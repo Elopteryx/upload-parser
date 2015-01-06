@@ -1,3 +1,4 @@
+build/
 classes/
 .gradle/
 .idea/
@@ -10,12 +11,6 @@ upload/build/
 
 upload-test/.gradle/
 upload-test/build/
-
-standard/.gradle/
-standard/build/
-
-standard-test/.gradle/
-standard-test/build/
 
 *.iml
 *.ipr
