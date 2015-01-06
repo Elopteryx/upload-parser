@@ -1,0 +1,21 @@
+plugins {
+    id "com.github.ben-manes.versions" version "0.6"
+}
+
+allprojects {
+
+    apply plugin: "maven-publish"
+    apply plugin: "com.github.ben-manes.versions"
+
+    version = "1.0-SNAPSHOT"
+    ext.appName = "%APP_NAME%"
+
+    repositories {
+        mavenCentral()
+    }
+
+    configurations {
+        provided
+        provided.extendsFrom(compile)
+    }
+}

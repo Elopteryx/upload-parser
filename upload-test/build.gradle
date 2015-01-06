@@ -1,0 +1,35 @@
+apply plugin: "war"
+apply plugin: "idea"
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+    }
+}
+
+idea {
+    module {
+        scopes.PROVIDED.plus += [configurations.provided]
+    }
+}
+
+dependencies {
+
+    compile project(":upload")
+
+    /* Servlet API. */
+    provided "javax.servlet:javax.servlet-api:3.1.0"
+
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId "com.elopterix.paint"
+            artifactId "paint-upload-test"
+            version "1.0-SNAPSHOT"
+
+            from components.java
+        }
+    }
+}
