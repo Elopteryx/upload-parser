@@ -32,27 +32,22 @@ public final class MimeUtility {
      * The marker to indicate text is encoded with BASE64 algorithm.
      */
     private static final String BASE64_ENCODING_MARKER = "B";
-
     /**
      * The marker to indicate text is encoded with QuotedPrintable algorithm.
      */
     private static final String QUOTED_PRINTABLE_ENCODING_MARKER = "Q";
-
     /**
      * If the text contains any encoded tokens, those tokens will be marked with "=?".
      */
     private static final String ENCODED_TOKEN_MARKER = "=?";
-
     /**
      * If the text contains any encoded tokens, those tokens will terminate with "=?".
      */
     private static final String ENCODED_TOKEN_FINISHER = "?=";
-
     /**
      * The linear whitespace chars sequence.
      */
     private static final String LINEAR_WHITESPACE = " \t\r\n";
-
     /**
      * Mappings between MIME and Java charset.
      */
@@ -254,7 +249,7 @@ public final class MimeUtility {
      * @return The Java equivalent for this name.
      */
     private static String javaCharset(String charset) {
-        // if there is no mapping, then the original name is used.  Many of the MIME character set
+        // If there is no mapping, then the original name is used. Many of the MIME character set
         // names map directly back into Java.  The reverse isn't necessarily true.
         return MIME2JAVA.getOrDefault(charset.toLowerCase(Locale.ENGLISH), charset);
     }

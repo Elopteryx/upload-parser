@@ -32,13 +32,23 @@ class UploadContextImpl implements UploadContext {
      * The request containing the bytes of the file. It's always a multipart, POST request.
      */
     private final HttpServletRequest request;
+    /**
+     * The response object. Only used by the callers, not necessary for these classes. 
+     */
     private final HttpServletResponse response;
-
-    private PartStream currentItem;
-
+    /**
+     * The currently processed item. 
+     */
+    private PartStream currentPart;
+    /**
+     * Determines whether the current item is buffering, that is, should new bytes be
+     * stored in memory or written out the channel. It is set to false after the
+     * validator function is called. 
+     */
     private boolean buffering = true;
-
-    /* The total number for the bytes read for the current item. */
+    /**
+     * The total number for the bytes read for the current part.
+     */
     private int partBytesRead;
 
 
@@ -46,8 +56,6 @@ class UploadContextImpl implements UploadContext {
         this.request = request;
         this.response = response;
     }
-
-    //Public API
 
     @Override
     @Nonnull
@@ -63,19 +71,12 @@ class UploadContextImpl implements UploadContext {
 
     @Override
     @Nonnull
-    public PartStream getCurrentItem() {
-        return currentItem;
+    public PartStream getCurrentPart() {
+        return currentPart;
     }
 
-
-    //Internal methods
-
-    void setCurrentItem(PartStream currentItem) {
-        this.currentItem = currentItem;
-    }
-
-    void reset(PartStream newItem) {
-        currentItem = newItem;
+    void reset(PartStream newPart) {
+        currentPart = newPart;
         buffering = true;
         partBytesRead = 0;
     }
@@ -84,7 +85,7 @@ class UploadContextImpl implements UploadContext {
         return buffering;
     }
 
-    public void finishBuffering() {
+    void finishBuffering() {
         this.buffering = false;
     }
 
@@ -96,5 +97,4 @@ class UploadContextImpl implements UploadContext {
         partBytesRead += additional;
         return partBytesRead;
     }
-
 }

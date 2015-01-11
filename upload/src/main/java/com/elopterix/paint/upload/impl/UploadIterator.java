@@ -29,42 +29,30 @@ import java.util.NoSuchElementException;
  */
 class UploadIterator {
 
-
     /**
      * HTTP content type header name.
      */
     static final String CONTENT_TYPE = "Content-type";
-
     /**
      * HTTP content disposition header name.
      */
     private static final String CONTENT_DISPOSITION = "Content-disposition";
-
     /**
      * Content-disposition value for form data.
      */
     private static final String FORM_DATA = "form-data";
-
     /**
      * Content-disposition value for file attachment.
      */
     private static final String ATTACHMENT = "attachment";
-
     /**
      * HTTP content type header for multiple uploads.
      */
     private static final String MULTIPART_MIXED = "multipart/mixed";
-
-
-    // ------------------------------------------------------ Protected methods
     /**
      * The multi part stream to process.
      */
     private final MultipartChannel multi;
-    /**
-     * The item counter.
-     */
-    private int items;
     /**
      * The boundary, which separates the various parts.
      */
@@ -312,7 +300,6 @@ class UploadIterator {
                     currentItem = new PartStreamImpl(fileName,
                             fieldName, headers.getHeader(CONTENT_TYPE),
                             fileName != null, multi.newItemChannel(), headers);
-                    items++;
                     itemValid = true;
                     return true;
                 }
@@ -321,7 +308,6 @@ class UploadIterator {
                 if (fileName != null) {
                     currentItem = new PartStreamImpl(fileName, currentFieldName,headers.getHeader(CONTENT_TYPE),
                             true, multi.newItemChannel(), headers);
-                    items++;
                     itemValid = true;
                     return true;
                 }

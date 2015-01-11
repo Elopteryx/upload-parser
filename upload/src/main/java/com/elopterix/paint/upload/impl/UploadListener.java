@@ -80,7 +80,7 @@ public class UploadListener extends UploadParser implements ReadListener {
         if (iterator.hasNext())
             currentItem = iterator.next();
         context = new UploadContextImpl(request, response);
-        context.setCurrentItem(currentItem);
+        context.reset(currentItem);
     }
 
     @Override
@@ -115,39 +115,6 @@ public class UploadListener extends UploadParser implements ReadListener {
      * @return Whether it should be called again
      * @throws IOException
      */
-//    private boolean parseCurrentItem() throws IOException {
-//        int read;
-//        int bytesRead = context.getPartBytesRead();
-//        MultipartStream.ItemInputStream itemStream = currentItem.getInputStream();
-//        if (context.isBuffering()) {
-//            read = itemStream.read(byteBuffer, bytesRead, byteBuffer.length - bytesRead);
-//        } else {
-//            read = itemStream.read(byteBuffer);
-//        }
-//        if (read != -1)
-//            checkSize(read);
-//        if (context.isBuffering() && (bytesRead >= sizeThreshold || read == -1)) {
-//            currentOutput = Objects.requireNonNull(partValidator.apply(context, ByteBuffer.wrap(byteBuffer)));
-//            context.finishBuffering();
-//            currentOutput.write(byteBuffer, 0, bytesRead);
-//        } else if (!context.isBuffering() && read != -1) {
-//            currentOutput.write(byteBuffer, 0, read);
-//        }
-//        if (read == -1) {
-//            partExecutor.accept(context, currentOutput);
-//            if (iterator.hasNext()) {
-//                currentItem = iterator.next();
-//                currentOutput = null;
-//                context.reset(currentItem);
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        } else {
-//            return true;
-//        }
-//    }
-
     private boolean parseCurrentItem() throws IOException {
         ReadableByteChannel channel = currentItem.getChannel();
         int read = channel.read(buffer);
@@ -179,25 +146,15 @@ public class UploadListener extends UploadParser implements ReadListener {
         }
     }
 
-    /**
-     * After the servlet input stream is finished there are still unread bytes or
-     * in case of fast uploads or small sizes the initial parse can read the whole
-     * input stream, causing the {@link #onDataAvailable} not to be called even once.
-     * This method takes care of these.
-     *
-     * @throws IOException
-     */
-    private void parseRemaining() throws IOException {
-        while (true) {
-            boolean shouldContinue = parseCurrentItem();
-            if (!shouldContinue)
-                break;
-        }
-    }
-
     @Override
     public void onAllDataRead() throws IOException {
-        parseRemaining();
+        // After the servlet input stream is finished there are still unread bytes or
+        // in case of fast uploads or small sizes the initial parse can read the whole
+        // input stream, causing the {@link #onDataAvailable} not to be called even once.
+        while (true) {
+            if (!parseCurrentItem())
+                break;
+        }
         completeExecutor.accept(context);
         request.getAsyncContext().complete();
     }

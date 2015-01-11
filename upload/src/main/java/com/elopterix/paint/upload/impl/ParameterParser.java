@@ -38,27 +38,27 @@ class ParameterParser {
     /**
      * String to be parsed.
      */
-    private char[] chars = null;
+    private char[] chars;
 
     /**
      * Current position in the string.
      */
-    private int pos = 0;
+    private int pos;
 
     /**
      * Maximum position in the string.
      */
-    private int len = 0;
+    private int len;
 
     /**
      * Start of a token.
      */
-    private int i1 = 0;
+    private int i1;
 
     /**
      * End of a token.
      */
-    private int i2 = 0;
+    private int i2;
 
     /**
      * Are there any characters left to parse?

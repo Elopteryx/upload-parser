@@ -12,30 +12,25 @@ import java.util.Collection;
 class PartStreamImpl implements PartStream {
 
     /**
-     * The file items content type.
+     * The content type of the part.
      */
     private final String contentType;
-
     /**
-     * The file items field name.
+     * The field name of the part.
      */
     private final String fieldName;
-
     /**
-     * The file items file name.
+     * The file items file name of the part.
      */
     private final String name;
-
     /**
-     * Whether the file item is a form field.
+     * Whether the part is a file field.
      */
     private final boolean fileField;
-
     /**
-     * The file items input stream.
+     * The readable channel of the part.
      */
     private final ReadableByteChannel channel;
-
     /**
      * The headers, if any.
      */
@@ -44,14 +39,14 @@ class PartStreamImpl implements PartStream {
     /**
      * Creates a new instance.
      *
-     * @param pName        The items file name, or null.
+     * @param name        The items file name, or null.
      * @param pFieldName   The items field name.
      * @param pContentType The items content type, or null.
      * @param pFileField   Whether the item is a form field.
      */
-    PartStreamImpl(String pName, String pFieldName, String pContentType, boolean pFileField,
+    PartStreamImpl(String name, String pFieldName, String pContentType, boolean pFileField,
                    ReadableByteChannel channel, PartStreamHeaders headers) {
-        name = pName;
+        this.name = name;
         fieldName = pFieldName;
         contentType = pContentType;
         fileField = pFileField;

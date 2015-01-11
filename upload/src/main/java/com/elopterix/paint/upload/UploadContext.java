@@ -48,5 +48,5 @@ public interface UploadContext {
      * @return The currently processed part
      */
     @Nonnull
-    PartStream getCurrentItem();
+    PartStream getCurrentPart();
 }

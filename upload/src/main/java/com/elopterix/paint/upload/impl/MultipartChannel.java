@@ -73,12 +73,14 @@ class MultipartChannel {
      * The input stream from which data is read.
      */
     private final InputStream input;
-    
+    /**
+     * The total number of bytes read from the channel. 
+     */
     private long bytesRead;
-    
+    /**
+     * The readable channel where
+     */
     private ReadableByteChannel readableChannel;
-
-    // ----------------------------------------------------------- Data members
     /**
      * The buffer used for processing the request.
      */
@@ -99,17 +101,15 @@ class MultipartChannel {
     /**
      * The index of first valid character in the buffer.
      * <br>
-     * 0 <= head < bufSize
+     * 0 <= head < capacity
      */
     private int head;
-
     /**
      * The index of last valid character in the buffer + 1.
      * <br>
-     * 0 <= tail <= bufSize
+     * 0 <= tail <= capacity
      */
     private int tail;
-
     /**
      * The content encoding to use when reading headers.
      */

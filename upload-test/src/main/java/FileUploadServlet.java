@@ -49,21 +49,21 @@ public class FileUploadServlet extends HttpServlet {
                 .onPartStart((context, buffer) -> {
                     System.out.println("Start!");
                     //use the buffer to detect file type
-                    PartStream item = context.getCurrentItem();
+                    PartStream part = context.getCurrentPart();
                     try {
-                        String name = item.getName();
-                        if (item.isFile()) {
+                        String name = part.getName();
+                        if (part.isFile()) {
                             System.out.println("File field " + name + " with file name "
-                                    + item.getSubmittedFileName() + " detected!");
-                            item.getHeaderNames().forEach(header -> System.out.println(header + " " + item.getHeader(header)));
-                            item.getHeaders("content-type");
-                            System.out.println(item.getContentType());
-                            joiner.add(item.getSubmittedFileName());
-                            Path path = uploadFilePath.resolve(item.getSubmittedFileName());
+                                    + part.getSubmittedFileName() + " detected!");
+                            part.getHeaderNames().forEach(header -> System.out.println(header + " " + part.getHeader(header)));
+                            part.getHeaders("content-type");
+                            System.out.println(part.getContentType());
+                            joiner.add(part.getSubmittedFileName());
+                            Path path = uploadFilePath.resolve(part.getSubmittedFileName());
                             return Channels.newChannel(Files.newOutputStream(path));
                         } else {
-                            item.getHeaderNames().forEach(header -> System.out.println(header + " " + item.getHeader(header)));
-                            System.out.println(item.getContentType());
+                            part.getHeaderNames().forEach(header -> System.out.println(header + " " + part.getHeader(header)));
+                            System.out.println(part.getContentType());
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             formFields.add(baos);
                             return Channels.newChannel(baos);
