@@ -1,4 +1,4 @@
-package io.undertow.util;
+package com.elopterix.paint.upload.impl2;
 
 import java.nio.ByteBuffer;
 
@@ -15,7 +15,7 @@ public class Pooled<T> implements AutoCloseable {
     }
 
     T getResource() throws IllegalStateException {
-        return (T)buffer;
+        return (T)ByteBuffer.allocate(8192);
         
     }
 

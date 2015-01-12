@@ -15,7 +15,7 @@
  */
 package com.elopterix.paint.upload;
 
-import com.elopterix.paint.upload.impl.UploadListener;
+import com.elopterix.paint.upload.impl2.UploadListener;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;

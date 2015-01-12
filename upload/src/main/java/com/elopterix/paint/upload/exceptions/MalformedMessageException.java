@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-package io.undertow.util;
+package com.elopterix.paint.upload.exceptions;
 
 import java.io.IOException;
 

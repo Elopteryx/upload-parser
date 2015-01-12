@@ -16,14 +16,16 @@
  *  limitations under the License.
  */
 
-package io.undertow.util;
+package com.elopterix.paint.upload.impl2;
 
+import com.elopterix.paint.upload.exceptions.MalformedMessageException;
 import com.elopterix.paint.upload.impl.PartStreamHeaders;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.util.Base64;
 
 /**
  * @author Stuart Douglas
@@ -331,8 +333,6 @@ public class MultipartParser {
 
     private static class Base64Encoding implements Encoding {
 
-        private final FlexBase64.Decoder decoder = FlexBase64.createDecoder();
-
         private final Pool<ByteBuffer> bufferPool;
 
         private Base64Encoding(final Pool<ByteBuffer> bufferPool) {
@@ -347,8 +347,8 @@ public class MultipartParser {
                 do {
                     buf.clear();
                     try {
-                        decoder.decode(rawData, buf);
-                    } catch (IOException e) {
+                        buf = Base64.getMimeDecoder().decode(rawData);
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                     buf.flip();
