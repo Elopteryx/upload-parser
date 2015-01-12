@@ -29,31 +29,31 @@ import java.util.Base64;
 /**
  * @author Stuart Douglas
  */
-public class MultipartParser {
+class MultipartParser {
 
     /**
      * The Carriage Return ASCII character value.
      */
-    public static final byte CR = 0x0D;
+    private static final byte CR = 0x0D;
 
 
     /**
      * The Line Feed ASCII character value.
      */
-    public static final byte LF = 0x0A;
+    private static final byte LF = 0x0A;
 
 
     /**
      * The dash (-) ASCII character value.
      */
-    public static final byte DASH = 0x2D;
+    private static final byte DASH = 0x2D;
 
     /**
      * A byte sequence that precedes a boundary (<code>CRLF--</code>).
      */
     private static final byte[] BOUNDARY_PREFIX = {CR, LF, DASH, DASH};
 
-    public static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
+    private static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
 
     public interface PartHandler {
         void beginPart(final PartStreamHeaders headers);
@@ -360,7 +360,7 @@ public class MultipartParser {
         boolean equalsSeen;
         byte firstCharacter;
 
-        private ByteBuffer buffer = ByteBuffer.allocate(4096);
+        private final ByteBuffer buffer = ByteBuffer.allocate(4096);
 
         private QuotedPrintableEncoding() {
             buffer.clear();

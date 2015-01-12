@@ -18,7 +18,7 @@
 
 package com.elopteryx.paint.upload.impl;
 
-public final class Headers {
+final class Headers {
 
     private Headers() {
     }

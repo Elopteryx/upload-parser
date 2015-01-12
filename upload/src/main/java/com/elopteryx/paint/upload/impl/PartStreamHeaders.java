@@ -22,7 +22,7 @@ import java.util.*;
  * item that was received within a <code>multipart/form-data</code> POST
  * request.</p>
  */
-public class PartStreamHeaders {
+class PartStreamHeaders {
 
     /**
      * Map of <code>String</code> keys to a <code>List</code> of

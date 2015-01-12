@@ -42,7 +42,7 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
      */
     private static final int MIN_BUFFER_SIZE = 8192;
 
-    public static final String MULTIPART_FORM_DATA = "multipart/form-data";
+    private static final String MULTIPART_FORM_DATA = "multipart/form-data";
     
     private ByteBuffer buffer;
 

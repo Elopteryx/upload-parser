@@ -28,7 +28,7 @@ class PartStreamImpl implements PartStream {
     /**
      * The headers, if any.
      */
-    private PartStreamHeaders headers;
+    private final PartStreamHeaders headers;
 
     /**
      * Creates a new instance.
