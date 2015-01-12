@@ -91,7 +91,7 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
             if (boundary == null) {
                 throw new RuntimeException("Could not find boundary in multipart request with ContentType: "+mimeType+", multipart data will not be available");
             }
-            parseState = MultipartParser.beginParse(new Pool<>(), this, boundary.getBytes(), request.getCharacterEncoding() != null ? request.getCharacterEncoding() : defaultEncoding);
+            parseState = MultipartParser.beginParse(this, boundary.getBytes(), request.getCharacterEncoding() != null ? request.getCharacterEncoding() : defaultEncoding);
         }
         readableByteChannel = Channels.newChannel(servletInputStream);
     }

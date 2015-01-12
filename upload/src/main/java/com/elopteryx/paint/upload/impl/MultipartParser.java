@@ -63,18 +63,17 @@ public class MultipartParser {
         void endPart();
     }
 
-    public static ParseState beginParse(final Pool<ByteBuffer> bufferPool, final PartHandler handler, final byte[] boundary, final String requestCharset) {
+    public static ParseState beginParse(final PartHandler handler, final byte[] boundary, final String requestCharset) {
 
         // We prepend CR/LF to the boundary to chop trailing CR/LF from
         // body-data tokens.
         byte[] boundaryToken = new byte[boundary.length + BOUNDARY_PREFIX.length];
         System.arraycopy(BOUNDARY_PREFIX, 0, boundaryToken, 0, BOUNDARY_PREFIX.length);
         System.arraycopy(boundary, 0, boundaryToken, BOUNDARY_PREFIX.length, boundary.length);
-        return new ParseState(bufferPool, handler, requestCharset, boundaryToken);
+        return new ParseState(handler, requestCharset, boundaryToken);
     }
 
     public static class ParseState {
-        private final Pool<ByteBuffer> bufferPool;
         private final PartHandler partHandler;
         private final String requestCharset;
         /**
@@ -91,8 +90,7 @@ public class MultipartParser {
         private volatile Encoding encodingHandler;
 
 
-        public ParseState(final Pool<ByteBuffer> bufferPool, final PartHandler partHandler, String requestCharset, final byte[] boundary) {
-            this.bufferPool = bufferPool;
+        public ParseState(final PartHandler partHandler, String requestCharset, final byte[] boundary) {
             this.partHandler = partHandler;
             this.requestCharset = requestCharset;
             this.boundary = boundary;
@@ -191,9 +189,9 @@ public class MultipartParser {
                     if (encoding == null) {
                         encodingHandler = new IdentityEncoding();
                     } else if (encoding.equalsIgnoreCase("base64")) {
-                        encodingHandler = new Base64Encoding(bufferPool);
+                        encodingHandler = new Base64Encoding();
                     } else if (encoding.equalsIgnoreCase("quoted-printable")) {
-                        encodingHandler = new QuotedPrintableEncoding(bufferPool);
+                        encodingHandler = new QuotedPrintableEncoding();
                     } else {
                         encodingHandler = new IdentityEncoding();
                     }
@@ -332,50 +330,47 @@ public class MultipartParser {
 
     private static class Base64Encoding implements Encoding {
 
-        private final Pool<ByteBuffer> bufferPool;
+        private ByteBuffer buffer = ByteBuffer.allocate(4096);
 
-        private Base64Encoding(final Pool<ByteBuffer> bufferPool) {
-            this.bufferPool = bufferPool;
+        private Base64Encoding() {
+            buffer.clear();
         }
 
         @Override
         public void handle(final PartHandler handler, final ByteBuffer rawData) throws IOException {
-            Pooled<ByteBuffer> resource = bufferPool.allocate();
-            ByteBuffer buf = resource.getResource();
             try {
                 do {
-                    buf.clear();
+                    buffer.clear();
                     try {
-                        buf = Base64.getMimeDecoder().decode(rawData);
+                        buffer = Base64.getMimeDecoder().decode(rawData);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                    buf.flip();
-                    handler.data(buf);
+                    buffer.flip();
+                    handler.data(buffer);
                 } while (rawData.hasRemaining());
             } finally {
-                resource.free();
+                buffer.clear();
             }
         }
     }
 
     private static class QuotedPrintableEncoding implements Encoding {
 
-        private final Pool<ByteBuffer> bufferPool;
         boolean equalsSeen;
         byte firstCharacter;
 
-        private QuotedPrintableEncoding(final Pool<ByteBuffer> bufferPool) {
-            this.bufferPool = bufferPool;
-        }
+        private ByteBuffer buffer = ByteBuffer.allocate(4096);
 
+        private QuotedPrintableEncoding() {
+            buffer.clear();
+        }
 
         @Override
         public void handle(final PartHandler handler, final ByteBuffer rawData) throws IOException {
             boolean equalsSeen = this.equalsSeen;
             byte firstCharacter = this.firstCharacter;
-            Pooled<ByteBuffer> resource = bufferPool.allocate();
-            ByteBuffer buf = resource.getResource();
+            buffer.clear();
             try {
                 while (rawData.hasRemaining()) {
                     byte b = rawData.get();
@@ -392,25 +387,25 @@ public class MultipartParser {
                             int result = Character.digit((char) firstCharacter, 16);
                             result <<= 4; //shift it 4 bytes and then add the next value to the end
                             result += Character.digit((char) b, 16);
-                            buf.put((byte) result);
+                            buffer.put((byte) result);
                             equalsSeen = false;
                             firstCharacter = 0;
                         }
                     } else if (b == '=') {
                         equalsSeen = true;
                     } else {
-                        buf.put(b);
-                        if (!buf.hasRemaining()) {
-                            buf.flip();
-                            handler.data(buf);
-                            buf.clear();
+                        buffer.put(b);
+                        if (!buffer.hasRemaining()) {
+                            buffer.flip();
+                            handler.data(buffer);
+                            buffer.clear();
                         }
                     }
                 }
-                buf.flip();
-                handler.data(buf);
+                buffer.flip();
+                handler.data(buffer);
             } finally {
-                resource.free();
+                buffer.clear();
                 this.equalsSeen = equalsSeen;
                 this.firstCharacter = firstCharacter;
             }
