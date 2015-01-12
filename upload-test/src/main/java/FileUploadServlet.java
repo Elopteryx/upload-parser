@@ -1,5 +1,5 @@
-import com.elopterix.paint.upload.PartStream;
-import com.elopterix.paint.upload.UploadParser;
+import com.elopteryx.paint.upload.PartStream;
+import com.elopteryx.paint.upload.UploadParser;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
