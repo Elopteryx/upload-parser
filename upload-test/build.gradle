@@ -25,7 +25,7 @@ dependencies {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId "com.elopterix.paint"
+            groupId "com.elopteryx.paint"
             artifactId "paint-upload-test"
             version "1.0-SNAPSHOT"
 
