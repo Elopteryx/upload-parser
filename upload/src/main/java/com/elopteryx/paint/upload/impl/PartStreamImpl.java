@@ -66,6 +66,16 @@ class PartStreamImpl implements PartStream {
     }
 
     /**
+     * Returns the known size of the part.
+     *
+     * @return Part size.
+     */
+    @Override
+    public long getSize() {
+        return -1;
+    }
+
+    /**
      * Returns the items file name.
      *
      * @return File name, if known, or null.

@@ -18,6 +18,7 @@ package com.elopteryx.paint.upload;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 public interface UploadContext {
 
@@ -49,4 +50,15 @@ public interface UploadContext {
      */
     @Nonnull
     PartStream getCurrentPart();
+
+    /**
+     * Returns the parts which have already been processed. Before
+     * the onPartStart method is called the current PartStream is
+     * added into the List returned by this method, meaning that
+     * the UploadContext#getCurrentPart will return with the last
+     * element of the list.
+     * @return The list of the processed parts, in the order they are uploaded
+     */
+    @Nonnull
+    List<PartStream> getPartStreams();
 }

@@ -15,6 +15,7 @@
  */
 package com.elopteryx.paint.upload;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nullable;
 import java.util.Collection;
 
@@ -41,6 +42,19 @@ public interface PartStream {
      */
     @Nullable
     String getName();
+
+    /**
+     * Returns the known size of this part. This means that the
+     * returned value depends on how many bytes have been processed. When called
+     * during the start of the part processing the returned value will be equal
+     * to the specified buffer threshold or the actual part size if it's smaller
+     * than that. When called during the end the returned value is always the
+     * actual size, because it has been fully processed. 
+     *
+     * @return A long specifying the known size of this part, in bytes.
+     */
+    @Nonnegative
+    long getSize();
 
     /**
      * Gets the file name specified by the client

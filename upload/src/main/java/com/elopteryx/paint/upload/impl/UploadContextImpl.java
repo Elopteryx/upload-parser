@@ -21,6 +21,9 @@ import com.elopteryx.paint.upload.UploadContext;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Meta data holder of an upload operation. Its fields are
@@ -41,6 +44,10 @@ class UploadContextImpl implements UploadContext {
      */
     private PartStream currentPart;
     /**
+     * The list of the already processed items.
+     */
+    private List<PartStream> partStreams = new ArrayList<>();
+    /**
      * Determines whether the current item is buffering, that is, should new bytes be
      * stored in memory or written out the channel. It is set to false after the
      * validator function is called. 
@@ -50,7 +57,6 @@ class UploadContextImpl implements UploadContext {
      * The total number for the bytes read for the current part.
      */
     private int partBytesRead;
-
 
     UploadContextImpl(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
@@ -75,10 +81,17 @@ class UploadContextImpl implements UploadContext {
         return currentPart;
     }
 
+    @Nonnull
+    @Override
+    public List<PartStream> getPartStreams() {
+        return Collections.unmodifiableList(partStreams);
+    }
+
     void reset(PartStream newPart) {
         currentPart = newPart;
         buffering = true;
         partBytesRead = 0;
+        partStreams.add(newPart);
     }
 
     boolean isBuffering() {
