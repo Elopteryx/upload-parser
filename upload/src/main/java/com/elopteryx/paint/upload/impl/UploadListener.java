@@ -37,14 +37,9 @@ import java.util.Objects;
  */
 public class UploadListener extends UploadParser implements ReadListener, MultipartParser.PartHandler {
 
-    /**
-     * Minimal buffer size.
-     */
-    private static final int MIN_BUFFER_SIZE = 8192;
-
     private static final String MULTIPART_FORM_DATA = "multipart/form-data";
     
-    private ByteBuffer buffer;
+    private ByteBuffer checkBuffer;
 
     private ServletInputStream servletInputStream;
 
@@ -56,7 +51,7 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
 
     private static final Charset defaultEncoding = StandardCharsets.ISO_8859_1;
 
-    private byte[] buf = new byte[8192];
+    private byte[] buf = new byte[4096];
 
     private long requestSize;
     
@@ -78,7 +73,7 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
                         ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
         }
 
-        buffer = ByteBuffer.allocate(Math.max(MIN_BUFFER_SIZE, sizeThreshold));
+        checkBuffer = ByteBuffer.allocate(sizeThreshold);
         context = new UploadContextImpl(request, response);
 
         String mimeType = request.getHeader(PartStreamHeaders.CONTENT_TYPE);
@@ -161,22 +156,41 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
     @Override
     public void data(final ByteBuffer buffer) throws IOException {
         checkPartSize(buffer.remaining());
-        //TODO copy the buffered bytes
-        if(context.isBuffering()) {
-        //if (context.isBuffering() && (context.getPartBytesRead() >= sizeThreshold || read == -1)) {
-            writableChannel = Objects.requireNonNull(partValidator.apply(context, buffer.asReadOnlyBuffer()));
+        copyBuffer(buffer);
+        if (context.isBuffering() && (context.getPartBytesRead() >= sizeThreshold)) {
+            writableChannel = Objects.requireNonNull(partValidator.apply(context, checkBuffer));
             context.finishBuffering();
+            checkBuffer.flip();
+            while (checkBuffer.hasRemaining()) {
+                writableChannel.write(checkBuffer);
+            }
         }
         if(!context.isBuffering()) {
             while (buffer.hasRemaining()) {
                 writableChannel.write(buffer);
             }
         }
-        
+    }
+    
+    private void copyBuffer(final ByteBuffer buffer) {
+        int nTransfer = Math.min(checkBuffer.remaining(), buffer.remaining());
+        if (nTransfer > 0) {
+            checkBuffer.put(buffer.array(), buffer.arrayOffset() + buffer.position(), nTransfer);
+            buffer.position(buffer.position() + nTransfer);
+        }
     }
 
     @Override
-    public void endPart() {
+    public void endPart() throws IOException {
+        if(context.isBuffering()) {
+            writableChannel = Objects.requireNonNull(partValidator.apply(context, checkBuffer));
+            context.finishBuffering();
+            checkBuffer.flip();
+            while (checkBuffer.hasRemaining()) {
+                writableChannel.write(checkBuffer);
+            }
+        }
+        checkBuffer.clear();
         context.updatePartBytesRead();
         partExecutor.accept(context, writableChannel);
     }

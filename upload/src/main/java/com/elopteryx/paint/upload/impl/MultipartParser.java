@@ -61,7 +61,7 @@ class MultipartParser {
 
         void data(final ByteBuffer buffer) throws IOException;
 
-        void endPart();
+        void endPart() throws IOException;
     }
 
     public static ParseState beginParse(final PartHandler handler, final byte[] boundary, final Charset requestCharset) {

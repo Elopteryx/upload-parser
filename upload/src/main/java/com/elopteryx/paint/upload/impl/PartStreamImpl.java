@@ -73,7 +73,7 @@ class PartStreamImpl implements PartStream {
      * @return Part size.
      */
     @Override
-    public long getSize() {
+    public long getKnownSize() {
         return size;
     }
 

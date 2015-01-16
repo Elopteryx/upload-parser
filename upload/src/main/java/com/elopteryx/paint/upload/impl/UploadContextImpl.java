@@ -106,6 +106,10 @@ class UploadContextImpl implements UploadContext {
         currentPart.setSize(partBytesRead);
     }
 
+    public int getPartBytesRead() {
+        return partBytesRead;
+    }
+
     int incrementAndGetPartBytes(int additional) {
         partBytesRead += additional;
         return partBytesRead;

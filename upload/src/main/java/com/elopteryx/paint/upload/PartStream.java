@@ -28,7 +28,8 @@ import java.util.Collection;
 public interface PartStream {
 
     /**
-     * Gets the content type of this part
+     * Returns the content type of this part, as it was submitted by
+     * the client. 
      *
      * @return The content type of this part
      */
@@ -36,7 +37,8 @@ public interface PartStream {
     String getContentType();
 
     /**
-     * Gets the name of this part
+     * Returns the name of this part, which equals the name of the form
+     * field the part was selected for.
      *
      * @return The name of this part as a String
      */
@@ -49,15 +51,16 @@ public interface PartStream {
      * during the start of the part processing the returned value will be equal
      * to the specified buffer threshold or the actual part size if it's smaller
      * than that. When called during the end the returned value is always the
-     * actual size, because it has been fully processed. 
+     * actual size, because by that time it has been fully processed.
      *
      * @return A long specifying the known size of this part, in bytes.
      */
     @Nonnegative
-    long getSize();
+    long getKnownSize();
 
     /**
-     * Gets the file name specified by the client
+     * Returns the file name specified by the client or null if the
+     * part is a normal form field.
      *
      * @return The submitted file name
      */
@@ -90,7 +93,7 @@ public interface PartStream {
     String getHeader(String name);
 
     /**
-     * Gets the values of the Part header with the given name.
+     * Returns the values of the part header with the given name.
      *
      * @param name the header name whose values to return
      * @return a (possibly empty) Collection of the values of the header with the given name
@@ -98,7 +101,7 @@ public interface PartStream {
     Collection<String> getHeaders(String name);
 
     /**
-     * Gets the header names of this Part.
+     * Returns the header names of this part.
      *
      * @return a (possibly empty) Collection of the header names of this Part
      */

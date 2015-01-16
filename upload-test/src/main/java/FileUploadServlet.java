@@ -50,7 +50,7 @@ public class FileUploadServlet extends HttpServlet {
                     System.out.println("Start!");
                     //use the buffer to detect file type
                     PartStream part = context.getCurrentPart();
-                    System.out.println(part.getSize());
+                    System.out.println(part.getKnownSize());
                     try {
                         String name = part.getName();
                         if (part.isFile()) {
@@ -80,7 +80,7 @@ public class FileUploadServlet extends HttpServlet {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    System.out.println(context.getCurrentPart().getSize());
+                    System.out.println(context.getCurrentPart().getKnownSize());
                     System.out.println("Part success!");
                 })
                 .onComplete(context -> {
