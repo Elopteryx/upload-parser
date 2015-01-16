@@ -27,7 +27,6 @@ publishing {
         maven(MavenPublication) {
             groupId "com.elopteryx.paint"
             artifactId "paint-upload-test"
-            version "1.0-SNAPSHOT"
 
             from components.java
         }

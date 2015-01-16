@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.Objects;
 
@@ -49,8 +47,6 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
     private ServletInputStream servletInputStream;
 
     private UploadContextImpl context;
-
-    private PartStreamImpl currentItem;
 
     private WritableByteChannel writableChannel;
     
@@ -93,7 +89,6 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
             }
             parseState = MultipartParser.beginParse(this, boundary.getBytes(), request.getCharacterEncoding() != null ? request.getCharacterEncoding() : defaultEncoding);
         }
-        readableByteChannel = Channels.newChannel(servletInputStream);
     }
 
     @Override
@@ -107,23 +102,27 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
      * Checks how many bytes have been read so far and stops the
      * parsing if a max size has been set and reached.
      */
-    private void checkSize(int additional) {
+    private void checkPartSize(int additional) {
         long partSize = context.incrementAndGetPartBytes(additional);
-        long requestSize = 0;//iterator.getBytesRead(); TODO
-        if (maxPartSize > -1)
-            if (partSize > maxPartSize)
-                throw new PartSizeException("The size of the part (" + partSize +
-                        ") is greater than the allowed size (" + maxPartSize + ")!", partSize, maxPartSize);
-        if (maxRequestSize > -1) {
-            if (requestSize > maxRequestSize)
-                throw new RequestSizeException("The size of the request (" + requestSize +
-                        ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
-        }
+        if (maxPartSize > -1 && partSize > maxPartSize)
+            throw new PartSizeException("The size of the part (" + partSize +
+                    ") is greater than the allowed size (" + maxPartSize + ")!", partSize, maxPartSize);
+    }
+
+    /**
+     * Checks how many bytes have been read so far and stops the
+     * parsing if a max size has been set and reached.
+     */
+    private void checkRequestSize(int additional) {
+        requestSize += additional;
+        if (maxRequestSize > -1 && requestSize > maxRequestSize)
+            throw new RequestSizeException("The size of the request (" + requestSize +
+                    ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
     }
 
     private byte[] buf = new byte[8192];
     
-    private ReadableByteChannel readableByteChannel;
+    private long requestSize;
     
     /**
      * Parses the servlet stream once. Will switch to a new item
@@ -135,11 +134,10 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
     private boolean parseCurrentItem() throws IOException {
         int c = servletInputStream.read(buf);
         if (c == -1) {
-            if (!parseState.isComplete()) {
+            if (!parseState.isComplete())
                 throw new MalformedMessageException();
-            }
-            //TODO this should never be 0, the input is always called when ready
-        } else if (c != 0) {
+        } else {
+            checkRequestSize(c);
             parseState.parse(ByteBuffer.wrap(buf, 0, c));
         }
         return !parseState.isComplete();
@@ -152,19 +150,15 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
             if (disposition.startsWith("form-data")) {
                 String fieldName = Headers.extractQuotedValueFromHeader(disposition, "name");
                 String fileName = Headers.extractQuotedValueFromHeader(disposition, "filename");
-                currentItem = new PartStreamImpl(fileName, fieldName, headers.getHeader(Headers.CONTENT_TYPE), headers);
-                context.reset(currentItem);
+                context.reset(new PartStreamImpl(fileName, fieldName, headers.getHeader(Headers.CONTENT_TYPE), headers));
             }
         }
     }
 
     @Override
     public void data(final ByteBuffer buffer) throws IOException {
+        checkPartSize(buffer.remaining());
         //TODO copy the buffered bytes
-        int read = buffer.position();
-        if (read != -1)
-            checkSize(read);
-        //TODO track the bytes for size threshold
         if(context.isBuffering()) {
         //if (context.isBuffering() && (context.getPartBytesRead() >= sizeThreshold || read == -1)) {
             writableChannel = Objects.requireNonNull(partValidator.apply(context, buffer.asReadOnlyBuffer()));
