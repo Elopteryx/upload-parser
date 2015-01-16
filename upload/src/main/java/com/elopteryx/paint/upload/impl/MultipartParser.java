@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Base64;
 
 /**
@@ -63,7 +64,7 @@ class MultipartParser {
         void endPart();
     }
 
-    public static ParseState beginParse(final PartHandler handler, final byte[] boundary, final String requestCharset) {
+    public static ParseState beginParse(final PartHandler handler, final byte[] boundary, final Charset requestCharset) {
 
         // We prepend CR/LF to the boundary to chop trailing CR/LF from
         // body-data tokens.
@@ -75,7 +76,7 @@ class MultipartParser {
 
     public static class ParseState {
         private final PartHandler partHandler;
-        private final String requestCharset;
+        private final Charset requestCharset;
         /**
          * The boundary, complete with the initial CRLF--
          */
@@ -90,7 +91,7 @@ class MultipartParser {
         private volatile Encoding encodingHandler;
 
 
-        public ParseState(final PartHandler partHandler, String requestCharset, final byte[] boundary) {
+        public ParseState(final PartHandler partHandler, Charset requestCharset, final byte[] boundary) {
             this.partHandler = partHandler;
             this.requestCharset = requestCharset;
             this.boundary = boundary;

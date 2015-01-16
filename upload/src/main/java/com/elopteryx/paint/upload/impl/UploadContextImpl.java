@@ -42,7 +42,7 @@ class UploadContextImpl implements UploadContext {
     /**
      * The currently processed item. 
      */
-    private PartStream currentPart;
+    private PartStreamImpl currentPart;
     /**
      * The list of the already processed items.
      */
@@ -87,7 +87,7 @@ class UploadContextImpl implements UploadContext {
         return Collections.unmodifiableList(partStreams);
     }
 
-    void reset(PartStream newPart) {
+    void reset(PartStreamImpl newPart) {
         currentPart = newPart;
         buffering = true;
         partBytesRead = 0;
@@ -102,8 +102,8 @@ class UploadContextImpl implements UploadContext {
         this.buffering = false;
     }
 
-    int getPartBytesRead() {
-        return partBytesRead;
+    void updatePartBytesRead() {
+        currentPart.setSize(partBytesRead);
     }
 
     int incrementAndGetPartBytes(int additional) {

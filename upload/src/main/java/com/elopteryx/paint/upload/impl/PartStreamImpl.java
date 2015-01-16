@@ -29,6 +29,8 @@ class PartStreamImpl implements PartStream {
      * The headers, if any.
      */
     private final PartStreamHeaders headers;
+    
+    private long size;
 
     /**
      * Creates a new instance.
@@ -72,7 +74,7 @@ class PartStreamImpl implements PartStream {
      */
     @Override
     public long getSize() {
-        return -1;
+        return size;
     }
 
     /**
@@ -109,6 +111,10 @@ class PartStreamImpl implements PartStream {
     @Override
     public Collection<String> getHeaders(String name) {
         return headers.getHeaders(name);
+    }
+
+    void setSize(long size) {
+        this.size = size;
     }
 
     private String checkFileName(String fileName) {

@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
@@ -52,7 +54,11 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
     
     private MultipartParser.ParseState parseState;
 
-    private static final String defaultEncoding = "ISO-8859-1";
+    private static final Charset defaultEncoding = StandardCharsets.ISO_8859_1;
+
+    private byte[] buf = new byte[8192];
+
+    private long requestSize;
     
 
     public UploadListener(HttpServletRequest request, HttpServletResponse response) {
@@ -72,23 +78,24 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
                         ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
         }
 
+        buffer = ByteBuffer.allocate(Math.max(MIN_BUFFER_SIZE, sizeThreshold));
+        context = new UploadContextImpl(request, response);
+
+        String mimeType = request.getHeader(PartStreamHeaders.CONTENT_TYPE);
+        String boundary;
+        if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
+            boundary = PartStreamHeaders.extractTokenFromHeader(mimeType, "boundary");
+            if (boundary == null) {
+                throw new RuntimeException("Could not find boundary in multipart request with ContentType: "+mimeType+", multipart data will not be available");
+            }
+            Charset charset = request.getCharacterEncoding() != null ? Charset.forName(request.getCharacterEncoding()) : defaultEncoding;
+            parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
+        }
+
         servletInputStream = request.getInputStream();
         if (!request.isAsyncStarted())
             request.startAsync();
         servletInputStream.setReadListener(this);
-
-        buffer = ByteBuffer.allocate(Math.max(MIN_BUFFER_SIZE, sizeThreshold));
-        context = new UploadContextImpl(request, response);
-
-        String mimeType = request.getHeader(Headers.CONTENT_TYPE);
-        String boundary;
-        if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
-            boundary = Headers.extractTokenFromHeader(mimeType, "boundary");
-            if (boundary == null) {
-                throw new RuntimeException("Could not find boundary in multipart request with ContentType: "+mimeType+", multipart data will not be available");
-            }
-            parseState = MultipartParser.beginParse(this, boundary.getBytes(), request.getCharacterEncoding() != null ? request.getCharacterEncoding() : defaultEncoding);
-        }
     }
 
     @Override
@@ -119,10 +126,6 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
             throw new RequestSizeException("The size of the request (" + requestSize +
                     ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
     }
-
-    private byte[] buf = new byte[8192];
-    
-    private long requestSize;
     
     /**
      * Parses the servlet stream once. Will switch to a new item
@@ -145,12 +148,12 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
 
     @Override
     public void beginPart(final PartStreamHeaders headers) {
-        final String disposition = headers.getHeader(Headers.CONTENT_DISPOSITION);
+        final String disposition = headers.getHeader(PartStreamHeaders.CONTENT_DISPOSITION);
         if (disposition != null) {
             if (disposition.startsWith("form-data")) {
-                String fieldName = Headers.extractQuotedValueFromHeader(disposition, "name");
-                String fileName = Headers.extractQuotedValueFromHeader(disposition, "filename");
-                context.reset(new PartStreamImpl(fileName, fieldName, headers.getHeader(Headers.CONTENT_TYPE), headers));
+                String fieldName = PartStreamHeaders.extractQuotedValueFromHeader(disposition, "name");
+                String fileName = PartStreamHeaders.extractQuotedValueFromHeader(disposition, "filename");
+                context.reset(new PartStreamImpl(fileName, fieldName, headers.getHeader(PartStreamHeaders.CONTENT_TYPE), headers));
             }
         }
     }
@@ -174,6 +177,7 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
 
     @Override
     public void endPart() {
+        context.updatePartBytesRead();
         partExecutor.accept(context, writableChannel);
     }
 
