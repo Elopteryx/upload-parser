@@ -22,10 +22,8 @@ import com.elopteryx.paint.upload.errors.MalformedMessageException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.Base64;
 
 /**
  * @author Stuart Douglas
@@ -331,6 +329,8 @@ class MultipartParser {
 
     private static class Base64Encoding implements Encoding {
 
+        private final Base64.Decoder decoder = Base64.createDecoder();
+        
         private ByteBuffer buffer = ByteBuffer.allocate(4096);
 
         private Base64Encoding() {
@@ -343,7 +343,7 @@ class MultipartParser {
                 do {
                     buffer.clear();
                     try {
-                        buffer = Base64.getMimeDecoder().decode(rawData);
+                        decoder.decode(rawData, buffer);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
