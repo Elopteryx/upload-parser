@@ -1,6 +1,11 @@
 apply plugin: "java"
 apply plugin: "idea"
 
+tasks.withType(JavaCompile) {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
 sourceSets {
     main {
         compileClasspath += configurations.provided

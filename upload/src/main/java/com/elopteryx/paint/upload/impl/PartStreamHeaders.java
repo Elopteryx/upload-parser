@@ -70,7 +70,7 @@ class PartStreamHeaders {
      */
     public Collection<String> getHeaders(String name) {
         String nameLower = name.toLowerCase(Locale.ENGLISH);
-        return headerNameToValueListMap.getOrDefault(nameLower, Collections.emptyList());
+        return headerNameToValueListMap.getOrDefault(nameLower, Collections.<String>emptyList());
     }
 
     /**
@@ -94,7 +94,13 @@ class PartStreamHeaders {
      */
     public synchronized void addHeader(String name, String value) {
         String nameLower = name.toLowerCase(Locale.ENGLISH);
-        headerNameToValueListMap.computeIfAbsent(nameLower, n -> new ArrayList<>()).add(value);
+        //headerNameToValueListMap.computeIfAbsent(nameLower, n -> new ArrayList<>()).add(value); Java 8 version
+        List<String> headers = headerNameToValueListMap.get(nameLower);
+        if(headers == null) {
+            headers = new ArrayList<>();
+            headerNameToValueListMap.put(nameLower, headers);
+        }
+        headers.add(value);
     }
 
     /**
@@ -107,7 +113,7 @@ class PartStreamHeaders {
      * @param key    The key that identifies the token to extract
      * @return The token, or null if it was not found
      */
-    public static String extractTokenFromHeader(final String header, final String key) {
+    static String extractTokenFromHeader(final String header, final String key) {
         int pos = header.indexOf(key + '=');
         if (pos == -1) {
             return null;
@@ -133,7 +139,7 @@ class PartStreamHeaders {
      * @param key    The key that identifies the token to extract
      * @return The token, or null if it was not found
      */
-    public static String extractQuotedValueFromHeader(final String header, final String key) {
+    static String extractQuotedValueFromHeader(final String header, final String key) {
 
         int keypos = 0;
         int pos = -1;

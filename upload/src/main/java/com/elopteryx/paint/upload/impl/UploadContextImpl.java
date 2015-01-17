@@ -46,7 +46,7 @@ class UploadContextImpl implements UploadContext {
     /**
      * The list of the already processed items.
      */
-    private List<PartStream> partStreams = new ArrayList<>();
+    private final List<PartStream> partStreams = new ArrayList<>();
     /**
      * Determines whether the current item is buffering, that is, should new bytes be
      * stored in memory or written out the channel. It is set to false after the

@@ -159,7 +159,7 @@ class MultipartParser {
             }
         }
 
-        private void headerName(final ByteBuffer buffer) throws MalformedMessageException, UnsupportedEncodingException {
+        private void headerName(final ByteBuffer buffer) throws MalformedMessageException {
             while (buffer.hasRemaining()) {
                 final byte b = buffer.get();
                 if (b == ':') {
@@ -210,7 +210,7 @@ class MultipartParser {
             }
         }
 
-        private void headerValue(final ByteBuffer buffer) throws MalformedMessageException, UnsupportedEncodingException {
+        private void headerValue(final ByteBuffer buffer) throws MalformedMessageException {
             while (buffer.hasRemaining()) {
                 final byte b = buffer.get();
                 if (b == CR) {

@@ -23,13 +23,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.WritableByteChannel;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 /**
  * Builder class. Provides a fluent API for the users to
@@ -59,23 +54,22 @@ public abstract class UploadParser {
     /**
      * The part validator, called at the beginning of each part parsing. Mandatory.
      */
-    protected BiFunction<UploadContext, ByteBuffer, WritableByteChannel> partValidator;
+    protected OnPartBegin partValidator;
 
     /**
      * The part executor, called at the end of each part parsing. Mandatory.
      */
-    protected BiConsumer<UploadContext, WritableByteChannel> partExecutor;
+    protected OnPartEnd partExecutor;
 
     /**
      * The completion executor, called after every part has been processed. Optional.
      */
-    protected Consumer<UploadContext> completeExecutor = context -> {
-    };
+    protected OnRequestComplete completeExecutor;
 
     /**
      * The error executor, called when an error occurred. Optional.
      */
-    protected BiConsumer<UploadContext, Throwable> errorExecutor = (context, t) -> t.printStackTrace();
+    protected OnError errorExecutor;
 
     /**
      * The number of bytes that should be buffered before calling the validation.
@@ -109,22 +103,22 @@ public abstract class UploadParser {
         return new UploadListener(request, response);
     }
 
-    public UploadParser onPartStart(@Nonnull BiFunction<UploadContext, ByteBuffer, WritableByteChannel> partValidator) {
+    public UploadParser onPartBegin(@Nonnull OnPartBegin partValidator) {
         this.partValidator = Objects.requireNonNull(partValidator);
         return this;
     }
 
-    public UploadParser onPartFinish(@Nonnull BiConsumer<UploadContext, WritableByteChannel> partExecutor) {
+    public UploadParser onPartEnd(@Nonnull OnPartEnd partExecutor) {
         this.partExecutor = Objects.requireNonNull(partExecutor);
         return this;
     }
 
-    public UploadParser onComplete(@Nonnull Consumer<UploadContext> completeExecutor) {
+    public UploadParser onComplete(@Nonnull OnRequestComplete completeExecutor) {
         this.completeExecutor = Objects.requireNonNull(completeExecutor);
         return this;
     }
 
-    public UploadParser onError(@Nonnull BiConsumer<UploadContext, Throwable> errorExecutor) {
+    public UploadParser onError(@Nonnull OnError errorExecutor) {
         this.errorExecutor = Objects.requireNonNull(errorExecutor);
         return this;
     }
@@ -149,6 +143,5 @@ public abstract class UploadParser {
      * servlet container will be calling the read listener
      * whenever data is available.
      */
-    public abstract void setup()
-            throws IOException;
+    public abstract void setup() throws IOException;
 }

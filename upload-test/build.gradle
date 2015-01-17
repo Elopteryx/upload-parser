@@ -1,16 +1,8 @@
 apply plugin: "war"
-apply plugin: "idea"
 
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
-    }
-}
-
-idea {
-    module {
-        scopes.PROVIDED.plus += [configurations.provided]
-    }
+tasks.withType(JavaCompile) {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
 
 dependencies {
@@ -18,7 +10,7 @@ dependencies {
     compile project(":upload")
 
     /* Servlet API. */
-    provided "javax.servlet:javax.servlet-api:3.1.0"
+    providedCompile "javax.servlet:javax.servlet-api:3.1.0"
 
 }
 

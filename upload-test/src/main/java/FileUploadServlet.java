@@ -46,51 +46,37 @@ public class FileUploadServlet extends HttpServlet {
         List<ByteArrayOutputStream> formFields = new ArrayList<>();
 
         UploadParser.newParser(request, response)
-                .onPartStart((context, buffer) -> {
+                .onPartBegin((context, buffer) -> {
                     System.out.println("Start!");
                     //use the buffer to detect file type
                     PartStream part = context.getCurrentPart();
-                    System.out.println(part.getKnownSize());
-                    try {
-                        String name = part.getName();
-                        if (part.isFile()) {
-                            System.out.println("File field " + name + " with file name "
-                                    + part.getSubmittedFileName() + " detected!");
-                            part.getHeaderNames().forEach(header -> System.out.println(header + " " + part.getHeader(header)));
-                            part.getHeaders("content-type");
-                            System.out.println(part.getContentType());
-                            joiner.add(part.getSubmittedFileName());
-                            Path path = uploadFilePath.resolve(part.getSubmittedFileName());
-                            return Channels.newChannel(Files.newOutputStream(path));
-                        } else {
-                            part.getHeaderNames().forEach(header -> System.out.println(header + " " + part.getHeader(header)));
-                            System.out.println(part.getContentType());
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            formFields.add(baos);
-                            return Channels.newChannel(baos);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return null;
+                    String name = part.getName();
+                    if (part.isFile()) {
+                        System.out.println("File field " + name + " with file name "
+                                + part.getSubmittedFileName() + " detected!");
+                        part.getHeaderNames().forEach(header -> System.out.println(header + " " + part.getHeader(header)));
+                        part.getHeaders("content-type");
+                        System.out.println(part.getContentType());
+                        joiner.add(part.getSubmittedFileName());
+                        Path path = uploadFilePath.resolve(part.getSubmittedFileName());
+                        return Channels.newChannel(Files.newOutputStream(path));
+                    } else {
+                        part.getHeaderNames().forEach(header -> System.out.println(header + " " + part.getHeader(header)));
+                        System.out.println(part.getContentType());
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        formFields.add(baos);
+                        return Channels.newChannel(baos);
                     }
                 })
-                .onPartFinish((context, output) -> {
-                    try {
-                        output.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                .onPartEnd((context, output) -> {
+                    output.close();
                     System.out.println(context.getCurrentPart().getKnownSize());
                     System.out.println("Part success!");
                 })
                 .onComplete(context -> {
                     System.out.println("Success!");
                     request.setAttribute("message", joiner + " File uploaded successfully!");
-                    try {
-                        getServletContext().getRequestDispatcher("/response.jsp").forward(request, response);
-                    } catch (ServletException | IOException e) {
-                        e.printStackTrace();
-                    }
+                    getServletContext().getRequestDispatcher("/response.jsp").forward(request, response);
                     formFields.stream()
                             .map(ByteArrayOutputStream::toString)
                             .forEach(System.out::println);

@@ -53,7 +53,7 @@ public interface UploadContext {
 
     /**
      * Returns the parts which have already been processed. Before
-     * the onPartStart method is called the current PartStream is
+     * the onPartBegin method is called the current PartStream is
      * added into the List returned by this method, meaning that
      * the UploadContext#getCurrentPart will return with the last
      * element of the list.

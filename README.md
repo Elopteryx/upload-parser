@@ -35,7 +35,7 @@ Features
 
 Requirements
 --------
-* Java 8+
+* Java 7+
 * Servlet 3.1 environment
 
 Gradle

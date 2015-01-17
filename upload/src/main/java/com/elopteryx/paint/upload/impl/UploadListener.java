@@ -21,6 +21,7 @@ import com.elopteryx.paint.upload.errors.PartSizeException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
 
 import javax.servlet.ReadListener;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,7 +52,7 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
 
     private static final Charset defaultEncoding = StandardCharsets.ISO_8859_1;
 
-    private byte[] buf = new byte[4096];
+    private final byte[] buf = new byte[4096];
 
     private long requestSize;
     
@@ -204,12 +205,18 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
             if (!parseCurrentItem())
                 break;
         }
-        completeExecutor.accept(context);
+        try {
+            if(completeExecutor != null)
+                completeExecutor.accept(context);
+        } catch (ServletException e) {
+            throw new IOException(e);
+        }
         request.getAsyncContext().complete();
     }
 
     @Override
     public void onError(Throwable t) {
-        errorExecutor.accept(context, t);
+        if(errorExecutor != null)
+            errorExecutor.accept(context, t);
     }
 }
