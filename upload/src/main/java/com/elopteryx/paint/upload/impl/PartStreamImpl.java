@@ -29,7 +29,9 @@ class PartStreamImpl implements PartStream {
      * The headers, if any.
      */
     private final PartStreamHeaders headers;
-    
+    /**
+     * The size of the part, updated on each read.
+     */
     private long size;
 
     /**

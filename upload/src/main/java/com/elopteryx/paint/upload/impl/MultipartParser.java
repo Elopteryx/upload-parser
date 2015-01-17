@@ -30,6 +30,8 @@ import java.nio.charset.Charset;
  */
 class MultipartParser {
 
+    private static final int BUFFER_SIZE = 1024;
+    
     /**
      * The Carriage Return ASCII character value.
      */
@@ -331,7 +333,7 @@ class MultipartParser {
 
         private final Base64.Decoder decoder = Base64.createDecoder();
         
-        private ByteBuffer buffer = ByteBuffer.allocate(4096);
+        private final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
         private Base64Encoding() {
             buffer.clear();
@@ -361,7 +363,7 @@ class MultipartParser {
         boolean equalsSeen;
         byte firstCharacter;
 
-        private final ByteBuffer buffer = ByteBuffer.allocate(4096);
+        private final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
         private QuotedPrintableEncoding() {
             buffer.clear();

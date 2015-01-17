@@ -39,6 +39,8 @@ import java.util.Objects;
 public class UploadListener extends UploadParser implements ReadListener, MultipartParser.PartHandler {
 
     private static final String MULTIPART_FORM_DATA = "multipart/form-data";
+
+    private static final int BUFFER_SIZE = 1024;
     
     private ByteBuffer checkBuffer;
 
@@ -52,7 +54,7 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
 
     private static final Charset defaultEncoding = StandardCharsets.ISO_8859_1;
 
-    private final byte[] buf = new byte[4096];
+    private final byte[] buf = new byte[BUFFER_SIZE];
 
     private long requestSize;
     
@@ -106,7 +108,7 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
      * parsing if a max size has been set and reached.
      */
     private void checkPartSize(int additional) {
-        long partSize = context.incrementAndGetPartBytes(additional);
+        long partSize = context.incrementAndGetPartBytesRead(additional);
         if (maxPartSize > -1 && partSize > maxPartSize)
             throw new PartSizeException("The size of the part (" + partSize +
                     ") is greater than the allowed size (" + maxPartSize + ")!", partSize, maxPartSize);
@@ -159,12 +161,7 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
         checkPartSize(buffer.remaining());
         copyBuffer(buffer);
         if (context.isBuffering() && (context.getPartBytesRead() >= sizeThreshold)) {
-            writableChannel = Objects.requireNonNull(partValidator.apply(context, checkBuffer));
-            context.finishBuffering();
-            checkBuffer.flip();
-            while (checkBuffer.hasRemaining()) {
-                writableChannel.write(checkBuffer);
-            }
+            validate();
         }
         if(!context.isBuffering()) {
             while (buffer.hasRemaining()) {
@@ -174,22 +171,26 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
     }
     
     private void copyBuffer(final ByteBuffer buffer) {
-        int nTransfer = Math.min(checkBuffer.remaining(), buffer.remaining());
-        if (nTransfer > 0) {
-            checkBuffer.put(buffer.array(), buffer.arrayOffset() + buffer.position(), nTransfer);
-            buffer.position(buffer.position() + nTransfer);
+        int transferCount = Math.min(checkBuffer.remaining(), buffer.remaining());
+        if (transferCount > 0) {
+            checkBuffer.put(buffer.array(), buffer.arrayOffset() + buffer.position(), transferCount);
+            buffer.position(buffer.position() + transferCount);
+        }
+    }
+    
+    private void validate() throws IOException {
+        writableChannel = Objects.requireNonNull(partValidator.apply(context, checkBuffer));
+        context.finishBuffering();
+        checkBuffer.flip();
+        while (checkBuffer.hasRemaining()) {
+            writableChannel.write(checkBuffer);
         }
     }
 
     @Override
     public void endPart() throws IOException {
         if(context.isBuffering()) {
-            writableChannel = Objects.requireNonNull(partValidator.apply(context, checkBuffer));
-            context.finishBuffering();
-            checkBuffer.flip();
-            while (checkBuffer.hasRemaining()) {
-                writableChannel.write(checkBuffer);
-            }
+            validate();
         }
         checkBuffer.clear();
         context.updatePartBytesRead();
@@ -209,7 +210,7 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
             if(completeExecutor != null)
                 completeExecutor.accept(context);
         } catch (ServletException e) {
-            throw new IOException(e);
+            throw new RuntimeException(e);
         }
         request.getAsyncContext().complete();
     }

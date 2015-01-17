@@ -27,10 +27,7 @@ import java.nio.ByteBuffer;
  * @author Jason T. Greene
  */
 class Base64 {
-    /*
-     * Note that this code heavily favors performance over reuse and clean style.
-     */
-
+    
     private static final byte[] ENCODING_TABLE;
     private static final byte[] DECODING_TABLE = new byte[80];
 
@@ -65,17 +62,10 @@ class Base64 {
     public static final class Decoder {
         private int state;
         private int last;
-        private int lastPos;
         private static final int SKIP = 0x0FD00;
         private static final int MARK = 0x0FE00;
         private static final int DONE = 0x0FF00;
         private static final int ERROR = 0xF0000;
-
-
-
-        private Decoder() {
-        }
-
 
         private static int nextByte(ByteBuffer buffer, int state, int last, boolean ignoreErrors) throws IOException {
             return nextByte(buffer.get() & 0xFF, state, last, ignoreErrors);
@@ -206,7 +196,6 @@ class Base64 {
 
             this.last = last;
             this.state = state;
-            this.lastPos = source.position();
         }
 
         private static void drain(ByteBuffer source, int b, int state, int last) {

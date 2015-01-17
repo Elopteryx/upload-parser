@@ -26,63 +26,21 @@ class PartStreamHeaders {
 
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
     public static final String CONTENT_TYPE = "Content-Type";
-    
-    /**
-     * Map of <code>String</code> keys to a <code>List</code> of
-     * <code>String</code> instances.
-     */
+
     private final Map<String, List<String>> headerNameToValueListMap = new LinkedHashMap<>();
 
-    /**
-     * Returns the value of the specified part header as a <code>String</code>.
-     * <p>
-     * If the part did not include a header of the specified name, this method
-     * return <code>null</code>.  If there are multiple headers with the same
-     * name, this method returns the first header in the item.  The header
-     * name is case insensitive.
-     *
-     * @param name a <code>String</code> specifying the header name
-     * @return a <code>String</code> containing the value of the requested
-     * header, or <code>null</code> if the item does not have a header
-     * of that name
-     */
-    public String getHeader(String name) {
+    String getHeader(String name) {
         String nameLower = name.toLowerCase(Locale.ENGLISH);
         List<String> headerValueList = headerNameToValueListMap.get(nameLower);
         return headerValueList != null ? headerValueList.get(0) : null;
     }
 
-    /**
-     * <p>
-     * Returns all the values of the specified item header as an
-     * <code>Iterator</code> of <code>String</code> objects.
-     * </p>
-     * <p>
-     * If the item did not include any headers of the specified name, this
-     * method returns an empty <code>Iterator</code>. The header name is
-     * case insensitive.
-     * </p>
-     *
-     * @param name a <code>String</code> specifying the header name
-     * @return an <code>Iterator</code> containing the values of the
-     * requested header. If the item does not have any headers of
-     * that name, return an empty <code>Iterator</code>
-     */
-    public Collection<String> getHeaders(String name) {
+    Collection<String> getHeaders(String name) {
         String nameLower = name.toLowerCase(Locale.ENGLISH);
         return headerNameToValueListMap.getOrDefault(nameLower, Collections.<String>emptyList());
     }
 
-    /**
-     * <p>
-     * Returns an <code>Iterator</code> of all the header names.
-     * </p>
-     *
-     * @return an <code>Iterator</code> containing all of the names of
-     * headers provided with this file item. If the item does not have
-     * any headers return an empty <code>Iterator</code>
-     */
-    public Collection<String> getHeaderNames() {
+    Collection<String> getHeaderNames() {
         return headerNameToValueListMap.keySet();
     }
 
@@ -92,7 +50,7 @@ class PartStreamHeaders {
      * @param name  name of this header
      * @param value value of this header
      */
-    public synchronized void addHeader(String name, String value) {
+    void addHeader(String name, String value) {
         String nameLower = name.toLowerCase(Locale.ENGLISH);
         //headerNameToValueListMap.computeIfAbsent(nameLower, n -> new ArrayList<>()).add(value); Java 8 version
         List<String> headers = headerNameToValueListMap.get(nameLower);

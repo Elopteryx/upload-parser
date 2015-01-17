@@ -110,7 +110,7 @@ class UploadContextImpl implements UploadContext {
         return partBytesRead;
     }
 
-    int incrementAndGetPartBytes(int additional) {
+    int incrementAndGetPartBytesRead(int additional) {
         partBytesRead += additional;
         return partBytesRead;
     }

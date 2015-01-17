@@ -25,6 +25,4 @@ import java.io.IOException;
  *
 * @author Stuart Douglas
 */
-public class MalformedMessageException extends IOException {
-
-}
+public class MalformedMessageException extends IOException {}
