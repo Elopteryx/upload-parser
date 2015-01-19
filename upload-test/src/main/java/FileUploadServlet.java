@@ -52,6 +52,8 @@ public class FileUploadServlet extends HttpServlet {
                     PartStream part = context.getCurrentPart();
                     String name = part.getName();
                     if (part.isFile()) {
+                        if("".equals(part.getSubmittedFileName()))
+                            throw new IOException("No file was chosen for the form field!");
                         System.out.println("File field " + name + " with file name "
                                 + part.getSubmittedFileName() + " detected!");
                         part.getHeaderNames().forEach(header -> System.out.println(header + " " + part.getHeader(header)));
