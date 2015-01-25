@@ -1,6 +1,6 @@
 rootProject.name = "paint-upload"
 
-include "upload"
+include "upload-core"
 
 include "upload-test"
 
