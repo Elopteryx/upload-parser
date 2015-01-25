@@ -41,7 +41,7 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId "com.elopteryx.paint"
-            artifactId "paint-upload"
+            artifactId "upload-core"
 
             from components.java
         }
