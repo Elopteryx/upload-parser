@@ -5,11 +5,11 @@
 
     <groupId>com.elopteryx.paint</groupId>
     <artifactId>upload-parent</artifactId>
-    <version>1.0</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
     
     <modules>
-        <module>upload</module>
+        <module>upload-core</module>
         <module>upload-test</module>
     </modules>
 
