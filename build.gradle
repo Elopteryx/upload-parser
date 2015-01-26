@@ -7,7 +7,7 @@ allprojects {
     apply plugin: "maven-publish"
     apply plugin: "com.github.ben-manes.versions"
 
-    version = "1.0"
+    version = "1.0.0"
     ext.appName = "%APP_NAME%"
 
     repositories {

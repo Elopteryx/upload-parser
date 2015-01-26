@@ -37,7 +37,8 @@ class PartStreamHeaders {
 
     Collection<String> getHeaders(String name) {
         String nameLower = name.toLowerCase(Locale.ENGLISH);
-        return headerNameToValueListMap.getOrDefault(nameLower, Collections.<String>emptyList());
+        Collection<String> headers = headerNameToValueListMap.get(nameLower);
+        return headers != null ? headers : Collections.<String>emptyList();
     }
 
     Collection<String> getHeaderNames() {

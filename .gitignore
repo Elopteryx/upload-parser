@@ -12,6 +12,10 @@ upload/build/
 upload-test/.gradle/
 upload-test/build/
 
+target/
+upload-core/target/
+upload-test/target/
+
 *.iml
 *.ipr
 *.iws

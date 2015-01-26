@@ -1,4 +1,9 @@
+import com.elopteryx.paint.upload.OnError;
+import com.elopteryx.paint.upload.OnPartBegin;
+import com.elopteryx.paint.upload.OnPartEnd;
+import com.elopteryx.paint.upload.OnRequestComplete;
 import com.elopteryx.paint.upload.PartStream;
+import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.UploadParser;
 
 import javax.servlet.ServletException;
@@ -8,11 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 @WebServlet(value = "/FileUploadServlet", asyncSupported = true)
 public class FileUploadServlet extends HttpServlet {
@@ -23,14 +29,14 @@ public class FileUploadServlet extends HttpServlet {
      */
     private static final String UPLOAD_DIR = "uploads";
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
 
 
         // gets absolute path of the web application
         String applicationPath = request.getServletContext().getRealPath("");
         // constructs path of the directory to save uploaded file
-        Path uploadFilePath = Paths.get(applicationPath, UPLOAD_DIR);
+        final Path uploadFilePath = Paths.get(applicationPath, UPLOAD_DIR);
 
         if (!Files.isDirectory(uploadFilePath)) {
             Files.createDirectories(uploadFilePath);
@@ -41,59 +47,71 @@ public class FileUploadServlet extends HttpServlet {
         if (!UploadParser.isMultipart(request))
             throw new ServletException("Not multipart!");
 
-        StringJoiner joiner = new StringJoiner(",");
+        final List<ByteArrayOutputStream> formFields = new ArrayList<>();
 
-        List<ByteArrayOutputStream> formFields = new ArrayList<>();
+        final StringBuilder builder = new StringBuilder();
 
         UploadParser.newParser(request, response)
-                .onPartBegin((context, buffer) -> {
-                    System.out.println("Start!");
-                    //use the buffer to detect file type
-                    PartStream part = context.getCurrentPart();
-                    String name = part.getName();
-                    if (part.isFile()) {
-                        if("".equals(part.getSubmittedFileName()))
-                            throw new IOException("No file was chosen for the form field!");
-                        System.out.println("File field " + name + " with file name "
-                                + part.getSubmittedFileName() + " detected!");
-                        part.getHeaderNames().forEach(header -> System.out.println(header + " " + part.getHeader(header)));
-                        part.getHeaders("content-type");
-                        System.out.println(part.getContentType());
-                        joiner.add(part.getSubmittedFileName());
-                        Path path = uploadFilePath.resolve(part.getSubmittedFileName());
-                        return Channels.newChannel(Files.newOutputStream(path));
-                    } else {
-                        part.getHeaderNames().forEach(header -> System.out.println(header + " " + part.getHeader(header)));
-                        System.out.println(part.getContentType());
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        formFields.add(baos);
-                        return Channels.newChannel(baos);
+                .onPartBegin(new OnPartBegin() {
+                    @Override
+                    public WritableByteChannel apply(UploadContext context, ByteBuffer buffer) throws IOException {
+                        System.out.println("Start!");
+                        //use the buffer to detect file type
+                        PartStream part = context.getCurrentPart();
+                        String name = part.getName();
+                        if (part.isFile()) {
+                            if ("".equals(part.getSubmittedFileName()))
+                                throw new IOException("No file was chosen for the form field!");
+                            System.out.println("File field " + name + " with file name "
+                                    + part.getSubmittedFileName() + " detected!");
+                            for(String header : part.getHeaderNames())
+                                System.out.println(header + " " + part.getHeader(header));
+                            part.getHeaders("content-type");
+                            System.out.println(part.getContentType());
+                            builder.append(part.getSubmittedFileName() + ",");
+                            Path path = uploadFilePath.resolve(part.getSubmittedFileName());
+                            return Channels.newChannel(Files.newOutputStream(path));
+                        } else {
+                            for(String header : part.getHeaderNames())
+                                System.out.println(header + " " + part.getHeader(header));
+                            System.out.println(part.getContentType());
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            formFields.add(baos);
+                            return Channels.newChannel(baos);
+                        }
                     }
                 })
-                .onPartEnd((context, output) -> {
-                    output.close();
-                    System.out.println(context.getCurrentPart().getKnownSize());
-                    System.out.println("Part success!");
+                .onPartEnd(new OnPartEnd() {
+                    @Override
+                    public void accept(UploadContext context, WritableByteChannel channel) throws IOException {
+                        channel.close();
+                        System.out.println(context.getCurrentPart().getKnownSize());
+                        System.out.println("Part success!");
+                    }
                 })
-                .onComplete(context -> {
-                    System.out.println("Success!");
-                    request.setAttribute("message", joiner + " File uploaded successfully!");
-                    getServletContext().getRequestDispatcher("/response.jsp").forward(request, response);
-                    formFields.stream()
-                            .map(ByteArrayOutputStream::toString)
-                            .forEach(System.out::println);
-                    context.getResponse().setStatus(200);
+                .onComplete(new OnRequestComplete() {
+                    @Override
+                    public void accept(UploadContext context) throws IOException, ServletException {
+                        System.out.println("Success!");
+                        request.setAttribute("message", builder + " File uploaded successfully!");
+                        getServletContext().getRequestDispatcher("/response.jsp").forward(request, response);
+                        for (ByteArrayOutputStream baos : formFields)
+                            System.out.println(baos.toString());
+                        context.getResponse().setStatus(200);
+                    }
                 })
-                .onError((context, t) -> {
-                    System.out.println("Error!");
-                    t.printStackTrace();
-                    formFields.stream()
-                            .map(ByteArrayOutputStream::toString)
-                            .forEach(System.out::println);
-                    try {
-                        context.getResponse().sendError(500);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                .onError(new OnError() {
+                    @Override
+                    public void accept(UploadContext context, Throwable throwable) {
+                        System.out.println("Error!");
+                        throwable.printStackTrace();
+                        for (ByteArrayOutputStream baos : formFields)
+                            System.out.println(baos.toString());
+                        try {
+                            context.getResponse().sendError(500);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 })
                 .sizeThreshold(4096)

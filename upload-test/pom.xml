@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.elopteryx.paint</groupId>
+        <artifactId>upload-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    
+    <artifactId>upload-test</artifactId>
+    <packaging>war</packaging>
+
+    <name>Paint Upload Test</name>
+    <description>
+        Test servlet application for the upload module.
+    </description>
+    <url></url>
+    <inceptionYear>2015</inceptionYear>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.elopteryx.paint</groupId>
+            <artifactId>upload-core</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
