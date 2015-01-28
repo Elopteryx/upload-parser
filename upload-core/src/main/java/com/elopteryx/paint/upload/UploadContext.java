@@ -20,6 +20,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+/**
+ * The context object which is passed to the user-supplied functions,
+ * allowing the user to get the necessary objects during the various
+ * stages of the parsing.
+ */
 public interface UploadContext {
 
     /**

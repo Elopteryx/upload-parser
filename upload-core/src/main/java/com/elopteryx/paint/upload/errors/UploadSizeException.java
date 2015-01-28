@@ -1,6 +1,9 @@
 package com.elopteryx.paint.upload.errors;
 
-abstract class UploadSizeException extends RuntimeException {
+/**
+ * Base class for the size related exceptions.
+ */
+public abstract class UploadSizeException extends RuntimeException {
 
     /**
      * The actual size.

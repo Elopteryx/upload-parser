@@ -86,12 +86,18 @@ public abstract class UploadParser {
      */
     protected long maxRequestSize = -1;
 
-    protected UploadParser(HttpServletRequest request, HttpServletResponse response) {
+    protected UploadParser(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response) {
         this.request = Objects.requireNonNull(request);
         this.response = Objects.requireNonNull(response);
     }
 
-    public static boolean isMultipart(HttpServletRequest request) {
+    /**
+     * Utility method which can be used to check whether the request
+     * should be processed by this parser or not.
+     * @param request The request object
+     * @return Whether the request is a proper multipart request
+     */
+    public static boolean isMultipart(@Nonnull HttpServletRequest request) {
         return POST_METHOD.equalsIgnoreCase(request.getMethod()) && request.getContentType() != null &&
                 request.getContentType().toLowerCase(Locale.ENGLISH).startsWith(MULTIPART);
     }

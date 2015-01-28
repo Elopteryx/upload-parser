@@ -33,8 +33,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
- * Asynchronous upload listener. Called by the servlet
- * container whenever data is available.
+ * Asynchronous upload listener. Called by the servlet container whenever data is available.
+ * This class is only public to serve as an entry point in the implementation package, users
+ * should not need to directly depend on this class.
  */
 public class UploadListener extends UploadParser implements ReadListener, MultipartParser.PartHandler {
 
@@ -57,7 +58,6 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
     private final byte[] buf = new byte[BUFFER_SIZE];
 
     private long requestSize;
-    
 
     public UploadListener(HttpServletRequest request, HttpServletResponse response) {
         super(request, response);
