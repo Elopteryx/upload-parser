@@ -18,7 +18,7 @@ Paint-Upload
 Paint-Upload is an asynchronous file upload library, allowing non-blocking parsing of
 multipart requests, using the async IO API introduced with Servlet 3.1.
 
-The actual multipart parser is based on the Apache Commons-Fileupload library. Using
+The actual multipart parser is based on the parser from Undertow. Using
 that I created a custom ReadListener implementation, which can be customized with a 
 fluent API, however you wish.
 
@@ -31,24 +31,8 @@ Features
   * ```.onComplete(…)```
   * ```.onError(…)```
 * Lightweight, no dependencies other than the servlet API
-* Available on the Maven Central Repository
 
 Requirements
 --------
 * Java 7+
 * Servlet 3.1 environment
-
-Gradle
------
-```xml
-'com.elopterix.paint:paint-upload:1.0-SNAPSHOT'
-```
-Maven
------
-```xml
-<dependency>
-    <groupId>com.elopterix.paint</groupId>
-    <artifactId>paint-upload</artifactId>
-    <version>1.0-SNAPSHOT</version>
-</dependency>
-```
