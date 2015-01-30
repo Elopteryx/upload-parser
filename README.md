@@ -12,9 +12,9 @@ Features
 --------
 * Async parsing, preventing IO blocking
 * Fully customizable, just pass your custom logic
-  * ```.onPartStart(…)```
-  * ```.onPartFinish(…)```
-  * ```.onComplete(…)```
+  * ```.onPartBegin(…)```
+  * ```.onPartEnd(…)```
+  * ```.onRequestComplete(…)```
   * ```.onError(…)```
 * Lightweight, no dependencies other than the servlet API
 
