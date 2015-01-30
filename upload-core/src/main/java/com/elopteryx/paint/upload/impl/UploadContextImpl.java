@@ -19,8 +19,10 @@ import com.elopteryx.paint.upload.PartStream;
 import com.elopteryx.paint.upload.UploadContext;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +45,10 @@ class UploadContextImpl implements UploadContext {
      * The currently processed item. 
      */
     private PartStreamImpl currentPart;
+    /**
+     * The active channel.
+     */
+    private WritableByteChannel channel;
     /**
      * The list of the already processed items.
      */
@@ -81,6 +87,12 @@ class UploadContextImpl implements UploadContext {
         return currentPart;
     }
 
+    @Override
+    @Nullable
+    public WritableByteChannel getCurrentChannel() {
+        return channel;
+    }
+
     @Nonnull
     @Override
     public List<PartStream> getPartStreams() {
@@ -88,10 +100,15 @@ class UploadContextImpl implements UploadContext {
     }
 
     void reset(PartStreamImpl newPart) {
-        currentPart = newPart;
         buffering = true;
         partBytesRead = 0;
+        currentPart = newPart;
         partStreams.add(newPart);
+        channel = null;
+    }
+
+    void setChannel(WritableByteChannel channel) {
+        this.channel = channel;
     }
 
     boolean isBuffering() {

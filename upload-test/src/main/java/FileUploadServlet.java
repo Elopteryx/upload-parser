@@ -83,8 +83,8 @@ public class FileUploadServlet extends HttpServlet {
                 })
                 .onPartEnd(new OnPartEnd() {
                     @Override
-                    public void accept(UploadContext context, WritableByteChannel channel) throws IOException {
-                        channel.close();
+                    public void accept(UploadContext context) throws IOException {
+                        context.getCurrentChannel().close();
                         System.out.println(context.getCurrentPart().getKnownSize());
                         System.out.println("Part success!");
                     }

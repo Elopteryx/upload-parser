@@ -96,6 +96,12 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
         servletInputStream.setReadListener(this);
     }
 
+    /**
+     * When an instance of the ReadListener is registered with a ServletInputStream, this method will be invoked
+     * by the container the first time when it is possible to read data. Subsequently the container will invoke
+     * this method if and only if ServletInputStream.isReady() method has been called and has returned false.
+     * @throws IOException if an I/O related error has occurred during processing
+     */
     @Override
     public void onDataAvailable() throws IOException {
         while (servletInputStream.isReady()) {
@@ -180,6 +186,7 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
     
     private void validate() throws IOException {
         writableChannel = Objects.requireNonNull(partValidator.apply(context, checkBuffer));
+        context.setChannel(writableChannel);
         context.finishBuffering();
         checkBuffer.flip();
         while (checkBuffer.hasRemaining()) {
@@ -194,9 +201,13 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
         }
         checkBuffer.clear();
         context.updatePartBytesRead();
-        partExecutor.accept(context, writableChannel);
+        partExecutor.accept(context);
     }
 
+    /**
+     * Invoked when all data for the current request has been read.
+     * @throws IOException if an I/O related error has occurred during processing
+     */
     @Override
     public void onAllDataRead() throws IOException {
         // After the servlet input stream is finished there are still unread bytes or
@@ -215,6 +226,10 @@ public class UploadListener extends UploadParser implements ReadListener, Multip
         request.getAsyncContext().complete();
     }
 
+    /**
+     * Invoked when an error occurs processing the request.
+     * @param t The unhandled error that happened
+     */
     @Override
     public void onError(Throwable t) {
         if(errorExecutor != null)
