@@ -331,7 +331,7 @@ class MultipartParser {
 
     private static class Base64Encoding implements Encoding {
 
-        private final Base64.Decoder decoder = Base64.createDecoder();
+        private final Base64Decoder decoder = new Base64Decoder();
         
         private final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
