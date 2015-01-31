@@ -1,20 +1,11 @@
 build/
+target/
 classes/
 .gradle/
 .idea/
 out
 
 gradle/wrapper/gradle-wrapper.properties
-
-upload/.gradle/
-upload/build/
-
-upload-test/.gradle/
-upload-test/build/
-
-target/
-upload-core/target/
-upload-test/target/
 
 *.iml
 *.ipr

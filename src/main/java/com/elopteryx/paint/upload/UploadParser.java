@@ -148,6 +148,7 @@ public abstract class UploadParser {
      * Sets up the necessary objects to start the parsing. The
      * servlet container will be calling the read listener
      * whenever data is available.
+     * @throws IOException If an error occurs with the IO
      */
     public abstract void setup() throws IOException;
 }

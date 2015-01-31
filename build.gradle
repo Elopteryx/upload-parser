@@ -2,20 +2,67 @@ plugins {
     id "com.github.ben-manes.versions" version "0.7"
 }
 
-allprojects {
+version = "1.0.0"
+ext.appName = "%APP_NAME%"
 
-    apply plugin: "maven-publish"
-    apply plugin: "com.github.ben-manes.versions"
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
 
-    version = "1.0.0"
-    ext.appName = "%APP_NAME%"
+apply plugin: "java"
+apply plugin: "idea"
+apply plugin: "maven-publish"
+apply plugin: "com.github.ben-manes.versions"
 
-    repositories {
-        mavenCentral()
+configurations {
+    provided
+    provided.extendsFrom(compile)
+}
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
     }
+    test {
+        compileClasspath += configurations.provided
+    }
+}
 
-    configurations {
-        provided
-        provided.extendsFrom(compile)
+idea {
+    module {
+        scopes.PROVIDED.plus += [configurations.provided]
+    }
+}
+
+dependencies {
+
+    /* Servlet API. */
+    provided "javax.servlet:javax.servlet-api:3.1.0"
+
+    /* Annotations for code documentation. */
+    provided "com.google.code.findbugs:jsr305:3.0.0"
+
+    /* Test runner. */
+    testCompile "junit:junit:4.12"
+
+    /* Object mocking. */
+    testCompile "org.mockito:mockito-all:2.0.2-beta"
+
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId "com.elopteryx.paint"
+            artifactId "upload-parser"
+
+            from components.java
+        }
     }
 }

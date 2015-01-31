@@ -12,7 +12,8 @@ public interface OnRequestComplete {
     /**
      * The consumer function to implement.
      * @param context The upload context
-     * @throws IOException
+     * @throws IOException If an error occurs with the IO
+     * @throws ServletException If and error occurred with the servlet
      */
     void accept(UploadContext context) throws IOException, ServletException;
 }

@@ -15,7 +15,7 @@ public interface OnPartBegin {
      * @param context The upload context
      * @param buffer The byte buffer containing the first bytes of the part
      * @return A non-null channel to write out the part
-     * @throws IOException
+     * @throws IOException If an error occurred with the channel
      */
     WritableByteChannel apply(UploadContext context, ByteBuffer buffer) throws IOException;
 

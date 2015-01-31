@@ -11,7 +11,7 @@ public interface OnPartEnd {
     /**
      * The consumer function to implement.
      * @param context The upload context
-     * @throws IOException
+     * @throws IOException If an error occurred with the current channel
      */
     void accept(UploadContext context) throws IOException;
     
