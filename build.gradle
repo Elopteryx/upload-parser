@@ -59,8 +59,8 @@ dependencies {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId "com.elopteryx.paint"
-            artifactId "upload-parser"
+            groupId "com.github.elopteryx"
+            artifactId "paint-upload"
 
             from components.java
         }
