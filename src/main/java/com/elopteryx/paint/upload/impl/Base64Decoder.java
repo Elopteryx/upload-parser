@@ -18,8 +18,8 @@
 package com.elopteryx.paint.upload.impl;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * An efficient and flexible MIME Base64 implementation.
@@ -32,12 +32,7 @@ class Base64Decoder {
     private static final byte[] DECODING_TABLE = new byte[80];
 
     static {
-        try {
-            ENCODING_TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".getBytes("ASCII");
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException();
-        }
-
+        ENCODING_TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".getBytes(StandardCharsets.US_ASCII);
         for (int i = 0; i < ENCODING_TABLE.length; i++) {
             int v = (ENCODING_TABLE[i] & 0xFF) - 43;
             DECODING_TABLE[v] = (byte)(i + 1);  // zero = illegal
