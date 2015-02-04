@@ -17,8 +17,26 @@ Features
   * ```.onRequestComplete(…)```
   * ```.onError(…)```
 * Lightweight, no dependencies other than the servlet API
+* Available from the Maven Central repository
 
 Requirements
 --------
 * Java 7+
 * Servlet 3.1 environment
+
+Gradle
+-----
+```xml
+'com.github.elopteryx:paint-upload:1.0.0'
+```
+Maven
+-----
+```xml
+<dependency>
+    <groupId>com.github.elopteryx</groupId>
+    <artifactId>paint-upload</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+Find available versions on [Maven Central Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.elopteryx%22%20AND%20a%3A%22paint-upload%22).
