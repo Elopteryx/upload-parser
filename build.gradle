@@ -3,6 +3,7 @@ plugins {
 }
 
 version = "1.1.0-SNAPSHOT"
+ext.archivesBaseName = "paint-upload"
 ext.appName = "%APP_NAME%"
 
 repositories {
@@ -13,6 +14,8 @@ repositories {
 apply plugin: "java"
 apply plugin: "idea"
 apply plugin: "maven-publish"
+apply plugin: "maven"
+apply plugin: "signing"
 apply plugin: "com.github.ben-manes.versions"
 
 configurations {
@@ -23,6 +26,24 @@ configurations {
 tasks.withType(JavaCompile) {
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
+}
+
+task javadocJar(type: Jar) {
+    classifier = "javadoc"
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = "sources"
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
 }
 
 sourceSets {
@@ -63,6 +84,55 @@ publishing {
             artifactId "paint-upload"
 
             from components.java
+        }
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name "Paint Upload"
+                groupId "com.github.elopteryx"
+                artifactId "paint-upload"
+                packaging "jar"
+
+                description "Paint Upload is an asynchronous multipart parser for servlets with version 3.1 or above."
+                url "http://elopteryx.github.io/paint-upload-site"
+
+                scm {
+                    connection "scm:git:git@github.com/Elopteryx/paint-upload.git"
+                    developerConnection "scm:git:git@github.com/Elopteryx/paint-upload.git"
+                    url "scm:git:git@github.com/Elopteryx/paint-upload.git"
+                }
+
+                licenses {
+                    license {
+                        name "The Apache License, Version 2.0"
+                        url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+
+                developers {
+                    developer {
+                        id "elopteryx"
+                        name "Adam Forgacs"
+                        email "creative.elopteryx@gmail.com"
+                        organization "Creative Elopteryx"
+                        organizationUrl "http://elopteryx.github.io/paint-upload-site/"
+                    }
+                }
+            }
         }
     }
 }
