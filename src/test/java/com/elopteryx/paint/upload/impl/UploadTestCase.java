@@ -1,9 +1,8 @@
 package com.elopteryx.paint.upload.impl;
 
-
 class UploadTestCase {
 
-    private final String fileName = "foo.exe\u0000.png";
+    private final String fileName = "foo.png";
     final String request =
             "-----1234\r\n" +
                     "Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"\r\n" +
