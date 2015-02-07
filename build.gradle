@@ -52,7 +52,7 @@ dependencies {
     testCompile "junit:junit:4.12"
 
     /* Object mocking. */
-    testCompile "org.mockito:mockito-all:2.0.2-beta"
+    testCompile "org.mockito:mockito-core:2.0.3-beta"
 
 }
 

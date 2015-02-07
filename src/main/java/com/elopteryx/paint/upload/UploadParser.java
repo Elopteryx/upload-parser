@@ -15,7 +15,8 @@
  */
 package com.elopteryx.paint.upload;
 
-import com.elopteryx.paint.upload.impl.UploadListener;
+import com.elopteryx.paint.upload.impl.AsyncUploadParser;
+import com.elopteryx.paint.upload.impl.BlockingUploadParser;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -24,7 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Builder class. Provides a fluent API for the users to
@@ -87,8 +89,8 @@ public abstract class UploadParser {
     protected long maxRequestSize = -1;
 
     protected UploadParser(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response) {
-        this.request = Objects.requireNonNull(request);
-        this.response = Objects.requireNonNull(response);
+        this.request = requireNonNull(request);
+        this.response = requireNonNull(response);
     }
 
     /**
@@ -106,26 +108,26 @@ public abstract class UploadParser {
             throws ServletException {
         if (!isMultipart(request))
             throw new ServletException("Not a multipart request!");
-        return new UploadListener(request, response);
+        return request.isAsyncSupported() ? new AsyncUploadParser(request, response) : new BlockingUploadParser(request, response);
     }
 
     public UploadParser onPartBegin(@Nonnull OnPartBegin partValidator) {
-        this.partValidator = Objects.requireNonNull(partValidator);
+        this.partValidator = requireNonNull(partValidator);
         return this;
     }
 
     public UploadParser onPartEnd(@Nonnull OnPartEnd partExecutor) {
-        this.partExecutor = Objects.requireNonNull(partExecutor);
+        this.partExecutor = requireNonNull(partExecutor);
         return this;
     }
 
-    public UploadParser onComplete(@Nonnull OnRequestComplete completeExecutor) {
-        this.completeExecutor = Objects.requireNonNull(completeExecutor);
+    public UploadParser onRequestComplete(@Nonnull OnRequestComplete completeExecutor) {
+        this.completeExecutor = requireNonNull(completeExecutor);
         return this;
     }
 
     public UploadParser onError(@Nonnull OnError errorExecutor) {
-        this.errorExecutor = Objects.requireNonNull(errorExecutor);
+        this.errorExecutor = requireNonNull(errorExecutor);
         return this;
     }
 
