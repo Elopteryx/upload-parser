@@ -119,7 +119,7 @@ class PartStreamImpl implements PartStream {
         this.size = size;
     }
 
-    private String checkFileName(String fileName) {
+    protected String checkFileName(String fileName) {
         if (fileName != null && fileName.indexOf('\u0000') != -1) {
             final StringBuilder sb = new StringBuilder();
             for (int i = 0; i < fileName.length(); i++) {

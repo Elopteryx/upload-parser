@@ -21,8 +21,7 @@ package com.elopteryx.paint.upload.errors;
 import java.io.IOException;
 
 /**
- * Exception that is thrown when multipart parsing cannot parse a request
- *
-* @author Stuart Douglas
-*/
-public class MalformedMessageException extends IOException {}
+ * Exception thrown by the multipart parser. Usually it's
+ * impossible to recover from this error.
+ */
+public class MultipartException extends IOException {}

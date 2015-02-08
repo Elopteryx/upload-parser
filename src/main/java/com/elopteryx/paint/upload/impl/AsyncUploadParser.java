@@ -15,7 +15,7 @@
  */
 package com.elopteryx.paint.upload.impl;
 
-import com.elopteryx.paint.upload.errors.MalformedMessageException;
+import com.elopteryx.paint.upload.errors.MultipartException;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
@@ -67,7 +67,7 @@ public class AsyncUploadParser extends UploadParserImpl implements ReadListener 
         int c = servletInputStream.read(buf);
         if (c == -1) {
             if (!parseState.isComplete())
-                throw new MalformedMessageException();
+                throw new MultipartException();
         } else {
             checkRequestSize(c);
             parseState.parse(ByteBuffer.wrap(buf, 0, c));

@@ -18,7 +18,7 @@
 
 package com.elopteryx.paint.upload.impl;
 
-import com.elopteryx.paint.upload.errors.MalformedMessageException;
+import com.elopteryx.paint.upload.errors.MultipartException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,29 +26,28 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 /**
+ * The parser which reads the multipart stream and calls the part
+ * handler during certain stages.
  * @author Stuart Douglas
  */
 class MultipartParser {
 
+    /**
+     * The default size for the buffers. 
+     */
     private static final int BUFFER_SIZE = 1024;
-    
     /**
      * The Carriage Return ASCII character value.
      */
     private static final byte CR = 0x0D;
-
-
     /**
      * The Line Feed ASCII character value.
      */
     private static final byte LF = 0x0A;
-
-
     /**
      * The dash (-) ASCII character value.
      */
     private static final byte DASH = 0x2D;
-
     /**
      * A byte sequence that precedes a boundary (<code>CRLF--</code>).
      */
@@ -126,11 +125,7 @@ class MultipartParser {
                 if (subState >= 0) {
                     //handle the case of no preamble. In this case there is no CRLF
                     if (subState == Integer.MAX_VALUE) {
-                        if (boundary[2] == b) {
-                            subState = 2;
-                        } else {
-                            subState = 0;
-                        }
+                        subState = boundary[2] == b ? 2 : 0;
                     }
                     if (b == boundary[subState]) {
                         subState++;
@@ -159,12 +154,12 @@ class MultipartParser {
             }
         }
 
-        private void headerName(final ByteBuffer buffer) throws MalformedMessageException {
+        private void headerName(final ByteBuffer buffer) throws MultipartException {
             while (buffer.hasRemaining()) {
                 final byte b = buffer.get();
                 if (b == ':') {
                     if (currentString == null || subState != 0) {
-                        throw new MalformedMessageException();
+                        throw new MultipartException();
                     } else {
                         currentHeaderName = new String(currentString.toByteArray(), requestCharset);
                         currentString.reset();
@@ -174,13 +169,13 @@ class MultipartParser {
                     }
                 } else if (b == CR) {
                     if (currentString != null) {
-                        throw new MalformedMessageException();
+                        throw new MultipartException();
                     } else {
                         subState = 1;
                     }
                 } else if (b == LF) {
                     if (currentString != null || subState != 1) {
-                        throw new MalformedMessageException();
+                        throw new MultipartException();
                     }
                     state = 3;
                     subState = 0;
@@ -201,7 +196,7 @@ class MultipartParser {
 
                 } else {
                     if (subState != 0) {
-                        throw new MalformedMessageException();
+                        throw new MultipartException();
                     } else if (currentString == null) {
                         currentString = new ByteArrayOutputStream();
                     }
@@ -210,14 +205,14 @@ class MultipartParser {
             }
         }
 
-        private void headerValue(final ByteBuffer buffer) throws MalformedMessageException {
+        private void headerValue(final ByteBuffer buffer) throws MultipartException {
             while (buffer.hasRemaining()) {
                 final byte b = buffer.get();
                 if (b == CR) {
                     subState = 1;
                 } else if (b == LF) {
                     if (subState != 1) {
-                        throw new MalformedMessageException();
+                        throw new MultipartException();
                     }
                     headers.addHeader(currentHeaderName.trim(), new String(currentString.toByteArray(), requestCharset).trim());
                     state = 1;
@@ -226,7 +221,7 @@ class MultipartParser {
                     return;
                 } else {
                     if (subState != 0) {
-                        throw new MalformedMessageException();
+                        throw new MultipartException();
                     }
                     currentString.write(b);
                 }

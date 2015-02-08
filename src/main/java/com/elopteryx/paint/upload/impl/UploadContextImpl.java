@@ -123,7 +123,7 @@ class UploadContextImpl implements UploadContext {
         currentPart.setSize(partBytesRead);
     }
 
-    public int getPartBytesRead() {
+    int getPartBytesRead() {
         return partBytesRead;
     }
 

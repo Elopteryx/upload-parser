@@ -21,21 +21,21 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
 
     private static final int BUFFER_SIZE = 1024;
 
+    private static final Charset defaultEncoding = StandardCharsets.ISO_8859_1;
+
     private ByteBuffer checkBuffer;
+
+    private WritableByteChannel writableChannel;
+
+    private long requestSize;
 
     protected ServletInputStream servletInputStream;
 
     protected UploadContextImpl context;
 
-    private WritableByteChannel writableChannel;
-
     protected MultipartParser.ParseState parseState;
 
-    private static final Charset defaultEncoding = StandardCharsets.ISO_8859_1;
-
     protected final byte[] buf = new byte[BUFFER_SIZE];
-
-    private long requestSize;
 
     public UploadParserImpl(HttpServletRequest request, HttpServletResponse response) {
         super(request, response);
@@ -75,7 +75,7 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
      * Checks how many bytes have been read so far and stops the
      * parsing if a max size has been set and reached.
      */
-    private void checkPartSize(int additional) {
+    protected void checkPartSize(int additional) {
         long partSize = context.incrementAndGetPartBytesRead(additional);
         if (maxPartSize > -1 && partSize > maxPartSize)
             throw new PartSizeException("The size of the part (" + partSize +

@@ -132,17 +132,17 @@ public abstract class UploadParser {
     }
 
     public UploadParser sizeThreshold(@Nonnegative int sizeThreshold) {
-        this.sizeThreshold = sizeThreshold;
+        this.sizeThreshold = Math.max(sizeThreshold, 0);
         return this;
     }
 
     public UploadParser maxPartSize(@Nonnegative long maxPartSize) {
-        this.maxPartSize = maxPartSize;
+        this.maxPartSize = Math.max(maxPartSize, -1);
         return this;
     }
 
     public UploadParser maxRequestSize(@Nonnegative long maxRequestSize) {
-        this.maxRequestSize = maxRequestSize;
+        this.maxRequestSize = Math.max(maxRequestSize, -1);
         return this;
     }
 

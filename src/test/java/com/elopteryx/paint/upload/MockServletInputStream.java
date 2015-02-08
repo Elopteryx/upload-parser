@@ -1,15 +1,36 @@
 package com.elopteryx.paint.upload;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 
-import static java.util.Objects.requireNonNull;
-
 public class MockServletInputStream extends ServletInputStream {
 
-    private final InputStream sourceStream;
+    private static final String fileName = "foo.txt";
+    private static final String requestData =
+            "-----1234\r\n" +
+                    "Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"\r\n" +
+                    "Content-Type: text/whatever\r\n" +
+                    "\r\n" +
+                    "This is the content of the file\n" +
+                    "\r\n" +
+                    "-----1234\r\n" +
+                    "Content-Disposition: form-data; name=\"field\"\r\n" +
+                    "\r\n" +
+                    "fieldValue\r\n" +
+                    "-----1234\r\n" +
+                    "Content-Disposition: form-data; name=\"multi\"\r\n" +
+                    "\r\n" +
+                    "value1\r\n" +
+                    "-----1234\r\n" +
+                    "Content-Disposition: form-data; name=\"multi\"\r\n" +
+                    "\r\n" +
+                    "value2\r\n" +
+                    "-----1234--\r\n";
+    
+    private ByteArrayInputStream sourceStream;
 
     private boolean ready;
 
@@ -18,12 +39,12 @@ public class MockServletInputStream extends ServletInputStream {
     private ReadListener readListener;
 
 
-    public MockServletInputStream(InputStream sourceStream) {
-        this.sourceStream = requireNonNull(sourceStream, "Source InputStream must not be null");
+    public MockServletInputStream() {
+        this.sourceStream = new ByteArrayInputStream(requestData.getBytes(StandardCharsets.US_ASCII));
     }
 
-    public InputStream getSourceStream() {
-        return this.sourceStream;
+    public MockServletInputStream(String data) {
+        this.sourceStream = new ByteArrayInputStream(data.getBytes(StandardCharsets.US_ASCII));
     }
 
 
