@@ -75,6 +75,7 @@ sourceSets {
     }
     test {
         compileClasspath += configurations.provided
+        runtimeClasspath += configurations.provided
     }
 }
 
