@@ -27,7 +27,7 @@ Requirements
 Gradle
 -----
 ```xml
-compile 'com.github.elopteryx:paint-upload:1.0.0'
+compile "com.github.elopteryx:paint-upload:1.1.0"
 ```
 Maven
 -----
@@ -35,7 +35,7 @@ Maven
 <dependency>
     <groupId>com.github.elopteryx</groupId>
     <artifactId>paint-upload</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
