@@ -6,7 +6,7 @@ package com.elopteryx.paint.upload.errors;
 public abstract class UploadSizeException extends RuntimeException {
 
     /**
-     * The actual size.
+     * The known size.
      */
     private final long actual;
 
@@ -16,11 +16,10 @@ public abstract class UploadSizeException extends RuntimeException {
     private final long permitted;
 
     /**
-     * Creates a new instance.
-     *
-     * @param message   The detail message.
-     * @param actual    The actual number of bytes.
-     * @param permitted The size limit, in bytes.
+     * Exception thrown when there is a maximum size limit and it is exceeded for the first time
+     * @param message The message of the exception
+     * @param actual The known size at the time of the exception in bytes
+     * @param permitted The maximum permitted size in bytes
      */
     UploadSizeException(String message, long actual, long permitted) {
         super(message);
@@ -29,7 +28,7 @@ public abstract class UploadSizeException extends RuntimeException {
     }
 
     /**
-     * Retrieves the actual size.
+     * Returns the actual size.
      *
      * @return The actual size.
      */
@@ -38,7 +37,7 @@ public abstract class UploadSizeException extends RuntimeException {
     }
 
     /**
-     * Retrieves the permitted size.
+     * Returns the permitted size.
      *
      * @return The permitted size.
      */

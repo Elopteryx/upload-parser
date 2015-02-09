@@ -15,6 +15,13 @@ import java.nio.charset.StandardCharsets;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Base class for the parser implementations. This holds the common methods, like the more specific
+ * validation and the calling of the user-supplied functions.
+ *
+ * This class is only public to serve as an entry point in the implementation package, users
+ * should not need to directly depend on this class.
+ */
 public abstract class UploadParserImpl extends UploadParser implements MultipartParser.PartHandler {
 
     private static final String MULTIPART_FORM_DATA = "multipart/form-data";
@@ -43,8 +50,8 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
 
     @Override
     public void setup() throws IOException {
-        requireNonNull(partValidator, "Setting a valid part validator is mandatory!");
-        requireNonNull(partExecutor, "Setting a valid part executor is mandatory!");
+        requireNonNull(partBeginCallback, "Setting a valid part begin callback is mandatory!");
+        requireNonNull(partEndCallback, "Setting a valid part end callback is mandatory!");
 
         //Fail fast mode
         if (maxRequestSize > -1) {
@@ -74,6 +81,7 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
     /**
      * Checks how many bytes have been read so far and stops the
      * parsing if a max size has been set and reached.
+     * @param additional The amount to add, always non negative
      */
     protected void checkPartSize(int additional) {
         long partSize = context.incrementAndGetPartBytesRead(additional);
@@ -85,6 +93,7 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
     /**
      * Checks how many bytes have been read so far and stops the
      * parsing if a max size has been set and reached.
+     * @param additional The amount to add, always non negative
      */
     protected void checkRequestSize(int additional) {
         requestSize += additional;
@@ -128,7 +137,7 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
     }
 
     private void validate() throws IOException {
-        writableChannel = requireNonNull(partValidator.apply(context, checkBuffer));
+        writableChannel = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
         context.setChannel(writableChannel);
         context.finishBuffering();
         checkBuffer.flip();
@@ -144,6 +153,6 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
         }
         checkBuffer.clear();
         context.updatePartBytesRead();
-        partExecutor.accept(context);
+        partEndCallback.onPartEnd(context);
     }
 }

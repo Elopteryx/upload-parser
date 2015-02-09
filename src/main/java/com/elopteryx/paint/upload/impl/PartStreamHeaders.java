@@ -18,13 +18,13 @@ package com.elopteryx.paint.upload.impl;
 import java.util.*;
 
 /**
- * <p> This class provides support for accessing the headers for a file or form
- * item that was received within a <code>multipart/form-data</code> POST
- * request.</p>
+ * This class provides support for accessing the headers for a file or form
+ * item that was received within a multipart/form-data POST request.
  */
 class PartStreamHeaders {
 
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
+
     public static final String CONTENT_TYPE = "Content-Type";
 
     private final Map<String, List<String>> headerNameToValueListMap = new LinkedHashMap<>();
@@ -100,7 +100,7 @@ class PartStreamHeaders {
      */
     static String extractQuotedValueFromHeader(final String header, final String key) {
 
-        int keypos = 0;
+        int keyPosition = 0;
         int pos = -1;
         boolean inQuotes = false;
         for (int i = 0; i < header.length() - 1; ++i) { //-1 because we need room for the = at the end
@@ -111,20 +111,20 @@ class PartStreamHeaders {
                     inQuotes = false;
                 }
             } else {
-                if (key.charAt(keypos) == c) {
-                    keypos++;
+                if (key.charAt(keyPosition) == c) {
+                    keyPosition++;
                 } else if (c == '"') {
-                    keypos = 0;
+                    keyPosition = 0;
                     inQuotes = true;
                 } else {
-                    keypos = 0;
+                    keyPosition = 0;
                 }
-                if (keypos == key.length()) {
+                if (keyPosition == key.length()) {
                     if (header.charAt(i + 1) == '=') {
                         pos = i + 2;
                         break;
                     } else {
-                        keypos = 0;
+                        keyPosition = 0;
                     }
                 }
             }

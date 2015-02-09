@@ -4,7 +4,7 @@ import java.io.IOException;
 
 /**
  * A functional interface. An implementation of it must be passed in the
- * UploadParser#onPartEnd method to call it at the end of parsing for each part.
+ * {@link UploadParser#onPartEnd(OnPartEnd)} onPartEnd} method to call it at the end of parsing for each part.
  */
 public interface OnPartEnd {
 
@@ -13,6 +13,6 @@ public interface OnPartEnd {
      * @param context The upload context
      * @throws IOException If an error occurred with the current channel
      */
-    void accept(UploadContext context) throws IOException;
+    void onPartEnd(UploadContext context) throws IOException;
     
 }

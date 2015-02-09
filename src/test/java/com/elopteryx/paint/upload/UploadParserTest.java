@@ -45,10 +45,10 @@ public class UploadParserTest {
         when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
 
         UploadParser.newParser(request, response)
-                .onPartBegin(partValidator())
-                .onPartEnd(partExecutor())
-                .onRequestComplete(requestExecutor())
-                .onError(errorExecutor())
+                .onPartBegin(partBeginCallback())
+                .onPartEnd(partEndCallback())
+                .onRequestComplete(requestCallback())
+                .onError(errorCallback())
                 .sizeThreshold(1024 * 1024 * 10)
                 .maxPartSize(1024 * 1024 * 50)
                 .maxRequestSize(1024 * 1024 * 50)

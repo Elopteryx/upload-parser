@@ -7,37 +7,37 @@ import java.nio.channels.WritableByteChannel;
 
 public class FunctionSupplier {
 
-    public static OnPartBegin partValidator() {
+    public static OnPartBegin partBeginCallback() {
         return new OnPartBegin() {
             @Override
-            public WritableByteChannel apply(UploadContext context, ByteBuffer buffer) throws IOException {
+            public WritableByteChannel onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
                 return null;
             }
         };
     }
 
-    public static OnPartEnd partExecutor() {
+    public static OnPartEnd partEndCallback() {
         return new OnPartEnd() {
             @Override
-            public void accept(UploadContext context) throws IOException {
+            public void onPartEnd(UploadContext context) throws IOException {
 
             }
         };
     }
     
-    public static OnRequestComplete requestExecutor() {
+    public static OnRequestComplete requestCallback() {
         return new OnRequestComplete() {
             @Override
-            public void accept(UploadContext context) throws IOException, ServletException {
+            public void onRequestComplete(UploadContext context) throws IOException, ServletException {
                 
             }
         };
     }
     
-    public static OnError errorExecutor() {
+    public static OnError errorCallback() {
         return new OnError() {
             @Override
-            public void accept(UploadContext context, Throwable throwable) {
+            public void onError(UploadContext context, Throwable throwable) {
 
             }
         };

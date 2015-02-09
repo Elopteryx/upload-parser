@@ -6,7 +6,7 @@ import java.nio.channels.WritableByteChannel;
 
 /**
  * A functional interface. An implementation of it must be passed in the
- * UploadParser#onPartBegin method to call it at the start of parsing for each part.
+ * {@link UploadParser#onPartBegin(OnPartBegin)} onPartBegin} method to call it at the start of parsing for each part.
  */
 public interface OnPartBegin {
 
@@ -17,6 +17,6 @@ public interface OnPartBegin {
      * @return A non-null channel to write out the part
      * @throws IOException If an error occurred with the channel
      */
-    WritableByteChannel apply(UploadContext context, ByteBuffer buffer) throws IOException;
+    WritableByteChannel onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException;
 
 }

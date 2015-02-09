@@ -7,9 +7,7 @@ import java.util.Iterator;
 import static org.junit.Assert.*;
 
 public class PartStreamHeadersTest {
-    /**
-     * @throws Exception
-     */
+
     @Test
     public void testFileItemHeaders() throws Exception {
         PartStreamHeaders aMutableFileItemHeaders = new PartStreamHeaders();

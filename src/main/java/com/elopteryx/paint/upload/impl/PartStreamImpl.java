@@ -14,13 +14,13 @@ class PartStreamImpl implements PartStream {
      */
     private final String contentType;
     /**
+     * The file name of the part.
+     */
+    private final String fileName;
+    /**
      * The field name of the part.
      */
     private final String fieldName;
-    /**
-     * The file items file name of the part.
-     */
-    private final String name;
     /**
      * Whether the part is a file field.
      */
@@ -36,21 +36,21 @@ class PartStreamImpl implements PartStream {
 
     /**
      * Creates a new instance.
-     *
-     * @param name        The items file name, or null.
-     * @param fieldName   The items field name.
-     * @param contentType The items content type, or null.
+     * @param fileName The file name.
+     * @param fieldName The form field name.
+     * @param contentType The content type
+     * @param headers The object containing the headers
      */
-    PartStreamImpl(String name, String fieldName, String contentType, PartStreamHeaders headers) {
-        this.name = name;
+    PartStreamImpl(String fileName, String fieldName, String contentType, PartStreamHeaders headers) {
+        this.fileName = fileName;
         this.fieldName = fieldName;
         this.contentType = contentType;
-        this.fileField = name != null;
+        this.fileField = fileName != null;
         this.headers = headers;
     }
 
     /**
-     * Returns the items content type, or null.
+     * Returns the content type of the part, or null.
      *
      * @return Content type, if known, or null.
      */
@@ -60,7 +60,7 @@ class PartStreamImpl implements PartStream {
     }
 
     /**
-     * Returns the items field name.
+     * Returns the field name of the part.
      *
      * @return Field name.
      */
@@ -80,19 +80,20 @@ class PartStreamImpl implements PartStream {
     }
 
     /**
-     * Returns the items file name.
+     * Returns the file name of the part. Returns null
+     * if it's a normal form field.
      *
      * @return File name, if known, or null.
      */
     @Override
     public String getSubmittedFileName() {
-        return checkFileName(name);
+        return checkFileName(fileName);
     }
 
     /**
-     * Returns, whether this is a form field.
+     * Returns whether the part is a form field.
      *
-     * @return True, if the item is a form field,
+     * @return True, if the part is a form field,
      * otherwise false.
      */
     @Override
@@ -119,7 +120,7 @@ class PartStreamImpl implements PartStream {
         this.size = size;
     }
 
-    protected String checkFileName(String fileName) {
+    private String checkFileName(String fileName) {
         if (fileName != null && fileName.indexOf('\u0000') != -1) {
             final StringBuilder sb = new StringBuilder();
             for (int i = 0; i < fileName.length(); i++) {

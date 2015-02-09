@@ -7,6 +7,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+/**
+ * The blocking implementation of the parser. If the calling servlet does not
+ * support async mode, then the created upload parser will be an instance of
+ * this class.
+ *
+ * This class is only public to serve as an entry point in the implementation package, users
+ * should not need to directly depend on this class.
+ */
 public class BlockingUploadParser extends UploadParserImpl {
 
     public BlockingUploadParser(HttpServletRequest request, HttpServletResponse response) {
@@ -29,11 +37,11 @@ public class BlockingUploadParser extends UploadParserImpl {
                     parseState.parse(ByteBuffer.wrap(buf, 0, c));
                 }
             }
-            if(completeExecutor != null)
-                completeExecutor.accept(context);
+            if(requestCallback != null)
+                requestCallback.onRequestComplete(context);
         } catch (Exception e) {
-            if(errorExecutor != null)
-                errorExecutor.accept(context, e);
+            if(errorCallback != null)
+                errorCallback.onError(context, e);
         }
     }
 }

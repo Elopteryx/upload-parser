@@ -5,7 +5,7 @@ import java.io.IOException;
 
 /**
  * A functional interface. An implementation of it must be passed in the
- * UploadParser#onRequestComplete method to call it after every part has been processed.
+ * {@link UploadParser#onRequestComplete(OnRequestComplete)} onRequestComplete} method to call it after every part has been processed.
  */
 public interface OnRequestComplete {
 
@@ -15,5 +15,5 @@ public interface OnRequestComplete {
      * @throws IOException If an error occurs with the IO
      * @throws ServletException If and error occurred with the servlet
      */
-    void accept(UploadContext context) throws IOException, ServletException;
+    void onRequestComplete(UploadContext context) throws IOException, ServletException;
 }

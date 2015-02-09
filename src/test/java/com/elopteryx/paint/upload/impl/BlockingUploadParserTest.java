@@ -42,19 +42,19 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
     }
 
     @Override
-    public WritableByteChannel apply(UploadContext context, ByteBuffer buffer) throws IOException {
+    public WritableByteChannel onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         strings.add(baos);
         return Channels.newChannel(baos);
     }
 
     @Override
-    public void accept(UploadContext context) throws IOException {
+    public void onPartEnd(UploadContext context) throws IOException {
         System.out.println(strings.get(strings.size() - 1).toString());
     }
 
     @Override
-    public void accept(UploadContext context, Throwable throwable) {
+    public void onError(UploadContext context, Throwable throwable) {
         throwable.printStackTrace();
     }
 }

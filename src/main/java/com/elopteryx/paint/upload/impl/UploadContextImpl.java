@@ -56,7 +56,7 @@ class UploadContextImpl implements UploadContext {
     /**
      * Determines whether the current item is buffering, that is, should new bytes be
      * stored in memory or written out the channel. It is set to false after the
-     * validator function is called. 
+     * part begin function is called.
      */
     private boolean buffering = true;
     /**

@@ -54,27 +54,27 @@ public abstract class UploadParser {
     protected final HttpServletResponse response;
 
     /**
-     * The part validator, called at the beginning of each part parsing. Mandatory.
+     * The part begin callback, called at the beginning of each part parsing. Mandatory.
      */
-    protected OnPartBegin partValidator;
+    protected OnPartBegin partBeginCallback;
 
     /**
-     * The part executor, called at the end of each part parsing. Mandatory.
+     * The part end callback, called at the end of each part parsing. Mandatory.
      */
-    protected OnPartEnd partExecutor;
+    protected OnPartEnd partEndCallback;
 
     /**
-     * The completion executor, called after every part has been processed. Optional.
+     * The request callback, called after every part has been processed. Optional.
      */
-    protected OnRequestComplete completeExecutor;
+    protected OnRequestComplete requestCallback;
 
     /**
-     * The error executor, called when an error occurred. Optional.
+     * The error callback, called when an error occurred. Optional.
      */
-    protected OnError errorExecutor;
+    protected OnError errorCallback;
 
     /**
-     * The number of bytes that should be buffered before calling the validation.
+     * The number of bytes that should be buffered before calling the part begin callback.
      */
     protected int sizeThreshold;
 
@@ -88,6 +88,11 @@ public abstract class UploadParser {
      */
     protected long maxRequestSize = -1;
 
+    /**
+     * Protected constructor, to prevent invalid usages.
+     * @param request The servlet request
+     * @param response The servlet response
+     */
     protected UploadParser(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response) {
         this.request = requireNonNull(request);
         this.response = requireNonNull(response);
@@ -96,7 +101,7 @@ public abstract class UploadParser {
     /**
      * Utility method which can be used to check whether the request
      * should be processed by this parser or not.
-     * @param request The request object
+     * @param request The servlet request
      * @return Whether the request is a proper multipart request
      */
     public static boolean isMultipart(@Nonnull HttpServletRequest request) {
@@ -104,6 +109,13 @@ public abstract class UploadParser {
                 request.getContentType().toLowerCase(Locale.ENGLISH).startsWith(MULTIPART);
     }
 
+    /**
+     * Returns a parser implementation, allowing the caller to set configuration.
+     * @param request The servlet request
+     * @param response The servlet response
+     * @return A parser object
+     * @throws ServletException If the parameters are invalid
+     */
     public static UploadParser newParser(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response)
             throws ServletException {
         if (!isMultipart(request))
@@ -111,45 +123,82 @@ public abstract class UploadParser {
         return request.isAsyncSupported() ? new AsyncUploadParser(request, response) : new BlockingUploadParser(request, response);
     }
 
-    public UploadParser onPartBegin(@Nonnull OnPartBegin partValidator) {
-        this.partValidator = requireNonNull(partValidator);
+    /**
+     * Sets a callback for each part, called at the beginning.
+     * @param partBeginCallback An object or lambda expression
+     * @return The parser will return itself
+     */
+    public UploadParser onPartBegin(@Nonnull OnPartBegin partBeginCallback) {
+        this.partBeginCallback = requireNonNull(partBeginCallback);
         return this;
     }
 
-    public UploadParser onPartEnd(@Nonnull OnPartEnd partExecutor) {
-        this.partExecutor = requireNonNull(partExecutor);
+    /**
+     * Sets a callback for each part, called at the end.
+     * @param partEndCallback An object or lambda expression
+     * @return The parser will return itself
+     */
+    public UploadParser onPartEnd(@Nonnull OnPartEnd partEndCallback) {
+        this.partEndCallback = requireNonNull(partEndCallback);
         return this;
     }
 
-    public UploadParser onRequestComplete(@Nonnull OnRequestComplete completeExecutor) {
-        this.completeExecutor = requireNonNull(completeExecutor);
+    /**
+     * Sets a callback for the request, called after each part is processed.
+     * @param requestCallback An object or lambda expression
+     * @return The parser will return itself
+     */
+    public UploadParser onRequestComplete(@Nonnull OnRequestComplete requestCallback) {
+        this.requestCallback = requireNonNull(requestCallback);
         return this;
     }
 
-    public UploadParser onError(@Nonnull OnError errorExecutor) {
-        this.errorExecutor = requireNonNull(errorExecutor);
+    /**
+     * Sets a callback for the errors, called if any error occurs.
+     * @param errorCallback An object or lambda expression
+     * @return The parser will return itself
+     */
+    public UploadParser onError(@Nonnull OnError errorCallback) {
+        this.errorCallback = requireNonNull(errorCallback);
         return this;
     }
 
+    /**
+     * Sets the amount of bytes to buffer in the memory, before
+     * calling the part end callback.
+     * @param sizeThreshold The amount to use
+     * @return The parser will return itself
+     */
     public UploadParser sizeThreshold(@Nonnegative int sizeThreshold) {
         this.sizeThreshold = Math.max(sizeThreshold, 0);
         return this;
     }
 
+    /**
+     * Sets the maximum allowed size for each part. Exceeding this
+     * will result in a {@link com.elopteryx.paint.upload.errors.PartSizeException} exception.
+     * @param maxPartSize The amount to use
+     * @return The parser will return itself
+     */
     public UploadParser maxPartSize(@Nonnegative long maxPartSize) {
         this.maxPartSize = Math.max(maxPartSize, -1);
         return this;
     }
 
+    /**
+     * Sets the maximum allowed size for the request. Exceeding this
+     * will result in a {@link com.elopteryx.paint.upload.errors.RequestSizeException} exception.
+     * @param maxRequestSize The amount to use
+     * @return The parser will return itself
+     */
     public UploadParser maxRequestSize(@Nonnegative long maxRequestSize) {
         this.maxRequestSize = Math.max(maxRequestSize, -1);
         return this;
     }
 
     /**
-     * Sets up the necessary objects to start the parsing. The
-     * servlet container will be calling the read listener
-     * whenever data is available.
+     * Sets up the necessary objects to start the parsing. Depending upon
+     * the environment the concrete implementations can be very different.
      * @throws IOException If an error occurs with the IO
      */
     public abstract void setup() throws IOException;

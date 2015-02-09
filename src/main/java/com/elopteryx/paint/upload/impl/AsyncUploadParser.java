@@ -25,7 +25,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
- * Asynchronous upload listener. Called by the servlet container whenever data is available.
+ * The asynchronous implementation of the parser. If the calling servlet supports
+ * async mode, then the created upload parser will be an instance of this class.
+ * Implements the listener interface. Called by the servlet container whenever data is available.
+ *
  * This class is only public to serve as an entry point in the implementation package, users
  * should not need to directly depend on this class.
  */
@@ -89,8 +92,8 @@ public class AsyncUploadParser extends UploadParserImpl implements ReadListener 
                 break;
         }
         try {
-            if(completeExecutor != null)
-                completeExecutor.accept(context);
+            if(requestCallback != null)
+                requestCallback.onRequestComplete(context);
         } catch (ServletException e) {
             throw new RuntimeException(e);
         }
@@ -103,7 +106,7 @@ public class AsyncUploadParser extends UploadParserImpl implements ReadListener 
      */
     @Override
     public void onError(Throwable t) {
-        if(errorExecutor != null)
-            errorExecutor.accept(context, t);
+        if(errorCallback != null)
+            errorCallback.onError(context, t);
     }
 }
