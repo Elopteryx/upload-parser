@@ -2,7 +2,7 @@ plugins {
     id "com.github.ben-manes.versions" version "0.7"
 }
 
-version = "1.1.0-SNAPSHOT"
+version = "1.1.0"
 ext.archivesBaseName = "paint-upload"
 ext.appName = "%APP_NAME%"
 
@@ -28,6 +28,27 @@ tasks.withType(JavaCompile) {
     targetCompatibility = 1.7
 }
 
+javadoc {
+    afterEvaluate {
+        classpath += configurations.provided
+        configure(options) {
+            windowTitle "Paint Upload API Documentation"
+            docTitle "Paint Upload API Documentation"
+            bottom = 'Copyright &#169; 2015 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
+            breakIterator = true
+            author = false
+            source = "1.7"
+            encoding = "UTF-8"
+            docEncoding = "UTF-8"
+            failOnError = true
+            links = [ "http://jsr-305.googlecode.com/svn/trunk/javadoc",
+                      "http://download.oracle.com/javase/7/docs/api/",
+                      "http://download.oracle.com/javaee/7/api/",
+            ]
+        }
+    }
+}
+
 task javadocJar(type: Jar) {
     classifier = "javadoc"
     from javadoc
@@ -39,7 +60,9 @@ task sourcesJar(type: Jar) {
 }
 
 artifacts {
-    archives javadocJar, sourcesJar
+    archives jar
+    archives sourcesJar
+    archives javadocJar
 }
 
 signing {
@@ -73,7 +96,7 @@ dependencies {
     testCompile "junit:junit:4.12"
 
     /* Object mocking. */
-    testCompile "org.mockito:mockito-core:2.0.3-beta"
+    testCompile "org.mockito:mockito-core:1.10.19"
 
 }
 
@@ -101,11 +124,14 @@ uploadArchives {
                 authentication(userName: ossrhUsername, password: ossrhPassword)
             }
 
+            pom.scopeMappings.with {
+                addMapping(1, configurations.provided, "provided")
+            }
+
             pom.project {
                 name "Paint Upload"
                 groupId "com.github.elopteryx"
                 artifactId "paint-upload"
-                packaging "jar"
 
                 description "Paint Upload is an asynchronous multipart parser for servlets with version 3.1 or above."
                 url "http://elopteryx.github.io/paint-upload-site"
@@ -128,8 +154,6 @@ uploadArchives {
                         id "elopteryx"
                         name "Adam Forgacs"
                         email "creative.elopteryx@gmail.com"
-                        organization "Creative Elopteryx"
-                        organizationUrl "http://elopteryx.github.io/paint-upload-site/"
                     }
                 }
             }
