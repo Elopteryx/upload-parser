@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Base64;
 
 /**
  * The parser which reads the multipart stream and calls the part
@@ -326,7 +327,7 @@ class MultipartParser {
 
     private static class Base64Encoding implements Encoding {
 
-        private final Base64Decoder decoder = new Base64Decoder();
+        private final Base64.Decoder decoder = Base64.getMimeDecoder();
         
         private final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
@@ -340,7 +341,8 @@ class MultipartParser {
                 do {
                     buffer.clear();
                     try {
-                        decoder.decode(rawData, buffer);
+                        int len = decoder.decode(rawData.array(), buffer.array());
+                        buffer.limit(len);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

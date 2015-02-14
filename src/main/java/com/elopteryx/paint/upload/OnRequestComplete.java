@@ -7,6 +7,7 @@ import java.io.IOException;
  * A functional interface. An implementation of it must be passed in the
  * {@link UploadParser#onRequestComplete(OnRequestComplete)} onRequestComplete} method to call it after every part has been processed.
  */
+@FunctionalInterface
 public interface OnRequestComplete {
 
     /**

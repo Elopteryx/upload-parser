@@ -8,6 +8,7 @@ import java.nio.channels.WritableByteChannel;
  * A functional interface. An implementation of it must be passed in the
  * {@link UploadParser#onPartBegin(OnPartBegin)} onPartBegin} method to call it at the start of parsing for each part.
  */
+@FunctionalInterface
 public interface OnPartBegin {
 
     /**

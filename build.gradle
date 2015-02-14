@@ -2,7 +2,7 @@ plugins {
     id "com.github.ben-manes.versions" version "0.7"
 }
 
-version = "1.1.0"
+version = "2.0.0-SNAPSHOT"
 ext.archivesBaseName = "paint-upload"
 ext.appName = "%APP_NAME%"
 
@@ -24,8 +24,8 @@ configurations {
 }
 
 tasks.withType(JavaCompile) {
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
 
 javadoc {
@@ -37,12 +37,12 @@ javadoc {
             bottom = 'Copyright &#169; 2015 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
             breakIterator = true
             author = false
-            source = "1.7"
+            source = "1.8"
             encoding = "UTF-8"
             docEncoding = "UTF-8"
             failOnError = true
             links = [ "http://jsr-305.googlecode.com/svn/trunk/javadoc",
-                      "http://download.oracle.com/javase/7/docs/api/",
+                      "http://download.oracle.com/javase/8/docs/api/",
                       "http://download.oracle.com/javaee/7/api/",
             ]
         }
@@ -134,7 +134,8 @@ uploadArchives {
                 groupId "com.github.elopteryx"
                 artifactId "paint-upload"
 
-                description "Paint Upload is an asynchronous multipart parser for servlets with version 3.1 or above."
+                description "Paint Upload is an asynchronous multipart parser for servlets with version 3.1 or above." +
+                        "Version 2.x releases are compiled to run on Java 8 or above."
                 url "http://elopteryx.github.io/paint-upload-site"
 
                 scm {
