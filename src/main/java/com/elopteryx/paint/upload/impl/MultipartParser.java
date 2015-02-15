@@ -312,11 +312,11 @@ class MultipartParser {
     }
 
 
-    private interface Encoding {
+    interface Encoding {
         void handle(final PartHandler handler, final ByteBuffer rawData) throws IOException;
     }
 
-    private static class IdentityEncoding implements Encoding {
+    static class IdentityEncoding implements Encoding {
 
         @Override
         public void handle(final PartHandler handler, final ByteBuffer rawData) throws IOException {
@@ -325,13 +325,13 @@ class MultipartParser {
         }
     }
 
-    private static class Base64Encoding implements Encoding {
+    static class Base64Encoding implements Encoding {
 
         private final Base64.Decoder decoder = Base64.getMimeDecoder();
-        
+
         private final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
-        private Base64Encoding() {
+        Base64Encoding() {
             buffer.clear();
         }
 
@@ -340,9 +340,11 @@ class MultipartParser {
             try {
                 do {
                     buffer.clear();
+                    int len;
                     try {
-                        int len = decoder.decode(rawData.array(), buffer.array());
-                        buffer.limit(len);
+                        //Unfortunately the Jdk decoder creates a new buffer on each call, the byte version avoids that
+                        len = decoder.decode(rawData.array(), buffer.array());
+                        rawData.position(Math.min(rawData.position() + len, rawData.limit()));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -355,14 +357,14 @@ class MultipartParser {
         }
     }
 
-    private static class QuotedPrintableEncoding implements Encoding {
+    static class QuotedPrintableEncoding implements Encoding {
 
         boolean equalsSeen;
         byte firstCharacter;
 
         private final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
-        private QuotedPrintableEncoding() {
+        QuotedPrintableEncoding() {
             buffer.clear();
         }
 
