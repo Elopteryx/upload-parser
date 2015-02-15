@@ -327,34 +327,15 @@ class MultipartParser {
 
     static class Base64Encoding implements Encoding {
 
-        private final Base64.Decoder decoder = Base64.getMimeDecoder();
-
-        private ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-
-        Base64Encoding() {
-            buffer.clear();
-        }
+        private static final Base64.Decoder decoder = Base64.getMimeDecoder();
 
         @Override
         public void handle(final PartHandler handler, final ByteBuffer rawData) throws IOException {
-            try {
-                do {
-                    buffer.clear();
-                    int len;
-                    try {
-                        //Unfortunately the Jdk decoder creates a new buffer on each call, the byte version avoids that
-//                        len = decoder.decode(rawData.array(), buffer.array());
-//                        rawData.position(Math.min(rawData.position() + len, rawData.limit()));
-                        buffer = decoder.decode(rawData);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                    buffer.flip();
-                    handler.data(buffer);
-                } while (rawData.hasRemaining());
-            } finally {
-                buffer.clear();
-            }
+            do {
+                ByteBuffer buffer = decoder.decode(rawData);
+                buffer.flip();
+                handler.data(buffer);
+            } while (rawData.hasRemaining());
         }
     }
 
