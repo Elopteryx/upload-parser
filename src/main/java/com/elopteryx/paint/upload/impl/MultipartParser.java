@@ -329,7 +329,7 @@ class MultipartParser {
 
         private final Base64.Decoder decoder = Base64.getMimeDecoder();
 
-        private final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+        private ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
         Base64Encoding() {
             buffer.clear();
@@ -343,8 +343,9 @@ class MultipartParser {
                     int len;
                     try {
                         //Unfortunately the Jdk decoder creates a new buffer on each call, the byte version avoids that
-                        len = decoder.decode(rawData.array(), buffer.array());
-                        rawData.position(Math.min(rawData.position() + len, rawData.limit()));
+//                        len = decoder.decode(rawData.array(), buffer.array());
+//                        rawData.position(Math.min(rawData.position() + len, rawData.limit()));
+                        buffer = decoder.decode(rawData);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
