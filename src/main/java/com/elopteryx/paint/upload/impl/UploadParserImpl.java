@@ -132,9 +132,9 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
     @Override
     public void data(final ByteBuffer buffer) throws IOException {
         checkPartSize(buffer.remaining());
-        copyBuffer(buffer);
+        copyBuffer(buffer); //It is possible that some bytes are not copied in certain edge-cases
         if (context.isBuffering() && (context.getPartBytesRead() >= sizeThreshold)) {
-            validate();
+            validate(buffer);
         }
         if(!context.isBuffering()) {
             while (buffer.hasRemaining()) {
@@ -151,7 +151,7 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
         }
     }
 
-    private void validate() throws IOException {
+    private void validate(final ByteBuffer remainingBuffer) throws IOException {
         writableChannel = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
         context.setChannel(writableChannel);
         context.finishBuffering();
@@ -159,12 +159,17 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
         while (checkBuffer.hasRemaining()) {
             writableChannel.write(checkBuffer);
         }
+        if(remainingBuffer == null)
+            return;
+        while (remainingBuffer.hasRemaining()) {
+            writableChannel.write(remainingBuffer);
+        }
     }
 
     @Override
     public void endPart() throws IOException {
         if(context.isBuffering()) {
-            validate();
+            validate(null);
         }
         checkBuffer.clear();
         context.updatePartBytesRead();
