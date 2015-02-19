@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.ben-manes.versions" version "0.7"
+    id "com.github.ben-manes.versions" version "0.8"
 }
 
 version = "2.0.0-SNAPSHOT"
@@ -97,7 +97,7 @@ dependencies {
     testCompile "junit:junit:4.12"
 
     /* Object mocking. */
-    testCompile "org.mockito:mockito-core:1.10.19"
+    testCompile "org.mockito:mockito-core:2.0.4-beta"
 
 }
 

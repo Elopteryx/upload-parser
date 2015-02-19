@@ -23,6 +23,8 @@ import java.util.*;
  */
 class PartStreamHeaders {
 
+    private static final String BOUNDARY = "boundary";
+
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
 
     public static final String CONTENT_TYPE = "Content-Type";
@@ -62,16 +64,16 @@ class PartStreamHeaders {
      * and the key is boundary the myboundary will be returned.
      *
      * @param header The header
-     * @param key    The key that identifies the token to extract
      * @return The token, or null if it was not found
      */
-    static String extractTokenFromHeader(final String header, final String key) {
-        int pos = header.indexOf(key + '=');
+    static String extractBoundaryFromHeader(final String header) {
+
+        int pos = header.indexOf(BOUNDARY + '=');
         if (pos == -1) {
             return null;
         }
         int end;
-        int start = pos + key.length() + 1;
+        int start = pos + BOUNDARY.length() + 1;
         for (end = start; end < header.length(); ++end) {
             char c = header.charAt(end);
             if (c == ' ' || c == '\t') {
@@ -97,7 +99,6 @@ class PartStreamHeaders {
         int pos = -1;
         boolean inQuotes = false;
         for (int i = 0; i < header.length() - 1; ++i) { //-1 because we need room for the = at the end
-            //TODO: a more efficient matching algorithm
             char c = header.charAt(i);
             if (inQuotes) {
                 if (c == '"') {

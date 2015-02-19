@@ -13,7 +13,9 @@ public class PartStreamImplTest {
         String fileName = randomString();
         String fieldName = randomString();
         String contentType = randomString();
-        PartStream partStream = new PartStreamImpl(fileName, fieldName, contentType, null);
+        PartStreamHeaders headers = new PartStreamHeaders();
+        headers.addHeader(PartStreamHeaders.CONTENT_TYPE, contentType);
+        PartStream partStream = new PartStreamImpl(fileName, fieldName, headers);
         assertEquals(fileName, partStream.getSubmittedFileName());
         assertEquals(fieldName, partStream.getName());
         assertEquals(contentType, partStream.getContentType());
@@ -23,7 +25,7 @@ public class PartStreamImplTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_file_names_are_not_allowed() {
         String fileName = randomString() + '\u0000';
-        PartStream partStream = new PartStreamImpl(fileName, null, null, null);
+        PartStream partStream = new PartStreamImpl(fileName, null, new PartStreamHeaders());
         partStream.getSubmittedFileName();
     }
 }

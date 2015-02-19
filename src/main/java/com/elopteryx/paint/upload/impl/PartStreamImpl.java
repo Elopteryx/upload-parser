@@ -53,13 +53,12 @@ class PartStreamImpl implements PartStream {
      * Creates a new instance.
      * @param fileName The file name.
      * @param fieldName The form field name.
-     * @param contentType The content type
      * @param headers The object containing the headers
      */
-    PartStreamImpl(String fileName, String fieldName, String contentType, PartStreamHeaders headers) {
+    PartStreamImpl(String fileName, String fieldName, PartStreamHeaders headers) {
         this.fileName = fileName;
         this.fieldName = fieldName;
-        this.contentType = contentType;
+        this.contentType = headers.getHeader(PartStreamHeaders.CONTENT_TYPE);
         this.fileField = fileName != null;
         this.headers = headers;
     }

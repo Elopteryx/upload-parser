@@ -43,8 +43,6 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
 
     private static final int BUFFER_SIZE = 1024;
 
-    private static final Charset defaultEncoding = StandardCharsets.ISO_8859_1;
-
     private ByteBuffer checkBuffer;
 
     private WritableByteChannel writableChannel;
@@ -82,11 +80,11 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
         String mimeType = request.getHeader(PartStreamHeaders.CONTENT_TYPE);
         String boundary;
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
-            boundary = PartStreamHeaders.extractTokenFromHeader(mimeType, "boundary");
+            boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
                 throw new RuntimeException("Could not find boundary in multipart request with ContentType: "+mimeType+", multipart data will not be available");
             }
-            Charset charset = request.getCharacterEncoding() != null ? Charset.forName(request.getCharacterEncoding()) : defaultEncoding;
+            Charset charset = request.getCharacterEncoding() != null ? Charset.forName(request.getCharacterEncoding()) : StandardCharsets.ISO_8859_1;
             parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
         }
 
@@ -120,12 +118,10 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
     @Override
     public void beginPart(final PartStreamHeaders headers) {
         final String disposition = headers.getHeader(PartStreamHeaders.CONTENT_DISPOSITION);
-        if (disposition != null) {
-            if (disposition.startsWith("form-data")) {
-                String fieldName = PartStreamHeaders.extractQuotedValueFromHeader(disposition, "name");
-                String fileName = PartStreamHeaders.extractQuotedValueFromHeader(disposition, "filename");
-                context.reset(new PartStreamImpl(fileName, fieldName, headers.getHeader(PartStreamHeaders.CONTENT_TYPE), headers));
-            }
+        if (disposition != null && disposition.startsWith("form-data")) {
+            String fieldName = PartStreamHeaders.extractQuotedValueFromHeader(disposition, "name");
+            String fileName = PartStreamHeaders.extractQuotedValueFromHeader(disposition, "filename");
+            context.reset(new PartStreamImpl(fileName, fieldName, headers));
         }
     }
 
