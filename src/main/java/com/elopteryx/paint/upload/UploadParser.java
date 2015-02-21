@@ -18,6 +18,7 @@ package com.elopteryx.paint.upload;
 import com.elopteryx.paint.upload.impl.AsyncUploadParser;
 import com.elopteryx.paint.upload.impl.BlockingUploadParser;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
@@ -104,6 +105,7 @@ public abstract class UploadParser {
      * @param request The servlet request
      * @return Whether the request is a proper multipart request
      */
+    @CheckReturnValue
     public static boolean isMultipart(@Nonnull HttpServletRequest request) {
         return POST_METHOD.equalsIgnoreCase(request.getMethod()) && request.getContentType() != null &&
                 request.getContentType().toLowerCase(Locale.ENGLISH).startsWith(MULTIPART);
@@ -116,6 +118,7 @@ public abstract class UploadParser {
      * @return A parser object
      * @throws ServletException If the parameters are invalid
      */
+    @CheckReturnValue
     public static UploadParser newParser(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response)
             throws ServletException {
         if (!isMultipart(request))
