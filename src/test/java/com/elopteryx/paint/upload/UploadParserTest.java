@@ -9,13 +9,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
+import java.util.Random;
+
 import static org.mockito.Mockito.*;
 import static com.elopteryx.paint.upload.util.FunctionSupplier.*;
 import static com.elopteryx.paint.upload.util.Servlets.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
-public class UploadParserTest {
+public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
 
     @Test(expected = ServletException.class)
     public void valid_and_invalid_content_type() throws Exception {
@@ -68,6 +73,30 @@ public class UploadParserTest {
                 .maxPartSize(1024 * 1024 * 50)
                 .maxRequestSize(1024 * 1024 * 50)
                 .setup();
+
+        Random random = new Random();
+        UploadParser.newParser(request, response)
+                .onPartBegin(this)
+                .onPartEnd(this)
+                .onRequestComplete(this)
+                .onError(this)
+                .sizeThreshold(() -> random.nextInt(1024 * 1024 * 10))
+                .maxPartSize(() -> random.nextInt(1024 * 1024 * 50))
+                .maxRequestSize(() -> random.nextInt(1024 * 1024 * 50))
+                .setup();
     }
 
+    @Override
+    public WritableByteChannel onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+        return null;
+    }
+
+    @Override
+    public void onPartEnd(UploadContext context) throws IOException {}
+
+    @Override
+    public void onRequestComplete(UploadContext context) throws IOException, ServletException {}
+
+    @Override
+    public void onError(UploadContext context, Throwable throwable) {}
 }

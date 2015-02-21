@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.function.IntSupplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -178,6 +179,17 @@ public abstract class UploadParser {
     }
 
     /**
+     * Sets the amount of bytes to buffer in the memory, before
+     * calling the part end callback.
+     * @param supplier The supplier, which returns the amount to use
+     * @return The parser will return itself
+     */
+    public UploadParser sizeThreshold(@Nonnegative @Nonnull IntSupplier supplier) {
+        this.sizeThreshold = Math.max(supplier.getAsInt(), 0);
+        return this;
+    }
+
+    /**
      * Sets the maximum allowed size for each part. Exceeding this
      * will result in a {@link com.elopteryx.paint.upload.errors.PartSizeException} exception.
      * @param maxPartSize The amount to use
@@ -189,6 +201,17 @@ public abstract class UploadParser {
     }
 
     /**
+     * Sets the maximum allowed size for each part. Exceeding this
+     * will result in a {@link com.elopteryx.paint.upload.errors.PartSizeException} exception.
+     * @param supplier The supplier, which returns the amount to use
+     * @return The parser will return itself
+     */
+    public UploadParser maxPartSize(@Nonnegative @Nonnull IntSupplier supplier) {
+        this.maxPartSize = Math.max(supplier.getAsInt(), -1);
+        return this;
+    }
+
+    /**
      * Sets the maximum allowed size for the request. Exceeding this
      * will result in a {@link com.elopteryx.paint.upload.errors.RequestSizeException} exception.
      * @param maxRequestSize The amount to use
@@ -196,6 +219,17 @@ public abstract class UploadParser {
      */
     public UploadParser maxRequestSize(@Nonnegative long maxRequestSize) {
         this.maxRequestSize = Math.max(maxRequestSize, -1);
+        return this;
+    }
+
+    /**
+     * Sets the maximum allowed size for the request. Exceeding this
+     * will result in a {@link com.elopteryx.paint.upload.errors.RequestSizeException} exception.
+     * @param supplier The supplier, which returns the amount to use
+     * @return The parser will return itself
+     */
+    public UploadParser maxRequestSize(@Nonnegative @Nonnull IntSupplier supplier) {
+        this.maxRequestSize = Math.max(supplier.getAsInt(), -1);
         return this;
     }
 
