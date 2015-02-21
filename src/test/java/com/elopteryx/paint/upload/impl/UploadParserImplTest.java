@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.mockito.Mockito.*;
-import static com.elopteryx.paint.upload.Servlets.*;
-import static com.elopteryx.paint.upload.FunctionSupplier.*;
+import static com.elopteryx.paint.upload.util.Servlets.*;
+import static com.elopteryx.paint.upload.util.FunctionSupplier.*;
 import static org.junit.Assert.*;
 
 public class UploadParserImplTest {

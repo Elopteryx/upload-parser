@@ -1,4 +1,4 @@
-package com.elopteryx.paint.upload;
+package com.elopteryx.paint.upload.util;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

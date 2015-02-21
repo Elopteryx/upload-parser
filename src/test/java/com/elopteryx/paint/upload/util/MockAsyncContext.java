@@ -1,4 +1,4 @@
-package com.elopteryx.paint.upload;
+package com.elopteryx.paint.upload.util;
 
 import java.io.IOException;
 import java.util.ArrayList;

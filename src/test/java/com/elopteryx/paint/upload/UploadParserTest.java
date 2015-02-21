@@ -2,6 +2,7 @@ package com.elopteryx.paint.upload;
 
 import com.elopteryx.paint.upload.impl.AsyncUploadParser;
 import com.elopteryx.paint.upload.impl.BlockingUploadParser;
+import com.elopteryx.paint.upload.util.MockAsyncContext;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
@@ -9,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.mockito.Mockito.*;
-import static com.elopteryx.paint.upload.FunctionSupplier.*;
-import static com.elopteryx.paint.upload.Servlets.*;
+import static com.elopteryx.paint.upload.util.FunctionSupplier.*;
+import static com.elopteryx.paint.upload.util.Servlets.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 

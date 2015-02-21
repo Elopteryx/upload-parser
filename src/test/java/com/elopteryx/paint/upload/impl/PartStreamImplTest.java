@@ -3,7 +3,7 @@ package com.elopteryx.paint.upload.impl;
 import com.elopteryx.paint.upload.PartStream;
 import org.junit.Test;
 
-import static com.elopteryx.paint.upload.Randoms.randomString;
+import static com.elopteryx.paint.upload.util.Randoms.randomString;
 import static org.junit.Assert.*;
 
 public class PartStreamImplTest {

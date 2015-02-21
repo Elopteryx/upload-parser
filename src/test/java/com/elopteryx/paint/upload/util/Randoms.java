@@ -1,4 +1,4 @@
-package com.elopteryx.paint.upload;
+package com.elopteryx.paint.upload.util;
 
 public class Randoms {
     

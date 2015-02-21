@@ -18,7 +18,7 @@ import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.elopteryx.paint.upload.Servlets.*;
+import static com.elopteryx.paint.upload.util.Servlets.*;
 import static org.mockito.Mockito.when;
 
 public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError {

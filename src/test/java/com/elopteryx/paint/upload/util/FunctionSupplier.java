@@ -1,4 +1,9 @@
-package com.elopteryx.paint.upload;
+package com.elopteryx.paint.upload.util;
+
+import com.elopteryx.paint.upload.OnError;
+import com.elopteryx.paint.upload.OnPartBegin;
+import com.elopteryx.paint.upload.OnPartEnd;
+import com.elopteryx.paint.upload.OnRequestComplete;
 
 public class FunctionSupplier {
 

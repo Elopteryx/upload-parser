@@ -96,6 +96,14 @@ dependencies {
     /* Test runner. */
     testCompile "junit:junit:4.12"
 
+    /* Http client library. */
+    testCompile "org.apache.httpcomponents:httpclient:4.4"
+    testCompile "org.apache.httpcomponents:httpmime:4.4"
+
+    /* Http server. */
+    testCompile "io.undertow:undertow-core:1.1.2.Final"
+    testCompile "io.undertow:undertow-servlet:1.1.2.Final"
+
     /* Object mocking. */
     testCompile "org.mockito:mockito-core:2.0.4-beta"
 
