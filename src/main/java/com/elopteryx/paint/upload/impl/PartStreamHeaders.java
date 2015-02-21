@@ -76,7 +76,7 @@ class PartStreamHeaders {
         int start = pos + BOUNDARY.length() + 1;
         for (end = start; end < header.length(); ++end) {
             char c = header.charAt(end);
-            if (c == ' ' || c == '\t') {
+            if (c == ' ' || c == '\t' || c == ';') {
                 break;
             }
         }
