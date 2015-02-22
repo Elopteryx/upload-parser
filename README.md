@@ -1,6 +1,7 @@
 Paint-Upload
 =========
 
+[![Apache 2 License](https://img.shields.io/badge/license-Apache%202-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Build Status](https://travis-ci.org/Elopteryx/paint-upload.svg?branch=master)](https://travis-ci.org/Elopteryx/paint-upload)
 [![Coverage Status](https://coveralls.io/repos/Elopteryx/paint-upload/badge.svg)](https://coveralls.io/r/Elopteryx/paint-upload)
 
