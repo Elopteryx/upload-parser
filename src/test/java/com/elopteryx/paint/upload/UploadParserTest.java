@@ -71,8 +71,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
                 .onError(errorCallback())
                 .sizeThreshold(1024 * 1024 * 10)
                 .maxPartSize(1024 * 1024 * 50)
-                .maxRequestSize(1024 * 1024 * 50)
-                .setup();
+                .maxRequestSize(1024 * 1024 * 50);
 
         Random random = new Random();
         UploadParser.newParser(request, response)
@@ -82,8 +81,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
                 .onError(this)
                 .sizeThreshold(() -> random.nextInt(1024 * 1024 * 10))
                 .maxPartSize(() -> random.nextInt(1024 * 1024 * 50))
-                .maxRequestSize(() -> random.nextInt(1024 * 1024 * 50))
-                .setup();
+                .maxRequestSize(() -> random.nextInt(1024 * 1024 * 50));
     }
 
     @Override
