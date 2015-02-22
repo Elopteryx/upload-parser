@@ -2,6 +2,7 @@ Paint-Upload
 =========
 
 [![Build Status](https://travis-ci.org/Elopteryx/paint-upload.svg?branch=master)](https://travis-ci.org/Elopteryx/paint-upload)
+[![Coverage Status](https://coveralls.io/repos/Elopteryx/paint-upload/badge.svg)](https://coveralls.io/r/Elopteryx/paint-upload)
 
 Paint-Upload is an asynchronous file upload library, allowing non-blocking parsing of
 multipart requests, using the async IO API introduced with Servlet 3.1.
