@@ -177,6 +177,7 @@ public class AsyncUploadParserTest {
                         context.getResponse().setStatus(HttpServletResponse.SC_OK);
                         for (ByteArrayOutputStream baos : formFields)
                             System.out.println(baos.toString());
+                        context.getRequest().getAsyncContext().complete();
                         context.getResponse().setStatus(200);
                     })
                     .onError((context, throwable) -> {

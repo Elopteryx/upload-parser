@@ -97,7 +97,6 @@ public class AsyncUploadParser extends UploadParserImpl implements ReadListener 
         } catch (ServletException e) {
             throw new RuntimeException(e);
         }
-        request.getAsyncContext().complete();
     }
 
     /**
