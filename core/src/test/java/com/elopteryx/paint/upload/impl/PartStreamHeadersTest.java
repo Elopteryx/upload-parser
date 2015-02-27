@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 public class PartStreamHeadersTest {
 
     @Test
-    public void testFileItemHeaders() throws Exception {
+    public void add_and_retrieve_headers() throws Exception {
         PartStreamHeaders aMutableFileItemHeaders = new PartStreamHeaders();
         aMutableFileItemHeaders.addHeader("Content-Disposition", "form-data; name=\"FileItem\"; filename=\"file1.txt\"");
         aMutableFileItemHeaders.addHeader("Content-Type", "text/plain");

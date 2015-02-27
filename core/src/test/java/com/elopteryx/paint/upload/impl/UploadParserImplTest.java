@@ -24,7 +24,7 @@ public class UploadParserImplTest {
 
         when(request.getContentLengthLong()).thenReturn(requestSize);
 
-        UploadParser parser = UploadParser.newParser(request, response)
+        UploadParser parser = UploadParser.newParser(request)
                 .onPartBegin(partBeginCallback())
                 .onPartEnd(partEndCallback())
                 .maxPartSize(allowedPartSize)

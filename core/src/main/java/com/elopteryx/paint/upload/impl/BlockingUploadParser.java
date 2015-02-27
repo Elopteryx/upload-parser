@@ -18,7 +18,6 @@ package com.elopteryx.paint.upload.impl;
 import com.elopteryx.paint.upload.errors.MultipartException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -32,8 +31,8 @@ import java.nio.ByteBuffer;
  */
 public class BlockingUploadParser extends UploadParserImpl {
 
-    public BlockingUploadParser(HttpServletRequest request, HttpServletResponse response) {
-        super(request, response);
+    public BlockingUploadParser(HttpServletRequest request) {
+        super(request);
     }
 
     @Override

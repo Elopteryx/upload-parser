@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.WritableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Random;
 
 import static org.mockito.Mockito.*;
@@ -32,7 +33,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
         assertFalse(UploadParser.isMultipart(request));
-        UploadParser.newParser(request, response);
+        UploadParser.newParser(request).withResponse(UploadResponse.from(response));
     }
 
     @Test
@@ -42,7 +43,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.isAsyncSupported()).thenReturn(true);
 
-        UploadParser asyncParser = UploadParser.newParser(request, response);
+        UploadParser asyncParser = UploadParser.newParser(request).withResponse(UploadResponse.from(response));
         assertThat(asyncParser, instanceOf(AsyncUploadParser.class));
     }
 
@@ -53,7 +54,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
         
         when(request.isAsyncSupported()).thenReturn(false);
 
-        UploadParser blockingParser = UploadParser.newParser(request, response);
+        UploadParser blockingParser = UploadParser.newParser(request).withResponse(UploadResponse.from(response));
         assertThat(blockingParser, instanceOf(BlockingUploadParser.class));
     }
 
@@ -64,7 +65,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
 
-        UploadParser.newParser(request, response)
+        UploadParser.newParser(request)
                 .onPartBegin(partBeginCallback())
                 .onPartEnd(partEndCallback())
                 .onRequestComplete(requestCallback())
@@ -74,7 +75,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
                 .maxRequestSize(1024 * 1024 * 50);
 
         Random random = new Random();
-        UploadParser.newParser(request, response)
+        UploadParser.newParser(request)
                 .onPartBegin(this)
                 .onPartEnd(this)
                 .onRequestComplete(this)
@@ -85,8 +86,11 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Override
-    public WritableByteChannel onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-        return null;
+    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+        if(true)
+            return PartOutput.from(Files.newByteChannel(Paths.get("")));
+        else
+            return PartOutput.from(Files.newOutputStream(Paths.get("")));
     }
 
     @Override

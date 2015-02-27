@@ -15,14 +15,15 @@
  */
 package com.elopteryx.paint.upload.impl;
 
+import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.PartStream;
 import com.elopteryx.paint.upload.UploadContext;
+import com.elopteryx.paint.upload.UploadResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.nio.channels.WritableByteChannel;
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,15 +41,15 @@ class UploadContextImpl implements UploadContext {
     /**
      * The response object. Only used by the callers, not necessary for these classes. 
      */
-    private final HttpServletResponse response;
+    private final UploadResponse response;
     /**
      * The currently processed item. 
      */
     private PartStreamImpl currentPart;
     /**
-     * The active channel.
+     * The active output.
      */
-    private WritableByteChannel channel;
+    private PartOutput output;
     /**
      * The list of the already processed items.
      */
@@ -64,7 +65,7 @@ class UploadContextImpl implements UploadContext {
      */
     private int partBytesRead;
 
-    UploadContextImpl(HttpServletRequest request, HttpServletResponse response) {
+    UploadContextImpl(HttpServletRequest request, UploadResponse response) {
         this.request = request;
         this.response = response;
     }
@@ -77,7 +78,7 @@ class UploadContextImpl implements UploadContext {
 
     @Override
     @Nonnull
-    public HttpServletResponse getResponse() {
+    public UploadResponse getResponse() {
         return response;
     }
 
@@ -89,8 +90,8 @@ class UploadContextImpl implements UploadContext {
 
     @Override
     @Nullable
-    public WritableByteChannel getCurrentChannel() {
-        return channel;
+    public PartOutput getCurrentOutput() {
+        return output;
     }
 
     @Nonnull
@@ -104,11 +105,11 @@ class UploadContextImpl implements UploadContext {
         partBytesRead = 0;
         currentPart = newPart;
         partStreams.add(newPart);
-        channel = null;
+        output = null;
     }
 
-    void setChannel(WritableByteChannel channel) {
-        this.channel = channel;
+    void setOutput(PartOutput output) {
+        this.output = output;
     }
 
     boolean isBuffering() {

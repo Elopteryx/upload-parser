@@ -61,9 +61,6 @@ dependencies {
     /* Servlet API. */
     provided "javax.servlet:javax.servlet-api:3.1.0"
 
-    /* Restful web services API and implementation. */
-    provided "javax.ws.rs:javax.ws.rs-api:2.0.1"
-
     /* Annotations for code documentation. */
     provided "com.google.code.findbugs:jsr305:3.0.0"
 
@@ -79,7 +76,7 @@ dependencies {
     testCompile "io.undertow:undertow-servlet:1.1.2.Final"
 
     /* Object mocking. */
-    testCompile "org.mockito:mockito-core:2.0.4-beta"
+    testCompile "org.mockito:mockito-core:2.0.5-beta"
 
 }
 

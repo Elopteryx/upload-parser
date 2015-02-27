@@ -3,8 +3,10 @@ package com.elopteryx.paint.upload.impl;
 import com.elopteryx.paint.upload.OnError;
 import com.elopteryx.paint.upload.OnPartBegin;
 import com.elopteryx.paint.upload.OnPartEnd;
+import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.UploadParser;
+import com.elopteryx.paint.upload.UploadResponse;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,8 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,19 +33,20 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
         when(request.isAsyncSupported()).thenReturn(false);
         when(request.getHeader(PartStreamHeaders.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary=----1234");
 
-        UploadParser parser = UploadParser.newParser(request, response)
+        UploadParser parser = UploadParser.newParser(request)
                 .onPartBegin(this)
                 .onPartEnd(this)
-                .onError(this);
+                .onError(this)
+                .withResponse(UploadResponse.from(response));
         BlockingUploadParser blockingParser = (BlockingUploadParser)parser;
         blockingParser.setup();
     }
 
     @Override
-    public WritableByteChannel onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         strings.add(baos);
-        return Channels.newChannel(baos);
+        return PartOutput.from(baos);
     }
 
     @Override

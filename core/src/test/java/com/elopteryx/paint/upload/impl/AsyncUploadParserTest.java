@@ -1,7 +1,9 @@
 package com.elopteryx.paint.upload.impl;
 
+import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.PartStream;
 import com.elopteryx.paint.upload.UploadParser;
+import com.elopteryx.paint.upload.UploadResponse;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
@@ -29,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.channels.Channels;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,7 +138,7 @@ public class AsyncUploadParserTest {
 
             final List<ByteArrayOutputStream> formFields = new ArrayList<>();
 
-            UploadParser parser = UploadParser.newParser(request, response)
+            UploadParser parser = UploadParser.newParser(request)
                     .onPartBegin((context, buffer) -> {
                         System.out.println("Start!");
                         //use the buffer to detect file type
@@ -156,29 +157,32 @@ public class AsyncUploadParserTest {
 //                        return Channels.newChannel(Files.newOutputStream(path));
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             formFields.add(baos);
-                            return Channels.newChannel(baos);
+                            return PartOutput.from(baos);
                         } else {
                             for (String header : part.getHeaderNames())
                                 System.out.println(header + " " + part.getHeader(header));
                             System.out.println(part.getContentType());
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             formFields.add(baos);
-                            return Channels.newChannel(baos);
+                            return PartOutput.from(baos);
                         }
                     })
                     .onPartEnd(context -> {
-                        if(context.getCurrentChannel() != null)
-                            context.getCurrentChannel().close();
+                        if (context.getCurrentOutput() != null)
+                            context.getCurrentOutput().close();
                         System.out.println(context.getCurrentPart().getKnownSize());
                         System.out.println("Part success!");
                     })
                     .onRequestComplete(context -> {
                         System.out.println("Success!");
-                        context.getResponse().setStatus(HttpServletResponse.SC_OK);
+                        UploadResponse uploadResponse = context.getResponse();
+                        if(uploadResponse.safeToCast(HttpServletResponse.class))
+                            uploadResponse.get(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
                         for (ByteArrayOutputStream baos : formFields)
                             System.out.println(baos.toString());
                         context.getRequest().getAsyncContext().complete();
-                        context.getResponse().setStatus(200);
+                        System.out.println("Total parts: " + context.getPartStreams().size());
+                        response.setStatus(200);
                     })
                     .onError((context, throwable) -> {
                         System.out.println("Error!");
@@ -186,11 +190,12 @@ public class AsyncUploadParserTest {
                         for (ByteArrayOutputStream baos : formFields)
                             System.out.println(baos.toString());
                         try {
-                            context.getResponse().sendError(500);
+                            response.sendError(500);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     })
+                    .withResponse(UploadResponse.from(response))
                     .sizeThreshold(4096)
                     .maxPartSize(Long.MAX_VALUE)
                     .maxRequestSize(Long.MAX_VALUE);

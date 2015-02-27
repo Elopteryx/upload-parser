@@ -34,8 +34,8 @@ import java.nio.ByteBuffer;
  */
 public class AsyncUploadParser extends UploadParserImpl implements ReadListener {
 
-    public AsyncUploadParser(HttpServletRequest request, HttpServletResponse response) {
-        super(request, response);
+    public AsyncUploadParser(HttpServletRequest request) {
+        super(request);
     }
 
     @Override

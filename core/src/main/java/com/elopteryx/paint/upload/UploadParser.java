@@ -23,7 +23,6 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.function.IntSupplier;
@@ -34,7 +33,7 @@ import static java.util.Objects.requireNonNull;
  * Builder class. Provides a fluent API for the users to
  * customize the parsing process.
  */
-public abstract class UploadParser {
+public class UploadParser {
     /**
      * The type of the HTTP request.
      */
@@ -53,7 +52,7 @@ public abstract class UploadParser {
     /**
      * The response object.
      */
-    protected final HttpServletResponse response;
+    protected UploadResponse uploadResponse;
 
     /**
      * The part begin callback, called at the beginning of each part parsing. Mandatory.
@@ -93,11 +92,9 @@ public abstract class UploadParser {
     /**
      * Protected constructor, to prevent invalid usages.
      * @param request The servlet request
-     * @param response The servlet response
      */
-    protected UploadParser(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response) {
+    protected UploadParser(@Nonnull HttpServletRequest request) {
         this.request = requireNonNull(request);
-        this.response = requireNonNull(response);
     }
 
     /**
@@ -115,16 +112,14 @@ public abstract class UploadParser {
     /**
      * Returns a parser implementation, allowing the caller to set configuration.
      * @param request The servlet request
-     * @param response The servlet response
      * @return A parser object
      * @throws ServletException If the parameters are invalid
      */
     @CheckReturnValue
-    public static UploadParser newParser(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response)
-            throws ServletException {
+    public static UploadParser newParser(@Nonnull HttpServletRequest request) throws ServletException {
         if (!isMultipart(request))
             throw new ServletException("Not a multipart request!");
-        return request.isAsyncSupported() ? new AsyncUploadParser(request, response) : new BlockingUploadParser(request, response);
+        return request.isAsyncSupported() ? new AsyncUploadParser(request) : new BlockingUploadParser(request);
     }
 
     /**
@@ -164,6 +159,20 @@ public abstract class UploadParser {
      */
     public UploadParser onError(@Nonnull OnError errorCallback) {
         this.errorCallback = requireNonNull(errorCallback);
+        return this;
+    }
+
+    /**
+     * Sets the servlet response object. This is only necessary to allow
+     * access to it during the stages of the parsing. Note that if the
+     * declaration of the custom functions are in the method which has
+     * the response object as a parameter then this method can be skipped
+     * and the parameter reference can be used instead.
+     * @param uploadResponse The response wrapper
+     * @return The parser will return itself
+     */
+    public UploadParser withResponse(@Nonnull UploadResponse uploadResponse) {
+        this.uploadResponse = uploadResponse;
         return this;
     }
 
@@ -238,5 +247,5 @@ public abstract class UploadParser {
      * the environment the concrete implementations can be very different.
      * @throws IOException If an error occurs with the IO
      */
-    public abstract void setup() throws IOException;
+    public void setup() throws IOException {}
 }

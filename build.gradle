@@ -1,6 +1,5 @@
 plugins {
     id "com.github.ben-manes.versions" version "0.8"
-    id "com.github.johnrengelman.shadow" version "1.2.0"
 }
 
 allprojects {
@@ -27,5 +26,45 @@ allprojects {
     tasks.withType(JavaCompile) {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
+    }
+
+    // JaCoCo
+
+    ext.jacocoVersion = "0.7.1.201405082137"
+
+    ext.lib = [
+            jacoco_agent: "org.jacoco:org.jacoco.agent:${jacocoVersion}:runtime@jar",
+            jacoco_ant:	"org.jacoco:org.jacoco.ant:${jacocoVersion}"
+    ]
+
+    configurations {
+        jacoco
+    }
+
+    dependencies {
+        jacoco lib.jacoco_agent
+    }
+
+    // Test: configure all tests, including integration
+
+    tasks.withType(Test) { testTask ->
+        configure(testTask) {
+            beforeTest { descriptor ->
+                logger.lifecycle("\t" + descriptor)
+            }
+
+            reports.html.enabled = true
+
+            systemProperties = System.properties
+
+            List<String> excludes = []
+
+            jvmArgs "-javaagent:${configurations.jacoco.asPath}=destfile=${project.buildDir.path}/jacoco/${testTask.name}.exec," +
+                    "sessionid=HSServ,append=false,excludes=${excludes.join(':')}",
+                    '-Djacoco=true',
+                    '-Xms128m',
+                    '-Xmx512m',
+                    '-Duser.timezone=GMT'
+        }
     }
 }

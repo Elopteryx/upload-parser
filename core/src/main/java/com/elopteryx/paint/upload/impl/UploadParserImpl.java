@@ -15,15 +15,17 @@
  */
 package com.elopteryx.paint.upload.impl;
 
+import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.UploadParser;
 import com.elopteryx.paint.upload.errors.PartSizeException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -57,8 +59,8 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
 
     protected final byte[] buf = new byte[BUFFER_SIZE];
 
-    public UploadParserImpl(HttpServletRequest request, HttpServletResponse response) {
-        super(request, response);
+    public UploadParserImpl(HttpServletRequest request) {
+        super(request);
     }
 
     @Override
@@ -75,7 +77,7 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
         }
 
         checkBuffer = ByteBuffer.allocate(sizeThreshold);
-        context = new UploadContextImpl(request, response);
+        context = new UploadContextImpl(request, uploadResponse);
 
         String mimeType = request.getHeader(PartStreamHeaders.CONTENT_TYPE);
         String boundary;
@@ -148,8 +150,14 @@ public abstract class UploadParserImpl extends UploadParser implements Multipart
     }
 
     private void validate() throws IOException {
-        writableChannel = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
-        context.setChannel(writableChannel);
+        PartOutput output = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
+        if(output.safeToCast(WritableByteChannel.class))
+            writableChannel = output.get(WritableByteChannel.class);
+        else if(output.safeToCast(OutputStream.class))
+            writableChannel = Channels.newChannel(output.get(OutputStream.class));
+        else
+            throw new IllegalArgumentException("Invalid output object!");
+        context.setOutput(output);
         context.finishBuffering();
         checkBuffer.flip();
         while (checkBuffer.hasRemaining()) {

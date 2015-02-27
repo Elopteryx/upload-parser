@@ -18,8 +18,6 @@ package com.elopteryx.paint.upload;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.nio.channels.WritableByteChannel;
 import java.util.List;
 
 /**
@@ -44,10 +42,10 @@ public interface UploadContext {
      * allowing customization during the stages of the
      * asynchronous processing.
      *
-     * @return The response object
+     * @return The response object, or null if it was not supplied
      */
     @Nonnull
-    HttpServletResponse getResponse();
+    UploadResponse getResponse();
 
     /**
      * Returns the currently processed part stream,
@@ -59,15 +57,15 @@ public interface UploadContext {
     PartStream getCurrentPart();
 
     /**
-     * Returns the currently active channel, which was returned
+     * Returns the currently active output, which was returned
      * in the latest UploadParser#onPartBegin method. This will
      * return a null during the part begin stage and might be
      * null during the error stage.
      *
-     * @return The latest channel set by the user
+     * @return The latest output provided by the caller
      */
     @Nullable
-    WritableByteChannel getCurrentChannel();
+    PartOutput getCurrentOutput();
 
     /**
      * Returns the parts which have already been processed. Before
