@@ -73,6 +73,7 @@ public class PartOutput implements Closeable {
      */
     @Override
     public void close() throws IOException {
-        value.close();
+        if(value != null)
+            value.close();
     }
 }
