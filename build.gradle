@@ -93,14 +93,21 @@ subprojects {
         destinationDir = file("${buildDir}/reports/allTests")
     }
 
-    tasks.withType(Test) {
-        testReport.reportOn it
+    jacocoTestReport {
+        group = 'Coverage reports'
+        description = 'Generates a test coverage report for a project'
+
+        reports {
+            xml.enabled = true
+            html.enabled = true
+        }
     }
 
-    jacocoTestReport {
-        reports {
-            xml.enabled = true // coveralls plugin depends on xml format report
-            html.enabled = true
+    tasks.withType(Test) {
+        jacoco {
+            append = true
+            destinationFile = file("${rootDir}/build/jacoco/jacocoTest.exec")
+            classDumpFile = file("${rootDir}/build/jacoco/classpathdumps")
         }
     }
 
@@ -127,7 +134,7 @@ subprojects {
 
     coveralls {
         sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
-        jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+        jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/test/jacocoRootReport.xml"
     }
 
     tasks.coveralls {

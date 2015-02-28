@@ -1,3 +1,5 @@
+rootProject.name = "paint-upload"
+
 include "core"
 include "jaxrs"
 
