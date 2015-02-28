@@ -93,6 +93,7 @@ subprojects {
         destinationDir = file("${buildDir}/reports/allTests")
     }
 
+    def publishedProjects = subprojects
     jacocoTestReport {
         group = 'Coverage reports'
         description = 'Generates a test coverage report for a project'
@@ -101,6 +102,13 @@ subprojects {
             xml.enabled = true
             html.enabled = true
         }
+
+//        dependsOn(publishedProjects.test)
+//
+//        additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+//        sourceDirectories = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+//        classDirectories = files(publishedProjects.sourceSets.main.output)
+//        executionData = files(publishedProjects.jacocoTestReport.executionData)
     }
 
     tasks.withType(Test) {
@@ -111,9 +119,10 @@ subprojects {
         }
     }
 
-    def publishedProjects = subprojects
+
 
     task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+        group = 'Coverage reports'
         description = 'Generates an aggregate report from all subprojects'
         dependsOn(publishedProjects.test)
 
@@ -134,7 +143,7 @@ subprojects {
 
     coveralls {
         sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
-        jacocoReportPath = "${buildDir}/reports/jacoco/test/jacocoRootReport.xml"
+        jacocoReportPath = "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
     }
 
     tasks.coveralls {
