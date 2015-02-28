@@ -134,7 +134,7 @@ subprojects {
 
     coveralls {
         sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
-        jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/test/jacocoRootReport.xml"
+        jacocoReportPath = "${buildDir}/reports/jacoco/test/jacocoRootReport.xml"
     }
 
     tasks.coveralls {
