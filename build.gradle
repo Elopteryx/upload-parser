@@ -3,6 +3,14 @@ plugins {
     id "com.github.kt3k.coveralls" version "2.3.1"
 }
 
+apply plugin: "com.github.kt3k.coveralls"
+apply plugin: "jacoco"
+
+task testReport(type: TestReport, group: 'Build') {
+    description = 'Generates an aggregate test report'
+    destinationDir = file("${buildDir}/reports/allTests")
+}
+
 subprojects {
 
     apply plugin: "java"
@@ -88,69 +96,52 @@ subprojects {
         }
     }
 
-    task testReport(type: TestReport, group: 'Build') {
-        description = 'Generates an aggregate test report'
-        destinationDir = file("${buildDir}/reports/allTests")
-    }
-
-    def publishedProjects = subprojects
-    jacocoTestReport {
-        group = 'Coverage reports'
-        description = 'Generates a test coverage report for a project'
-
-        reports {
-            xml.enabled = true
-            html.enabled = true
-        }
-
-//        dependsOn(publishedProjects.test)
-//
-//        additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
-//        sourceDirectories = files(publishedProjects.sourceSets.main.allSource.srcDirs)
-//        classDirectories = files(publishedProjects.sourceSets.main.output)
-//        executionData = files(publishedProjects.jacocoTestReport.executionData)
-    }
-
     tasks.withType(Test) {
+        if (!it.name.startsWith('slow')) {
+            rootProject.testReport.reportOn it
+        }
         jacoco {
             append = true
             destinationFile = file("${rootDir}/build/jacoco/jacocoTest.exec")
             classDumpFile = file("${rootDir}/build/jacoco/classpathdumps")
         }
     }
+}
 
+repositories {
+    jcenter()
+}
 
+def publishedProjects = subprojects
 
-    task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
-        group = 'Coverage reports'
-        description = 'Generates an aggregate report from all subprojects'
-        dependsOn(publishedProjects.test)
+task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+    description = 'Generates an aggregate report from all subprojects'
+    dependsOn(publishedProjects.test)
 
-        additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
-        sourceDirectories = files(publishedProjects.sourceSets.main.allSource.srcDirs)
-        classDirectories = files(publishedProjects.sourceSets.main.output)
-        executionData = files(publishedProjects.jacocoTestReport.executionData)
+    additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(publishedProjects.sourceSets.main.output)
+    executionData = files(publishedProjects.jacocoTestReport.executionData)
 
-        reports {
-            html.enabled = true
-            xml.enabled = true
-        }
-
-        doFirst {
-            executionData = files(executionData.findAll { it.exists() })
-        }
+    reports {
+        html.enabled = true
+        xml.enabled = true
     }
 
-    coveralls {
-        sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
-        jacocoReportPath = "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+    doFirst {
+        executionData = files(executionData.findAll { it.exists() })
     }
+}
 
-    tasks.coveralls {
-        group = 'Coverage reports'
-        description = 'Uploads the aggregated coverage report to Coveralls'
+coveralls {
+    sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+}
 
-        dependsOn jacocoRootReport
-        onlyIf { System.env.'CI' }
-    }
+tasks.coveralls {
+    group = 'Coverage reports'
+    description = 'Uploads the aggregated coverage report to Coveralls'
+
+    dependsOn jacocoRootReport
+    onlyIf { System.env.'CI' }
 }
