@@ -1,61 +1,3 @@
-apply plugin: "java"
-
-ext.archivesBaseName = "paint-upload"
-ext.appName = "%APP_NAME%"
-
-task javadocJar(type: Jar) {
-    classifier = "javadoc"
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    classifier = "sources"
-    from sourceSets.main.allSource
-}
-
-artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
-}
-
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
-    }
-    test {
-        compileClasspath += configurations.provided
-        runtimeClasspath += configurations.provided
-    }
-}
-
-idea {
-    module {
-        scopes.PROVIDED.plus += [configurations.provided]
-    }
-}
-
-javadoc {
-    afterEvaluate {
-        classpath += configurations.provided
-        configure(options) {
-            windowTitle "Paint Upload API Documentation"
-            docTitle "Paint Upload API Documentation"
-            bottom = 'Copyright &#169; 2015 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
-            breakIterator = true
-            author = false
-            source = "1.8"
-            encoding = "UTF-8"
-            docEncoding = "UTF-8"
-            failOnError = true
-            links = [ "http://jsr-305.googlecode.com/svn/trunk/javadoc",
-                      "http://download.oracle.com/javase/8/docs/api/",
-                      "http://download.oracle.com/javaee/7/api/",
-            ]
-        }
-    }
-}
-
 dependencies {
 
     /* Servlet API. */
@@ -84,7 +26,7 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId "com.github.elopteryx"
-            artifactId "paint-upload"
+            artifactId "paint-upload-core"
 
             from components.java
         }
@@ -96,13 +38,13 @@ uploadArchives {
         mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-//            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-//                authentication(userName: ossrhUsername, password: ossrhPassword)
-//            }
-//
-//            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-//                authentication(userName: ossrhUsername, password: ossrhPassword)
-//            }
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
 
             pom.scopeMappings.with {
                 addMapping(1, configurations.provided, "provided")
@@ -111,7 +53,7 @@ uploadArchives {
             pom.project {
                 name "Paint Upload"
                 groupId "com.github.elopteryx"
-                artifactId "paint-upload"
+                artifactId "paint-upload-core"
 
                 description "Paint Upload is an asynchronous multipart parser for servlets with version 3.1 or above." +
                         "Version 2.x releases are compiled to run on Java 8 or above."

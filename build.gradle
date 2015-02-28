@@ -2,8 +2,9 @@ plugins {
     id "com.github.ben-manes.versions" version "0.8"
 }
 
-allprojects {
+subprojects {
 
+    apply plugin: "java"
     apply plugin: "idea"
     apply plugin: "maven-publish"
     apply plugin: "maven"
@@ -16,7 +17,6 @@ allprojects {
     }
 
     version = "2.0.0-SNAPSHOT"
-    ext.appName = "%APP_NAME%"
 
     repositories {
         mavenCentral()
@@ -28,43 +28,60 @@ allprojects {
         targetCompatibility = 1.8
     }
 
-    // JaCoCo
-
-    ext.jacocoVersion = "0.7.1.201405082137"
-
-    ext.lib = [
-            jacoco_agent: "org.jacoco:org.jacoco.agent:${jacocoVersion}:runtime@jar",
-            jacoco_ant:	"org.jacoco:org.jacoco.ant:${jacocoVersion}"
-    ]
-
-    configurations {
-        jacoco
+    task javadocJar(type: Jar) {
+        classifier = "javadoc"
+        from javadoc
     }
 
-    dependencies {
-        jacoco lib.jacoco_agent
-    }
-
-    // Test: configure all tests, including integration
-
-    tasks.withType(Test) { testTask ->
-        configure(testTask) {
-            beforeTest { descriptor ->
-                logger.lifecycle("\t" + descriptor)
+    javadoc {
+        afterEvaluate {
+            classpath += configurations.provided
+            configure(options) {
+                windowTitle "Paint Upload API Documentation"
+                docTitle "Paint Upload API Documentation"
+                bottom = 'Copyright &#169; 2015 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
+                breakIterator = true
+                author = false
+                source = "1.8"
+                encoding = "UTF-8"
+                docEncoding = "UTF-8"
+                failOnError = true
+                links = [ "http://jsr-305.googlecode.com/svn/trunk/javadoc",
+                          "http://download.oracle.com/javase/8/docs/api/",
+                          "http://download.oracle.com/javaee/7/api/",
+                ]
             }
+        }
+    }
 
-            reports.html.enabled = true
+    task sourcesJar(type: Jar) {
+        classifier = "sources"
+        from sourceSets.main.allSource
+    }
 
-            systemProperties = System.properties
+    artifacts {
+        archives jar
+        archives sourcesJar
+        archives javadocJar
+    }
 
-            List<String> excludes = []
+//    signing {
+//        sign configurations.archives
+//    }
 
-            jvmArgs "-javaagent:${configurations.jacoco.asPath}=destfile=${project.buildDir.path}/jacoco/${testTask.name}.exec," +
-                    "sessionid=HSServ,append=false,excludes=${excludes.join(':')}",
-                    '-Djacoco=true',
-                    '-Xms128m',
-                    '-Xmx512m',
-                    '-Duser.timezone=GMT'
+    sourceSets {
+        main {
+            compileClasspath += configurations.provided
+        }
+        test {
+            compileClasspath += configurations.provided
+            runtimeClasspath += configurations.provided
+        }
+    }
+
+    idea {
+        module {
+            scopes.PROVIDED.plus += [configurations.provided]
         }
     }
 }
