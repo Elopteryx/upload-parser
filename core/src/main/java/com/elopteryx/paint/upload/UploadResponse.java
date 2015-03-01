@@ -12,13 +12,15 @@ public class UploadResponse {
     /**
      * The value object
      */
-    private Object value;
+    protected Object value;
 
-    private UploadResponse() {}
+    protected UploadResponse() {
+        // No need to allow public access
+    }
 
     /**
      * Creates a new instance from the given response object.
-     * @param response THe servlet response
+     * @param response The servlet response
      * @return A new UploadResponse instance
      */
     public static UploadResponse from(HttpServletResponse response) {
