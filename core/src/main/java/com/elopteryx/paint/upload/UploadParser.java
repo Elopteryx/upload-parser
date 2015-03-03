@@ -34,10 +34,6 @@ import static java.util.Objects.requireNonNull;
  * customize the parsing process.
  */
 public class UploadParser {
-    /**
-     * The type of the HTTP request.
-     */
-    private static final String POST_METHOD = "POST";
 
     /**
      * Part of HTTP content type header.
@@ -105,8 +101,7 @@ public class UploadParser {
      */
     @CheckReturnValue
     public static boolean isMultipart(@Nonnull HttpServletRequest request) {
-        return POST_METHOD.equalsIgnoreCase(request.getMethod()) && request.getContentType() != null &&
-                request.getContentType().toLowerCase(Locale.ENGLISH).startsWith(MULTIPART);
+        return request.getContentType() != null && request.getContentType().toLowerCase(Locale.ENGLISH).startsWith(MULTIPART);
     }
 
     /**
