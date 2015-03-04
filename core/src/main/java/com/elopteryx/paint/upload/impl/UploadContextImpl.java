@@ -23,7 +23,6 @@ import com.elopteryx.paint.upload.UploadResponse;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

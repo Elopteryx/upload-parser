@@ -15,6 +15,7 @@
  */
 package com.elopteryx.paint.upload.impl;
 
+import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.errors.MultipartException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,22 +23,23 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
- * The blocking implementation of the parser. If the calling servlet does not
- * support async mode, then the created upload parser will be an instance of
- * this class.
- *
- * This class is only public to serve as an entry point in the implementation package, users
- * should not need to directly depend on this class.
+ * The blocking implementation of the parser. This parser can be used to perform a
+ * blocking parse, whether the servlet supports async mode or not.
  */
-public class BlockingUploadParser extends UploadParserImpl {
+public class BlockingUploadParser extends UploadParser<BlockingUploadParser> {
 
     public BlockingUploadParser(HttpServletRequest request) {
         super(request);
     }
 
-    @Override
-    public void setup() throws IOException {
-        super.setup();
+    /**
+     * The parser begins parsing the request stream. This is a blocking method,
+     * the method will not finish until the upload process finished, either
+     * successfully or not.
+     * @return The upload context
+     * @throws IOException If an error occurred with the servlet stream
+     */
+    public UploadContext parse() throws IOException {
         try {
             while(true) {
                 int c = servletInputStream.read(buf);
@@ -57,5 +59,6 @@ public class BlockingUploadParser extends UploadParserImpl {
             if(errorCallback != null)
                 errorCallback.onError(context, e);
         }
+        return context;
     }
 }

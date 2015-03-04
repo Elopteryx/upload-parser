@@ -57,7 +57,7 @@ public class PartOutput implements Closeable {
     /**
      * Retrieves the value object, casting it to the
      * given type.
-     * @param clazz The class to to cast
+     * @param clazz The class to cast
      * @param <T> Type parameter
      * @return The stored value object
      */

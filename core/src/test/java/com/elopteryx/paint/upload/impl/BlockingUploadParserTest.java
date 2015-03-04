@@ -5,7 +5,7 @@ import com.elopteryx.paint.upload.OnPartBegin;
 import com.elopteryx.paint.upload.OnPartEnd;
 import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.UploadContext;
-import com.elopteryx.paint.upload.UploadParser;
+import com.elopteryx.paint.upload.Upload;
 import com.elopteryx.paint.upload.UploadResponse;
 import org.junit.Test;
 
@@ -33,13 +33,12 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
         when(request.isAsyncSupported()).thenReturn(false);
         when(request.getHeader(PartStreamHeaders.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary=----1234");
 
-        UploadParser parser = UploadParser.newParser(request)
+        BlockingUploadParser parser = Upload.newBlockingParser(request)
                 .onPartBegin(this)
                 .onPartEnd(this)
                 .onError(this)
                 .withResponse(UploadResponse.from(response));
-        BlockingUploadParser blockingParser = (BlockingUploadParser)parser;
-        blockingParser.setup();
+        parser.parse();
     }
 
     @Override

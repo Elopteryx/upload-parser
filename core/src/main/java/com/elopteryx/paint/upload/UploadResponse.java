@@ -1,5 +1,6 @@
 package com.elopteryx.paint.upload;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -23,7 +24,7 @@ public class UploadResponse {
      * @param response The servlet response
      * @return A new UploadResponse instance
      */
-    public static UploadResponse from(HttpServletResponse response) {
+    public static UploadResponse from(@Nonnull HttpServletResponse response) {
         UploadResponse wrapper = new UploadResponse();
         wrapper.value = response;
         return wrapper;
@@ -43,7 +44,7 @@ public class UploadResponse {
     /**
      * Retrieves the value object, casting it to the
      * given type.
-     * @param clazz The class to to cast
+     * @param clazz The class to cast
      * @param <T> Type parameter
      * @return The stored value object
      */

@@ -15,13 +15,12 @@
  */
 package com.elopteryx.paint.upload;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
  * A functional interface. An implementation of it must be passed in the
- * {@link UploadParser#onPartBegin(OnPartBegin)} onPartBegin} method to call it at the start of parsing for each part.
+ * {@link com.elopteryx.paint.upload.impl.UploadParser#onPartBegin(OnPartBegin)} onPartBegin} method to call it at the start of parsing for each part.
  */
 @FunctionalInterface
 public interface OnPartBegin {

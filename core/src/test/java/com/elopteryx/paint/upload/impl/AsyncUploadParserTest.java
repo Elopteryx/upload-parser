@@ -2,7 +2,7 @@ package com.elopteryx.paint.upload.impl;
 
 import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.PartStream;
-import com.elopteryx.paint.upload.UploadParser;
+import com.elopteryx.paint.upload.Upload;
 import com.elopteryx.paint.upload.UploadResponse;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -133,12 +133,12 @@ public class AsyncUploadParserTest {
 //            System.out.println("Upload File Directory=" + uploadFilePath.toAbsolutePath().toString());
 
             // Check that we have a file upload request
-            if (!UploadParser.isMultipart(request))
+            if (!Upload.isMultipart(request))
                 throw new ServletException("Not multipart!");
 
             final List<ByteArrayOutputStream> formFields = new ArrayList<>();
 
-            UploadParser parser = UploadParser.newParser(request)
+            AsyncUploadParser parser = Upload.newAsyncParser(request)
                     .onPartBegin((context, buffer) -> {
                         System.out.println("Start!");
                         //use the buffer to detect file type

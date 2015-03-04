@@ -20,27 +20,29 @@ import com.elopteryx.paint.upload.errors.MultipartException;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
- * The asynchronous implementation of the parser. If the calling servlet supports
- * async mode, then the created upload parser will be an instance of this class.
+ * The asynchronous implementation of the parser. This parser can be used to perform a parse
+ * only if the calling servlet supports async mode.
  * Implements the listener interface. Called by the servlet container whenever data is available.
- *
- * This class is only public to serve as an entry point in the implementation package, users
- * should not need to directly depend on this class.
  */
-public class AsyncUploadParser extends UploadParserImpl implements ReadListener {
+public class AsyncUploadParser extends UploadParser<AsyncUploadParser> implements ReadListener {
 
     public AsyncUploadParser(HttpServletRequest request) {
         super(request);
     }
 
-    @Override
+    /**
+     * Performs the necessary operations to setup the async parsing. The parser will
+     * register itself to the request stream and the method will quickly return.
+     * @throws IOException If an error occurred with the request stream
+     */
     public void setup() throws IOException {
-        super.setup();
+        init();
+        if(!request.isAsyncSupported())
+            throw new IllegalStateException("The servlet does not support async mode! Enable it or use a blocking parser.");
         if (!request.isAsyncStarted())
             request.startAsync();
         servletInputStream.setReadListener(this);

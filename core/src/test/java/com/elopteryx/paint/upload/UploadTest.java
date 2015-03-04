@@ -2,6 +2,7 @@ package com.elopteryx.paint.upload;
 
 import com.elopteryx.paint.upload.impl.AsyncUploadParser;
 import com.elopteryx.paint.upload.impl.BlockingUploadParser;
+import com.elopteryx.paint.upload.impl.UploadParser;
 import com.elopteryx.paint.upload.util.MockAsyncContext;
 import org.junit.Test;
 
@@ -21,7 +22,7 @@ import static com.elopteryx.paint.upload.util.Servlets.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
-public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
+public class UploadTest implements OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
 
     @Test(expected = ServletException.class)
     public void valid_and_invalid_content_type() throws Exception {
@@ -29,11 +30,11 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
         HttpServletResponse response = newResponse();
 
         when(request.getContentType()).thenReturn("multipart/");
-        assertTrue(UploadParser.isMultipart(request));
+        assertTrue(Upload.isMultipart(request));
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
-        assertFalse(UploadParser.isMultipart(request));
-        UploadParser.newParser(request).withResponse(UploadResponse.from(response));
+        assertFalse(Upload.isMultipart(request));
+        Upload.newAsyncParser(request).withResponse(UploadResponse.from(response));
     }
 
     @Test
@@ -43,7 +44,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.isAsyncSupported()).thenReturn(true);
 
-        UploadParser asyncParser = UploadParser.newParser(request).withResponse(UploadResponse.from(response));
+        UploadParser asyncParser = Upload.newAsyncParser(request).withResponse(UploadResponse.from(response));
         assertThat(asyncParser, instanceOf(AsyncUploadParser.class));
     }
 
@@ -54,7 +55,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
         
         when(request.isAsyncSupported()).thenReturn(false);
 
-        UploadParser blockingParser = UploadParser.newParser(request).withResponse(UploadResponse.from(response));
+        UploadParser blockingParser = Upload.newBlockingParser(request).withResponse(UploadResponse.from(response));
         assertThat(blockingParser, instanceOf(BlockingUploadParser.class));
     }
 
@@ -65,17 +66,18 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
 
-        UploadParser.newParser(request)
+        Upload.newAsyncParser(request)
                 .onPartBegin(partBeginCallback())
                 .onPartEnd(partEndCallback())
                 .onRequestComplete(requestCallback())
                 .onError(errorCallback())
                 .sizeThreshold(1024 * 1024 * 10)
                 .maxPartSize(1024 * 1024 * 50)
-                .maxRequestSize(1024 * 1024 * 50);
+                .maxRequestSize(1024 * 1024 * 50)
+                .setup();
 
         Random random = new Random();
-        UploadParser.newParser(request)
+        Upload.newBlockingParser(request)
                 .onPartBegin(this)
                 .onPartEnd(this)
                 .onRequestComplete(this)
@@ -87,7 +89,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
     @Override
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-        if(true)
+        if(new Random().nextInt() % 2 == 0)
             return PartOutput.from(Files.newByteChannel(Paths.get("")));
         else
             return PartOutput.from(Files.newOutputStream(Paths.get("")));
