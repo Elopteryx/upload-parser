@@ -31,7 +31,7 @@ import java.util.List;
  * Meta data holder of an upload operation. Its fields are
  * managed by the handler objects.
  */
-class UploadContextImpl implements UploadContext {
+public class UploadContextImpl implements UploadContext {
 
     /**
      * The request containing the bytes of the file. It's always a multipart, POST request.
@@ -64,7 +64,7 @@ class UploadContextImpl implements UploadContext {
      */
     private int partBytesRead;
 
-    UploadContextImpl(HttpServletRequest request, UploadResponse response) {
+    public UploadContextImpl(HttpServletRequest request, UploadResponse response) {
         this.request = request;
         this.response = response;
     }

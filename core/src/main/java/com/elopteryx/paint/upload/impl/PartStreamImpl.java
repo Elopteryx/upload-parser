@@ -22,7 +22,7 @@ import java.util.Collection;
 /**
  * Default implementation of {@link com.elopteryx.paint.upload.PartStream}.
  */
-class PartStreamImpl implements PartStream {
+public class PartStreamImpl implements PartStream {
 
     /**
      * The content type of the part.

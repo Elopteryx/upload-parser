@@ -26,15 +26,11 @@ import com.elopteryx.paint.upload.errors.RequestSizeException;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.function.IntSupplier;
 
 import static java.util.Objects.requireNonNull;
@@ -45,11 +41,6 @@ import static java.util.Objects.requireNonNull;
  */
 @SuppressWarnings("unchecked")
 public abstract class UploadParser<T extends UploadParser<T>> implements MultipartParser.PartHandler {
-
-    /**
-     * The request object.
-     */
-    protected final HttpServletRequest request;
 
     /**
      * The response object.
@@ -90,14 +81,6 @@ public abstract class UploadParser<T extends UploadParser<T>> implements Multipa
      * The maximum size permitted for the complete request. By default it is unlimited.
      */
     protected long maxRequestSize = -1;
-
-    /**
-     * Protected constructor, to prevent invalid usages.
-     * @param request The servlet request
-     */
-    public UploadParser(@Nonnull HttpServletRequest request) {
-        this.request = requireNonNull(request);
-    }
 
     /**
      * Sets a callback for each part, called at the beginning.
@@ -219,57 +202,21 @@ public abstract class UploadParser<T extends UploadParser<T>> implements Multipa
         return (T) this;
     }
 
-    private static final String MULTIPART_FORM_DATA = "multipart/form-data";
+    protected static final String MULTIPART_FORM_DATA = "multipart/form-data";
 
     private static final int BUFFER_SIZE = 1024;
 
-    private ByteBuffer checkBuffer;
+    protected ByteBuffer checkBuffer;
 
     private WritableByteChannel writableChannel;
 
     private long requestSize;
-
-    protected ServletInputStream servletInputStream;
 
     protected UploadContextImpl context;
 
     protected MultipartParser.ParseState parseState;
 
     protected final byte[] buf = new byte[BUFFER_SIZE];
-
-    /**
-     * Sets up the necessary objects to start the parsing. Depending upon
-     * the environment the concrete implementations can be very different.
-     * @throws IOException If an error occurs with the IO
-     */
-    protected void init() throws IOException {
-        requireNonNull(partBeginCallback, "Setting a valid part begin callback is mandatory!");
-        requireNonNull(partEndCallback, "Setting a valid part end callback is mandatory!");
-
-        //Fail fast mode
-        if (maxRequestSize > -1) {
-            long requestSize = request.getContentLengthLong();
-            if (requestSize > maxRequestSize)
-                throw new RequestSizeException("The size of the request (" + requestSize +
-                        ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
-        }
-
-        checkBuffer = ByteBuffer.allocate(sizeThreshold);
-        context = new UploadContextImpl(request, uploadResponse);
-
-        String mimeType = request.getHeader(PartStreamHeaders.CONTENT_TYPE);
-        String boundary;
-        if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
-            boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
-            if (boundary == null) {
-                throw new RuntimeException("Could not find boundary in multipart request with ContentType: "+mimeType+", multipart data will not be available");
-            }
-            Charset charset = request.getCharacterEncoding() != null ? Charset.forName(request.getCharacterEncoding()) : StandardCharsets.ISO_8859_1;
-            parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
-        }
-
-        servletInputStream = request.getInputStream();
-    }
 
     /**
      * Checks how many bytes have been read so far and stops the
@@ -328,13 +275,19 @@ public abstract class UploadParser<T extends UploadParser<T>> implements Multipa
     }
 
     private void validate() throws IOException {
-        PartOutput output = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
-        if(output.safeToCast(WritableByteChannel.class))
-            writableChannel = output.get(WritableByteChannel.class);
-        else if(output.safeToCast(OutputStream.class))
-            writableChannel = Channels.newChannel(output.get(OutputStream.class));
-        else
-            throw new IllegalArgumentException("Invalid output object!");
+        // Leaving the callback null is okay, but returning null from an existing one is not.
+        PartOutput output = null;
+        if(partBeginCallback != null) {
+            output = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
+            if (output.safeToCast(WritableByteChannel.class))
+                writableChannel = output.get(WritableByteChannel.class);
+            else if (output.safeToCast(OutputStream.class))
+                writableChannel = Channels.newChannel(output.get(OutputStream.class));
+            else
+                throw new IllegalArgumentException("Invalid output object!");
+        } else {
+            writableChannel = new NullChannel();
+        }
         context.setOutput(output);
         context.finishBuffering();
         checkBuffer.flip();
@@ -350,6 +303,7 @@ public abstract class UploadParser<T extends UploadParser<T>> implements Multipa
         }
         checkBuffer.clear();
         context.updatePartBytesRead();
-        partEndCallback.onPartEnd(context);
+        if(partEndCallback != null)
+            partEndCallback.onPartEnd(context);
     }
 }

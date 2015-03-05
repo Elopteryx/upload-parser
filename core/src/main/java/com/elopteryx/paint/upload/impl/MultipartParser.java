@@ -31,7 +31,7 @@ import java.util.Base64;
  * handler during certain stages.
  * @author Stuart Douglas
  */
-class MultipartParser {
+public class MultipartParser {
 
     /**
      * The default size for the buffers. 

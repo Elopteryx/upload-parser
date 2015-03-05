@@ -21,7 +21,7 @@ import java.util.*;
  * This class provides support for accessing the headers for a file or form
  * item that was received within a multipart/form-data POST request.
  */
-class PartStreamHeaders {
+public class PartStreamHeaders {
 
     private static final String BOUNDARY = "boundary";
 
@@ -59,14 +59,13 @@ class PartStreamHeaders {
 
     /**
      * Extracts a token from a header that has a given key. For instance if the header is
-     * <p/>
      * content-type=multipart/form-data boundary=myboundary
      * and the key is boundary the myboundary will be returned.
      *
      * @param header The header
      * @return The token, or null if it was not found
      */
-    static String extractBoundaryFromHeader(final String header) {
+    public static String extractBoundaryFromHeader(final String header) {
 
         int pos = header.indexOf(BOUNDARY + '=');
         if (pos == -1) {
@@ -85,7 +84,6 @@ class PartStreamHeaders {
 
     /**
      * Extracts a quoted value from a header that has a given key. For instance if the header is
-     * <p/>
      * content-disposition=form-data; name="my field"
      * and the key is name then "my field" will be returned without the quotes.
      *
@@ -93,7 +91,7 @@ class PartStreamHeaders {
      * @param key    The key that identifies the token to extract
      * @return The token, or null if it was not found
      */
-    static String extractQuotedValueFromHeader(final String header, final String key) {
+    public static String extractQuotedValueFromHeader(final String header, final String key) {
 
         int keyPosition = 0;
         int pos = -1;

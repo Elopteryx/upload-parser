@@ -16,12 +16,20 @@
 package com.elopteryx.paint.upload.impl;
 
 import com.elopteryx.paint.upload.errors.MultipartException;
+import com.elopteryx.paint.upload.errors.RequestSizeException;
 
+import javax.annotation.Nonnull;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * The asynchronous implementation of the parser. This parser can be used to perform a parse
@@ -30,8 +38,49 @@ import java.nio.ByteBuffer;
  */
 public class AsyncUploadParser extends UploadParser<AsyncUploadParser> implements ReadListener {
 
-    public AsyncUploadParser(HttpServletRequest request) {
-        super(request);
+    private ServletInputStream servletInputStream;
+
+    /**
+     * The request object.
+     */
+    protected final HttpServletRequest request;
+
+    public AsyncUploadParser(@Nonnull HttpServletRequest request) {
+        this.request = requireNonNull(request);
+    }
+
+    /**
+     * Sets up the necessary objects to start the parsing. Depending upon
+     * the environment the concrete implementations can be very different.
+     * @throws IOException If an error occurs with the IO
+     */
+    protected void init() throws IOException {
+//        requireNonNull(partBeginCallback, "Setting a valid part begin callback is mandatory!");
+//        requireNonNull(partEndCallback, "Setting a valid part end callback is mandatory!");
+
+        //Fail fast mode
+        if (maxRequestSize > -1) {
+            long requestSize = request.getContentLengthLong();
+            if (requestSize > maxRequestSize)
+                throw new RequestSizeException("The size of the request (" + requestSize +
+                        ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
+        }
+
+        checkBuffer = ByteBuffer.allocate(sizeThreshold);
+        context = new UploadContextImpl(request, uploadResponse);
+
+        String mimeType = request.getHeader(PartStreamHeaders.CONTENT_TYPE);
+        String boundary;
+        if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
+            boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
+            if (boundary == null) {
+                throw new RuntimeException("Could not find boundary in multipart request with ContentType: "+mimeType+", multipart data will not be available");
+            }
+            Charset charset = request.getCharacterEncoding() != null ? Charset.forName(request.getCharacterEncoding()) : StandardCharsets.ISO_8859_1;
+            parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
+        }
+
+        servletInputStream = request.getInputStream();
     }
 
     /**

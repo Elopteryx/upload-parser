@@ -21,6 +21,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
@@ -59,9 +60,13 @@ public class AsyncUploadParserTest {
                 .setContextPath("/")
                 .setDeploymentName("ROOT.war")
                 .addServlets(
-                        Servlets.servlet("FileUploadServlet", TestFileUploadServlet.class)
-                                .addMapping("/")
-                                .setAsyncSupported(true));
+                        Servlets.servlet("SimpleUploadServlet", SimpleUploadServlet.class)
+                                .addMapping("/Simple")
+                                .setAsyncSupported(true),
+                        Servlets.servlet("ComplexUploadServlet", ComplexUploadServlet.class)
+                                .addMapping("/Complex")
+                                .setAsyncSupported(true)
+                );
 
         DeploymentManager manager = Servlets.defaultContainer().addDeployment(servletBuilder);
         manager.deploy();
@@ -73,12 +78,22 @@ public class AsyncUploadParserTest {
                 .build();
         server.start();
     }
-    
-    @Test
-    public void test_with_a_real_request() throws IOException {
 
+    @Test
+    @Ignore
+    public void test_with_a_real_request_simple() throws IOException {
+        performRequest("http://localhost:8080" + "/Simple");
+
+    }
+
+    @Test
+    public void test_with_a_real_request_complex() throws IOException {
+        performRequest("http://localhost:8080" + "/Complex");
+    }
+
+    private void performRequest(String url) throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost httppost = new HttpPost("http://localhost:8080" + "/FileUpload");
+            HttpPost httppost = new HttpPost(url);
 
             HttpEntity entity = MultipartEntityBuilder.create()
                     .addBinaryBody("filefield1", largeFile, ContentType.create("application/octet-stream"), "file1.txt")
@@ -88,7 +103,7 @@ public class AsyncUploadParserTest {
                     .addTextBody("textfield2", "abcdef")
                     .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
                     .build();
-            
+
             httppost.setEntity(entity);
             System.out.println("executing request " + httppost.getRequestLine());
             try (CloseableHttpResponse response = httpClient.execute(httppost)) {
@@ -109,30 +124,33 @@ public class AsyncUploadParserTest {
     }
 
 
-    @WebServlet(value = "/FileUploadServlet", asyncSupported = true)
-    public static class TestFileUploadServlet extends HttpServlet {
+    @WebServlet(value = "/SimpleUploadServlet", asyncSupported = true)
+    public static class SimpleUploadServlet extends HttpServlet {
 
-        /**
-         * Directory where uploaded files will be saved, its relative to
-         * the web application directory.
-         */
-        private static final String UPLOAD_DIR = "uploads";
-
+        @Override
         protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
                 throws ServletException, IOException {
 
+            Upload.newAsyncParser(request)
+                    .onRequestComplete(context -> {
+                        request.getAsyncContext().complete();
+                        response.setStatus(200);
+                    })
+                    .withResponse(UploadResponse.from(response))
+                    .sizeThreshold(4096)
+                    .maxPartSize(Long.MAX_VALUE)
+                    .maxRequestSize(Long.MAX_VALUE)
+                    .setup();
+        }
+    }
 
-            // gets absolute path of the web application
-//            String applicationPath = request.getServletContext().getRealPath("");
-            // constructs path of the directory to save uploaded file
-//            final Path uploadFilePath = Paths.get(applicationPath, UPLOAD_DIR);
+    @WebServlet(value = "/ComplexUploadServlet", asyncSupported = true)
+    public static class ComplexUploadServlet extends HttpServlet {
 
-//            if (!Files.isDirectory(uploadFilePath)) {
-//                Files.createDirectories(uploadFilePath);
-//            }
-//            System.out.println("Upload File Directory=" + uploadFilePath.toAbsolutePath().toString());
+        @Override
+        protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+                throws ServletException, IOException {
 
-            // Check that we have a file upload request
             if (!Upload.isMultipart(request))
                 throw new ServletException("Not multipart!");
 
