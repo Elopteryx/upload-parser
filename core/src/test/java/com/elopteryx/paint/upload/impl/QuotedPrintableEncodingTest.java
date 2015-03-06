@@ -35,7 +35,7 @@ public class QuotedPrintableEncodingTest {
         checkEncoding("=\r\n", "=3d=0d=0a");
     }
 
-    private static void checkEncoding(String original, String encoded) throws IOException {
+    private static void checkEncoding(final String original, String encoded) throws IOException {
         MultipartParser.QuotedPrintableEncoding encoding = new MultipartParser.QuotedPrintableEncoding();
         encoding.handle(new MultipartParser.PartHandler() {
             @Override

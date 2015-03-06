@@ -61,7 +61,9 @@ public class MockAsyncContext implements AsyncContext {
     @Override
     public void dispatch(ServletContext context, String path) {
         this.dispatchedPath = path;
-        this.dispatchHandlers.forEach(Runnable::run);
+        for (Runnable r : this.dispatchHandlers) {
+            r.run();
+        }
     }
 
     @Override

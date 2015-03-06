@@ -39,7 +39,8 @@ public class PartStreamHeaders {
 
     Collection<String> getHeaders(String name) {
         String nameLower = name.toLowerCase(Locale.ENGLISH);
-        return headerNameToValueListMap.getOrDefault(nameLower, Collections.emptyList());
+        Collection<String> headers = headerNameToValueListMap.get(nameLower);
+        return headers != null ? headers : Collections.<String>emptyList();
     }
 
     Collection<String> getHeaderNames() {
@@ -54,7 +55,12 @@ public class PartStreamHeaders {
      */
     void addHeader(String name, String value) {
         String nameLower = name.toLowerCase(Locale.ENGLISH);
-        headerNameToValueListMap.computeIfAbsent(nameLower, n -> new ArrayList<>()).add(value);
+        List<String> headers = headerNameToValueListMap.get(nameLower);
+        if(headers == null) {
+            headers = new ArrayList<>();
+            headerNameToValueListMap.put(nameLower, headers);
+        }
+        headers.add(value);
     }
 
     /**

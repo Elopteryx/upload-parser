@@ -24,18 +24,18 @@ public class Base64EncodingTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void must_throw_exception_on_invalid_data() throws IOException {
-        checkEncoding("f", "Zg=À=");
+        checkEncoding("f", "Zg=ï¿½=");
         checkEncoding("f", "Zg=\u0100=");
     }
 
-    private static void checkEncoding(String original, String encoded) throws IOException {
+    private static void checkEncoding(final String original, String encoded) throws IOException {
 
         //Directly calling the Jdk decoder
         Base64.Decoder decoder = Base64.getMimeDecoder();
         ByteBuffer output = ByteBuffer.allocate(encoded.length());
         decoder.decode(encoded.getBytes(US_ASCII), output.array());
         byte[] actual = output.array();
-        String jdkResult = new String(actual, US_ASCII).trim();
+        final String jdkResult = new String(actual, US_ASCII).trim();
 
         //Using the decoder in the parser, which delegates to the Jdk decoder
         MultipartParser.Base64Encoding encoding = new MultipartParser.Base64Encoding();

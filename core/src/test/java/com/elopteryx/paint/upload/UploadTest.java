@@ -76,15 +76,11 @@ public class UploadTest implements OnPartBegin, OnPartEnd, OnRequestComplete, On
                 .maxRequestSize(1024 * 1024 * 50)
                 .setup();
 
-        Random random = new Random();
         Upload.newBlockingParser(request)
                 .onPartBegin(this)
                 .onPartEnd(this)
                 .onRequestComplete(this)
-                .onError(this)
-                .sizeThreshold(() -> random.nextInt(1024 * 1024 * 10))
-                .maxPartSize(() -> random.nextInt(1024 * 1024 * 50))
-                .maxRequestSize(() -> random.nextInt(1024 * 1024 * 50));
+                .onError(this);
     }
 
     @Override

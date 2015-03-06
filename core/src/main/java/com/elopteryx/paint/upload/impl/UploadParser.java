@@ -31,7 +31,6 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
-import java.util.function.IntSupplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -148,17 +147,6 @@ public abstract class UploadParser<T extends UploadParser<T>> implements Multipa
     }
 
     /**
-     * Sets the amount of bytes to buffer in the memory, before
-     * calling the part end callback.
-     * @param supplier The supplier, which returns the amount to use
-     * @return The parser will return itself
-     */
-    public T sizeThreshold(@Nonnegative @Nonnull IntSupplier supplier) {
-        this.sizeThreshold = Math.max(supplier.getAsInt(), 0);
-        return (T) this;
-    }
-
-    /**
      * Sets the maximum allowed size for each part. Exceeding this
      * will result in a {@link com.elopteryx.paint.upload.errors.PartSizeException} exception.
      * @param maxPartSize The amount to use
@@ -170,17 +158,6 @@ public abstract class UploadParser<T extends UploadParser<T>> implements Multipa
     }
 
     /**
-     * Sets the maximum allowed size for each part. Exceeding this
-     * will result in a {@link com.elopteryx.paint.upload.errors.PartSizeException} exception.
-     * @param supplier The supplier, which returns the amount to use
-     * @return The parser will return itself
-     */
-    public T maxPartSize(@Nonnegative @Nonnull IntSupplier supplier) {
-        this.maxPartSize = Math.max(supplier.getAsInt(), -1);
-        return (T) this;
-    }
-
-    /**
      * Sets the maximum allowed size for the request. Exceeding this
      * will result in a {@link com.elopteryx.paint.upload.errors.RequestSizeException} exception.
      * @param maxRequestSize The amount to use
@@ -188,17 +165,6 @@ public abstract class UploadParser<T extends UploadParser<T>> implements Multipa
      */
     public T maxRequestSize(@Nonnegative long maxRequestSize) {
         this.maxRequestSize = Math.max(maxRequestSize, -1);
-        return (T) this;
-    }
-
-    /**
-     * Sets the maximum allowed size for the request. Exceeding this
-     * will result in a {@link com.elopteryx.paint.upload.errors.RequestSizeException} exception.
-     * @param supplier The supplier, which returns the amount to use
-     * @return The parser will return itself
-     */
-    public T maxRequestSize(@Nonnegative @Nonnull IntSupplier supplier) {
-        this.maxRequestSize = Math.max(supplier.getAsInt(), -1);
         return (T) this;
     }
 

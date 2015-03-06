@@ -17,7 +17,7 @@ public class IdentityEncodingTest {
         checkEncoding("öüóúőűáéí");
     }
 
-    private static void checkEncoding(String original) throws IOException {
+    private static void checkEncoding(final String original) throws IOException {
 
         MultipartParser.IdentityEncoding encoding = new MultipartParser.IdentityEncoding();
         encoding.handle(new MultipartParser.PartHandler() {

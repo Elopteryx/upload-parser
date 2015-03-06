@@ -1,8 +1,13 @@
 package com.elopteryx.paint.upload.impl;
 
+import com.elopteryx.paint.upload.OnError;
+import com.elopteryx.paint.upload.OnPartBegin;
+import com.elopteryx.paint.upload.OnPartEnd;
+import com.elopteryx.paint.upload.OnRequestComplete;
 import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.PartStream;
 import com.elopteryx.paint.upload.Upload;
+import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.UploadResponse;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -32,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -132,9 +138,12 @@ public class AsyncUploadParserTest {
                 throws ServletException, IOException {
 
             Upload.newAsyncParser(request)
-                    .onRequestComplete(context -> {
-                        request.getAsyncContext().complete();
-                        response.setStatus(200);
+                    .onRequestComplete(new OnRequestComplete() {
+                        @Override
+                        public void onRequestComplete(UploadContext context) throws IOException, ServletException {
+                            request.getAsyncContext().complete();
+                            response.setStatus(200);
+                        }
                     })
                     .withResponse(UploadResponse.from(response))
                     .sizeThreshold(4096)
@@ -157,60 +166,70 @@ public class AsyncUploadParserTest {
             final List<ByteArrayOutputStream> formFields = new ArrayList<>();
 
             AsyncUploadParser parser = Upload.newAsyncParser(request)
-                    .onPartBegin((context, buffer) -> {
-                        System.out.println("Start!");
-                        //use the buffer to detect file type
-                        PartStream part = context.getCurrentPart();
-                        String name = part.getName();
-                        if (part.isFile()) {
-                            if ("".equals(part.getSubmittedFileName()))
-                                throw new IOException("No file was chosen for the form field!");
-                            System.out.println("File field " + name + " with file name "
-                                    + part.getSubmittedFileName() + " detected!");
-                            for (String header : part.getHeaderNames())
-                                System.out.println(header + " " + part.getHeader(header));
-                            part.getHeaders("content-type");
-                            System.out.println(part.getContentType());
-//                        Path path = uploadFilePath.resolve(part.getSubmittedFileName());
-//                        return Channels.newChannel(Files.newOutputStream(path));
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            formFields.add(baos);
-                            return PartOutput.from(baos);
-                        } else {
-                            for (String header : part.getHeaderNames())
-                                System.out.println(header + " " + part.getHeader(header));
-                            System.out.println(part.getContentType());
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            formFields.add(baos);
-                            return PartOutput.from(baos);
+                    .onPartBegin(new OnPartBegin() {
+                        @Override
+                        public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+                            System.out.println("Start!");
+                            //use the buffer to detect file type
+                            PartStream part = context.getCurrentPart();
+                            String name = part.getName();
+                            if (part.isFile()) {
+                                if ("".equals(part.getSubmittedFileName()))
+                                    throw new IOException("No file was chosen for the form field!");
+                                System.out.println("File field " + name + " with file name "
+                                        + part.getSubmittedFileName() + " detected!");
+                                for (String header : part.getHeaderNames())
+                                    System.out.println(header + " " + part.getHeader(header));
+                                part.getHeaders("content-type");
+                                System.out.println(part.getContentType());
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                formFields.add(baos);
+                                return PartOutput.from(baos);
+                            } else {
+                                for (String header : part.getHeaderNames())
+                                    System.out.println(header + " " + part.getHeader(header));
+                                System.out.println(part.getContentType());
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                formFields.add(baos);
+                                return PartOutput.from(baos);
+                            }
                         }
                     })
-                    .onPartEnd(context -> {
-                        if (context.getCurrentOutput() != null)
-                            context.getCurrentOutput().close();
-                        System.out.println(context.getCurrentPart().getKnownSize());
-                        System.out.println("Part success!");
+                    .onPartEnd(new OnPartEnd() {
+                        @Override
+                        public void onPartEnd(UploadContext context) throws IOException {
+                            if (context.getCurrentOutput() != null)
+                                context.getCurrentOutput().close();
+                            System.out.println(context.getCurrentPart().getKnownSize());
+                            System.out.println("Part success!");
+                        }
                     })
-                    .onRequestComplete(context -> {
-                        System.out.println("Success!");
-                        UploadResponse uploadResponse = context.getResponse();
-                        if(uploadResponse.safeToCast(HttpServletResponse.class))
-                            uploadResponse.get(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
-                        for (ByteArrayOutputStream baos : formFields)
-                            System.out.println(baos.toString());
-                        context.getRequest().getAsyncContext().complete();
-                        System.out.println("Total parts: " + context.getPartStreams().size());
-                        response.setStatus(200);
+                    .onRequestComplete(new OnRequestComplete() {
+                        @Override
+                        public void onRequestComplete(UploadContext context) throws IOException, ServletException {
+                            System.out.println("Success!");
+                            UploadResponse uploadResponse = context.getResponse();
+                            if (uploadResponse.safeToCast(HttpServletResponse.class))
+                                uploadResponse.get(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
+                            for (ByteArrayOutputStream baos : formFields)
+                                System.out.println(baos.toString());
+                            context.getRequest().getAsyncContext().complete();
+                            System.out.println("Total parts: " + context.getPartStreams().size());
+                            response.setStatus(200);
+                        }
                     })
-                    .onError((context, throwable) -> {
-                        System.out.println("Error!");
-                        throwable.printStackTrace();
-                        for (ByteArrayOutputStream baos : formFields)
-                            System.out.println(baos.toString());
-                        try {
-                            response.sendError(500);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                    .onError(new OnError() {
+                        @Override
+                        public void onError(UploadContext context, Throwable throwable) {
+                            System.out.println("Error!");
+                            throwable.printStackTrace();
+                            for (ByteArrayOutputStream baos : formFields)
+                                System.out.println(baos.toString());
+                            try {
+                                response.sendError(500);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     })
                     .withResponse(UploadResponse.from(response))

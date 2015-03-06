@@ -19,7 +19,6 @@ package com.elopteryx.paint.upload;
  * A functional interface. An implementation of it must be passed in the
  * {@link com.elopteryx.paint.upload.impl.UploadParser#onError(OnError)} onError} method to call it after an error occurs.
  */
-@FunctionalInterface
 public interface OnError {
 
     /**
