@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 
 /**
  * A functional interface. An implementation of it must be passed in the
- * {@link com.elopteryx.paint.upload.impl.UploadParser#onPartBegin(OnPartBegin)} onPartBegin} method to call it at the start of parsing for each part.
+ * {@link UploadParser#onPartBegin(OnPartBegin)} onPartBegin} method to call it at the start of parsing for each part.
  */
 public interface OnPartBegin {
 

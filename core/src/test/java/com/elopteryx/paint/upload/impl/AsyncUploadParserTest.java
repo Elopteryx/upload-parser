@@ -6,7 +6,7 @@ import com.elopteryx.paint.upload.OnPartEnd;
 import com.elopteryx.paint.upload.OnRequestComplete;
 import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.PartStream;
-import com.elopteryx.paint.upload.Upload;
+import com.elopteryx.paint.upload.UploadParser;
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.UploadResponse;
 import io.undertow.Handlers;
@@ -144,7 +144,7 @@ public class AsyncUploadParserTest {
         protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
                 throws ServletException, IOException {
 
-            Upload.newAsyncParser(request)
+            UploadParser.newAsyncParser(request)
                     .onPartEnd(new OnPartEnd() {
                         @Override
                         public void onPartEnd(UploadContext context) throws IOException {
@@ -160,7 +160,7 @@ public class AsyncUploadParserTest {
                             response.setStatus(200);
                         }
                     })
-                    .setup();
+                    .setupAsyncParse();
         }
     }
 
@@ -171,12 +171,12 @@ public class AsyncUploadParserTest {
         protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
                 throws ServletException, IOException {
 
-            if (!Upload.isMultipart(request))
+            if (!UploadParser.isMultipart(request))
                 throw new ServletException("Not multipart!");
 
             final List<ByteArrayOutputStream> formFields = new ArrayList<>();
 
-            AsyncUploadParser parser = Upload.newAsyncParser(request)
+            AsyncUploadParser parser = UploadParser.newAsyncParser(request)
                     .onPartBegin(new OnPartBegin() {
                         @Override
                         public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
@@ -253,7 +253,7 @@ public class AsyncUploadParserTest {
                     .sizeThreshold(4096)
                     .maxPartSize(Long.MAX_VALUE)
                     .maxRequestSize(Long.MAX_VALUE);
-            parser.setup();
+            parser.setupAsyncParse();
         }
     }
 }

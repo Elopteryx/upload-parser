@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
  * The blocking implementation of the parser. This parser can be used to perform a
  * blocking parse, whether the servlet supports async mode or not.
  */
-public class BlockingUploadParser extends UploadParser<BlockingUploadParser> {
+public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadParser> {
 
     /**
      * The request object.
@@ -85,7 +85,7 @@ public class BlockingUploadParser extends UploadParser<BlockingUploadParser> {
      * @return The upload context
      * @throws IOException If an error occurred with the servlet stream
      */
-    public UploadContext parse() throws IOException {
+    public UploadContext blockingParse() throws IOException {
         init();
         try {
             while(true) {

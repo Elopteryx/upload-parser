@@ -36,7 +36,7 @@ import static java.util.Objects.requireNonNull;
  * only if the calling servlet supports async mode.
  * Implements the listener interface. Called by the servlet container whenever data is available.
  */
-public class AsyncUploadParser extends UploadParser<AsyncUploadParser> implements ReadListener {
+public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> implements ReadListener {
 
     private ServletInputStream servletInputStream;
 
@@ -86,7 +86,7 @@ public class AsyncUploadParser extends UploadParser<AsyncUploadParser> implement
      * register itself to the request stream and the method will quickly return.
      * @throws IOException If an error occurred with the request stream
      */
-    public void setup() throws IOException {
+    public void setupAsyncParse() throws IOException {
         init();
         if(!request.isAsyncSupported())
             throw new IllegalStateException("The servlet does not support async mode! Enable it or use a blocking parser.");

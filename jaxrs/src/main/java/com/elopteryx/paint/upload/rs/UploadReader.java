@@ -11,7 +11,7 @@ import com.elopteryx.paint.upload.errors.RequestSizeException;
 import com.elopteryx.paint.upload.impl.MultipartParser;
 import com.elopteryx.paint.upload.impl.PartStreamHeaders;
 import com.elopteryx.paint.upload.impl.UploadContextImpl;
-import com.elopteryx.paint.upload.impl.UploadParser;
+import com.elopteryx.paint.upload.impl.AbstractUploadParser;
 
 import javax.servlet.ServletException;
 import javax.ws.rs.Consumes;
@@ -35,7 +35,7 @@ import static java.nio.charset.StandardCharsets.ISO_8859_1;
  */
 @Provider
 @Consumes(MediaType.MULTIPART_FORM_DATA)
-public class UploadReader<T> extends UploadParser<UploadReader<T>> implements MessageBodyReader<T>, OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
+public class UploadReader<T> extends AbstractUploadParser<UploadReader<T>> implements MessageBodyReader<T>, OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
 
     private static final String CONTENT_LENGTH = "Content-Length";
 

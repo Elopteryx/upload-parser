@@ -15,17 +15,11 @@
  */
 package com.elopteryx.paint.upload.impl;
 
-import com.elopteryx.paint.upload.OnError;
-import com.elopteryx.paint.upload.OnPartBegin;
-import com.elopteryx.paint.upload.OnPartEnd;
-import com.elopteryx.paint.upload.OnRequestComplete;
 import com.elopteryx.paint.upload.PartOutput;
-import com.elopteryx.paint.upload.UploadResponse;
+import com.elopteryx.paint.upload.UploadParser;
 import com.elopteryx.paint.upload.errors.PartSizeException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -38,8 +32,7 @@ import static java.util.Objects.requireNonNull;
  * Base class for the parser implementations. This holds the common methods, like the more specific
  * validation and the calling of the user-supplied functions.
  */
-@SuppressWarnings("unchecked")
-public abstract class UploadParser<T extends UploadParser<T>> implements MultipartParser.PartHandler {
+public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> extends UploadParser<T> implements MultipartParser.PartHandler {
 
     /**
      * The valid mime type.
@@ -57,7 +50,7 @@ public abstract class UploadParser<T extends UploadParser<T>> implements Multipa
     protected WritableByteChannel writableChannel;
 
     /**
-     * The know size of the request.
+     * The known size of the request.
      */
     protected long requestSize;
 
@@ -76,133 +69,6 @@ public abstract class UploadParser<T extends UploadParser<T>> implements Multipa
      * servlet input stream or from a different source.
      */
     protected final byte[] buf = new byte[1024];
-
-    /**
-     * The response object.
-     */
-    protected UploadResponse uploadResponse;
-
-    /**
-     * The part begin callback, called at the beginning of each part parsing. Mandatory.
-     */
-    protected OnPartBegin partBeginCallback;
-
-    /**
-     * The part end callback, called at the end of each part parsing. Mandatory.
-     */
-    protected OnPartEnd partEndCallback;
-
-    /**
-     * The request callback, called after every part has been processed. Optional.
-     */
-    protected OnRequestComplete requestCallback;
-
-    /**
-     * The error callback, called when an error occurred. Optional.
-     */
-    protected OnError errorCallback;
-
-    /**
-     * The number of bytes that should be buffered before calling the part begin callback.
-     */
-    protected int sizeThreshold;
-
-    /**
-     * The maximum size permitted for the parts. By default it is unlimited.
-     */
-    protected long maxPartSize = -1;
-
-    /**
-     * The maximum size permitted for the complete request. By default it is unlimited.
-     */
-    protected long maxRequestSize = -1;
-
-    /**
-     * Sets a callback for each part, called at the beginning.
-     * @param partBeginCallback An object or lambda expression
-     * @return The parser will return itself
-     */
-    public T onPartBegin(@Nonnull OnPartBegin partBeginCallback) {
-        this.partBeginCallback = requireNonNull(partBeginCallback);
-        return (T) this;
-    }
-
-    /**
-     * Sets a callback for each part, called at the end.
-     * @param partEndCallback An object or lambda expression
-     * @return The parser will return itself
-     */
-    public T onPartEnd(@Nonnull OnPartEnd partEndCallback) {
-        this.partEndCallback = requireNonNull(partEndCallback);
-        return (T) this;
-    }
-
-    /**
-     * Sets a callback for the request, called after each part is processed.
-     * @param requestCallback An object or lambda expression
-     * @return The parser will return itself
-     */
-    public T onRequestComplete(@Nonnull OnRequestComplete requestCallback) {
-        this.requestCallback = requireNonNull(requestCallback);
-        return (T) this;
-    }
-
-    /**
-     * Sets a callback for the errors, called if any error occurs.
-     * @param errorCallback An object or lambda expression
-     * @return The parser will return itself
-     */
-    public T onError(@Nonnull OnError errorCallback) {
-        this.errorCallback = requireNonNull(errorCallback);
-        return (T) this;
-    }
-
-    /**
-     * Sets the servlet response object. This is only necessary to allow
-     * access to it during the stages of the parsing. Note that if the
-     * declaration of the custom functions are in the method which has
-     * the response object as a parameter then this method can be skipped
-     * and the parameter reference can be used instead.
-     * @param uploadResponse The response wrapper
-     * @return The parser will return itself
-     */
-    public T withResponse(@Nonnull UploadResponse uploadResponse) {
-        this.uploadResponse = uploadResponse;
-        return (T) this;
-    }
-
-    /**
-     * Sets the amount of bytes to buffer in the memory, before
-     * calling the part end callback.
-     * @param sizeThreshold The amount to use
-     * @return The parser will return itself
-     */
-    public T sizeThreshold(@Nonnegative int sizeThreshold) {
-        this.sizeThreshold = Math.max(sizeThreshold, 0);
-        return (T) this;
-    }
-
-    /**
-     * Sets the maximum allowed size for each part. Exceeding this
-     * will result in a {@link com.elopteryx.paint.upload.errors.PartSizeException} exception.
-     * @param maxPartSize The amount to use
-     * @return The parser will return itself
-     */
-    public T maxPartSize(@Nonnegative long maxPartSize) {
-        this.maxPartSize = Math.max(maxPartSize, -1);
-        return (T) this;
-    }
-
-    /**
-     * Sets the maximum allowed size for the request. Exceeding this
-     * will result in a {@link com.elopteryx.paint.upload.errors.RequestSizeException} exception.
-     * @param maxRequestSize The amount to use
-     * @return The parser will return itself
-     */
-    public T maxRequestSize(@Nonnegative long maxRequestSize) {
-        this.maxRequestSize = Math.max(maxRequestSize, -1);
-        return (T) this;
-    }
 
     /**
      * Checks how many bytes have been read so far and stops the
