@@ -26,8 +26,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * Base class for the parser implementations. This holds the common methods, like the more specific
  * validation and the calling of the user-supplied functions.
@@ -127,17 +125,19 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
     }
 
     private void validate() throws IOException {
-        // Leaving the callback null is okay, but returning null from an existing one is not.
-        PartOutput output;
+        PartOutput output = null;
         if(partBeginCallback != null) {
-            output = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
-            if (output.safeToCast(WritableByteChannel.class))
-                writableChannel = output.get(WritableByteChannel.class);
-            else if (output.safeToCast(OutputStream.class))
-                writableChannel = Channels.newChannel(output.get(OutputStream.class));
-            else
-                throw new IllegalArgumentException("Invalid output object!");
-        } else {
+            output = partBeginCallback.onPartBegin(context, checkBuffer);
+            if (output != null) {
+                if (output.safeToCast(WritableByteChannel.class))
+                    writableChannel = output.get(WritableByteChannel.class);
+                else if (output.safeToCast(OutputStream.class))
+                    writableChannel = Channels.newChannel(output.get(OutputStream.class));
+                else
+                    throw new IllegalArgumentException("Invalid output object!");
+            }
+        }
+        if(output == null) {
             writableChannel = new NullChannel();
             output = PartOutput.from(writableChannel);
         }

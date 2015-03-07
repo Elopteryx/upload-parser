@@ -44,7 +44,7 @@ public interface UploadContext {
      *
      * @return The response object, or null if it was not supplied
      */
-    @Nonnull
+    @Nullable
     UploadResponse getResponse();
 
     /**

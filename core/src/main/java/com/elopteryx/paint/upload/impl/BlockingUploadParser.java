@@ -38,9 +38,9 @@ public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadPar
     /**
      * The request object.
      */
-    protected HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    protected InputStream inputStream;
+    private InputStream inputStream;
 
     public BlockingUploadParser(@Nonnull HttpServletRequest request) {
         this.request = requireNonNull(request);
@@ -51,7 +51,7 @@ public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadPar
      * the environment the concrete implementations can be very different.
      * @throws IOException If an error occurs with the IO
      */
-    protected void init() throws IOException {
+    private void init() throws IOException {
 
         // Fail fast mode
         if (maxRequestSize > -1) {
@@ -85,7 +85,7 @@ public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadPar
      * @return The upload context
      * @throws IOException If an error occurred with the servlet stream
      */
-    public UploadContext blockingParse() throws IOException {
+    public UploadContext doBlockingParse() throws IOException {
         init();
         try {
             while(true) {

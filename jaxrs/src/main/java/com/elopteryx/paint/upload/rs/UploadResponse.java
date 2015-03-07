@@ -10,7 +10,7 @@ import javax.ws.rs.container.AsyncResponse;
  */
 public class UploadResponse extends com.elopteryx.paint.upload.UploadResponse {
 
-    protected UploadResponse() {
+    private UploadResponse() {
         // No need to allow public access
     }
 

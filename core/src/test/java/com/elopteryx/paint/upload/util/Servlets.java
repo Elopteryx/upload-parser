@@ -20,7 +20,7 @@ public class Servlets {
         return request;
     }
 
-    public static HttpServletResponse newResponse() throws Exception {
+    public static HttpServletResponse newResponse() {
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(response.getStatus()).thenReturn(200);

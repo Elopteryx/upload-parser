@@ -10,7 +10,7 @@ import java.nio.channels.WritableByteChannel;
  * The purpose of this is to make the OnPartBegin callback
  * optional, which is useful for testing.
  */
-public class NullChannel implements WritableByteChannel {
+class NullChannel implements WritableByteChannel {
 
     /*
      * Flag to determine whether the channel is closed or not.

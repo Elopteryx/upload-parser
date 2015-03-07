@@ -25,8 +25,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * The public API class for the library. Provides a fluent API for the users to
  * customize the parsing process.
@@ -84,8 +82,8 @@ public class UploadParser<T extends UploadParser<T>> {
      * @param partBeginCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public T onPartBegin(@Nonnull OnPartBegin partBeginCallback) {
-        this.partBeginCallback = requireNonNull(partBeginCallback);
+    public T onPartBegin(OnPartBegin partBeginCallback) {
+        this.partBeginCallback = partBeginCallback;
         return (T) this;
     }
 
@@ -94,8 +92,8 @@ public class UploadParser<T extends UploadParser<T>> {
      * @param partEndCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public T onPartEnd(@Nonnull OnPartEnd partEndCallback) {
-        this.partEndCallback = requireNonNull(partEndCallback);
+    public T onPartEnd(OnPartEnd partEndCallback) {
+        this.partEndCallback = partEndCallback;
         return (T) this;
     }
 
@@ -104,8 +102,8 @@ public class UploadParser<T extends UploadParser<T>> {
      * @param requestCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public T onRequestComplete(@Nonnull OnRequestComplete requestCallback) {
-        this.requestCallback = requireNonNull(requestCallback);
+    public T onRequestComplete(OnRequestComplete requestCallback) {
+        this.requestCallback = requestCallback;
         return (T) this;
     }
 
@@ -114,8 +112,8 @@ public class UploadParser<T extends UploadParser<T>> {
      * @param errorCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public T onError(@Nonnull OnError errorCallback) {
-        this.errorCallback = requireNonNull(errorCallback);
+    public T onError(OnError errorCallback) {
+        this.errorCallback = errorCallback;
         return (T) this;
     }
 
