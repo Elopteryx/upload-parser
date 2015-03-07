@@ -55,10 +55,8 @@ public class AsyncUploadParser extends UploadParser<AsyncUploadParser> implement
      * @throws IOException If an error occurs with the IO
      */
     protected void init() throws IOException {
-//        requireNonNull(partBeginCallback, "Setting a valid part begin callback is mandatory!");
-//        requireNonNull(partEndCallback, "Setting a valid part end callback is mandatory!");
 
-        //Fail fast mode
+        // Fail fast mode
         if (maxRequestSize > -1) {
             long requestSize = request.getContentLengthLong();
             if (requestSize > maxRequestSize)

@@ -26,7 +26,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
@@ -34,32 +33,40 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
+import java.nio.channels.Channel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import static org.junit.Assert.assertTrue;
+
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class AsyncUploadParserTest {
 
-    private ByteArrayInputStream emptyFile;
-    private ByteArrayInputStream smallFile;
-    private ByteArrayInputStream largeFile;
+    private static byte[] emptyFile;
+    private static byte[] smallFile;
+    private static byte[] largeFile;
+
+    private static final String textValue1 = "íéáűúőóüö";
+    private static final String textValue2 = "abcdef";
     
     private Undertow server;
     
     @Before
     public void setUp() throws ServletException {
-        emptyFile = new ByteArrayInputStream(new byte[0]);
-        smallFile = new ByteArrayInputStream("0123456789".getBytes(StandardCharsets.UTF_8));
+        emptyFile = new byte[0];
+        smallFile = "0123456789".getBytes(UTF_8);
         Random random = new Random();
         StringBuilder builder = new StringBuilder();
         for(int i = 0; i < 10000; i++)
             builder.append(random.nextInt(100));
-        largeFile = new ByteArrayInputStream(builder.toString().getBytes(StandardCharsets.UTF_8));
+        largeFile = builder.toString().getBytes(UTF_8);
 
         DeploymentInfo servletBuilder = Servlets.deployment()
                 .setClassLoader(getClass().getClassLoader())
@@ -86,7 +93,6 @@ public class AsyncUploadParserTest {
     }
 
     @Test
-    @Ignore
     public void test_with_a_real_request_simple() throws IOException {
         performRequest("http://localhost:8080" + "/Simple");
 
@@ -105,8 +111,8 @@ public class AsyncUploadParserTest {
                     .addBinaryBody("filefield1", largeFile, ContentType.create("application/octet-stream"), "file1.txt")
                     .addBinaryBody("filefield2", emptyFile, ContentType.create("text/plain"), "file2.txt")
                     .addBinaryBody("filefield3", smallFile, ContentType.create("application/octet-stream"), "file3.txt")
-                    .addTextBody("textfield1", "íéáűúőóüö")
-                    .addTextBody("textfield2", "abcdef")
+                    .addTextBody("textfield1", textValue1)
+                    .addTextBody("textfield2", textValue2)
                     .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
                     .build();
 
@@ -116,6 +122,7 @@ public class AsyncUploadParserTest {
                 System.out.println("----------------------------------------");
                 System.out.println(response.getStatusLine());
                 HttpEntity resEntity = response.getEntity();
+                assertTrue(response.getStatusLine().getStatusCode() == 200);
                 if (resEntity != null) {
                     System.out.println("Response content length: " + resEntity.getContentLength());
                 }
@@ -138,6 +145,14 @@ public class AsyncUploadParserTest {
                 throws ServletException, IOException {
 
             Upload.newAsyncParser(request)
+                    .onPartEnd(new OnPartEnd() {
+                        @Override
+                        public void onPartEnd(UploadContext context) throws IOException {
+                            Channel channel = context.getCurrentOutput().get(Channel.class);
+                            if(channel.isOpen())
+                                channel.close();
+                        }
+                    })
                     .onRequestComplete(new OnRequestComplete() {
                         @Override
                         public void onRequestComplete(UploadContext context) throws IOException, ServletException {
@@ -145,10 +160,6 @@ public class AsyncUploadParserTest {
                             response.setStatus(200);
                         }
                     })
-                    .withResponse(UploadResponse.from(response))
-                    .sizeThreshold(4096)
-                    .maxPartSize(Long.MAX_VALUE)
-                    .maxRequestSize(Long.MAX_VALUE)
                     .setup();
         }
     }
@@ -207,15 +218,21 @@ public class AsyncUploadParserTest {
                     .onRequestComplete(new OnRequestComplete() {
                         @Override
                         public void onRequestComplete(UploadContext context) throws IOException, ServletException {
-                            System.out.println("Success!");
+                            System.out.println("Request complete!");
+                            System.out.println("Total parts: " + context.getPartStreams().size());
+
+                            assertTrue(Arrays.equals(formFields.get(0).toByteArray(), largeFile));
+                            assertTrue(Arrays.equals(formFields.get(1).toByteArray(), emptyFile));
+                            assertTrue(Arrays.equals(formFields.get(2).toByteArray(), smallFile));
+                            assertTrue(Arrays.equals(formFields.get(3).toByteArray(), textValue1.getBytes(ISO_8859_1)));
+                            assertTrue(Arrays.equals(formFields.get(4).toByteArray(), textValue2.getBytes(ISO_8859_1)));
+
                             UploadResponse uploadResponse = context.getResponse();
                             if (uploadResponse.safeToCast(HttpServletResponse.class))
                                 uploadResponse.get(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
                             for (ByteArrayOutputStream baos : formFields)
                                 System.out.println(baos.toString());
                             context.getRequest().getAsyncContext().complete();
-                            System.out.println("Total parts: " + context.getPartStreams().size());
-                            response.setStatus(200);
                         }
                     })
                     .onError(new OnError() {

@@ -7,12 +7,12 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.mockito.Mockito.*;
-import static com.elopteryx.paint.upload.util.Servlets.*;
-import static com.elopteryx.paint.upload.util.FunctionSupplier.*;
-import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
+import static com.elopteryx.paint.upload.util.Servlets.newRequest;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class UploadParserImplTest {
+public class UploadParserTest {
 
     private static final long size = 1024 * 1024 * 100L;
     private static final long smallSize = 1024;
@@ -23,8 +23,6 @@ public class UploadParserImplTest {
         when(request.getContentLengthLong()).thenReturn(requestSize);
 
         AsyncUploadParser parser = Upload.newAsyncParser(request)
-                .onPartBegin(partBeginCallback())
-                .onPartEnd(partEndCallback())
                 .maxPartSize(allowedPartSize)
                 .maxRequestSize(allowedRequestSize);
         parser.setup();

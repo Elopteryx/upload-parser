@@ -18,7 +18,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.elopteryx.paint.upload.util.Servlets.*;
+import static com.elopteryx.paint.upload.util.Servlets.newRequest;
+import static com.elopteryx.paint.upload.util.Servlets.newResponse;
 import static org.mockito.Mockito.when;
 
 public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError {

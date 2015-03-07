@@ -16,11 +16,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Random;
 
-import static org.mockito.Mockito.*;
-import static com.elopteryx.paint.upload.util.FunctionSupplier.*;
-import static com.elopteryx.paint.upload.util.Servlets.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
+import static com.elopteryx.paint.upload.util.Servlets.newRequest;
+import static com.elopteryx.paint.upload.util.Servlets.newResponse;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class UploadTest implements OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
 
@@ -67,10 +69,10 @@ public class UploadTest implements OnPartBegin, OnPartEnd, OnRequestComplete, On
         when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
 
         Upload.newAsyncParser(request)
-                .onPartBegin(partBeginCallback())
-                .onPartEnd(partEndCallback())
-                .onRequestComplete(requestCallback())
-                .onError(errorCallback())
+                .onPartBegin(this)
+                .onPartEnd(this)
+                .onRequestComplete(this)
+                .onError(this)
                 .sizeThreshold(1024 * 1024 * 10)
                 .maxPartSize(1024 * 1024 * 50)
                 .maxRequestSize(1024 * 1024 * 50)

@@ -42,6 +42,42 @@ import static java.util.Objects.requireNonNull;
 public abstract class UploadParser<T extends UploadParser<T>> implements MultipartParser.PartHandler {
 
     /**
+     * The valid mime type.
+     */
+    protected static final String MULTIPART_FORM_DATA = "multipart/form-data";
+
+    /**
+     * The buffer that stores the first bytes of the current part.
+     */
+    protected ByteBuffer checkBuffer;
+
+    /**
+     * The channel to where the current part is written.
+     */
+    protected WritableByteChannel writableChannel;
+
+    /**
+     * The know size of the request.
+     */
+    protected long requestSize;
+
+    /**
+     * The context instance.
+     */
+    protected UploadContextImpl context;
+
+    /**
+     * The reference to the multipart parser.
+     */
+    protected MultipartParser.ParseState parseState;
+
+    /**
+     * The buffer that stores the bytes which were read from the
+     * servlet input stream or from a different source.
+     */
+    protected final byte[] buf = new byte[1024];
+
+    /**
      * The response object.
      */
     protected UploadResponse uploadResponse;
@@ -168,22 +204,6 @@ public abstract class UploadParser<T extends UploadParser<T>> implements Multipa
         return (T) this;
     }
 
-    protected static final String MULTIPART_FORM_DATA = "multipart/form-data";
-
-    private static final int BUFFER_SIZE = 1024;
-
-    protected ByteBuffer checkBuffer;
-
-    private WritableByteChannel writableChannel;
-
-    private long requestSize;
-
-    protected UploadContextImpl context;
-
-    protected MultipartParser.ParseState parseState;
-
-    protected final byte[] buf = new byte[BUFFER_SIZE];
-
     /**
      * Checks how many bytes have been read so far and stops the
      * parsing if a max size has been set and reached.
@@ -242,7 +262,7 @@ public abstract class UploadParser<T extends UploadParser<T>> implements Multipa
 
     private void validate() throws IOException {
         // Leaving the callback null is okay, but returning null from an existing one is not.
-        PartOutput output = null;
+        PartOutput output;
         if(partBeginCallback != null) {
             output = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
             if (output.safeToCast(WritableByteChannel.class))
@@ -253,6 +273,7 @@ public abstract class UploadParser<T extends UploadParser<T>> implements Multipa
                 throw new IllegalArgumentException("Invalid output object!");
         } else {
             writableChannel = new NullChannel();
+            output = PartOutput.from(writableChannel);
         }
         context.setOutput(output);
         context.finishBuffering();
