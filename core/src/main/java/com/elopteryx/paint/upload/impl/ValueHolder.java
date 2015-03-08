@@ -42,7 +42,7 @@ public class ValueHolder {
      * @param <T> Type parameter
      * @return The stored value object
      */
-    public <T> T get(Class<T> clazz) {
+    public <T> T unwrap(Class<T> clazz) {
         return clazz.cast(value);
     }
 }

@@ -3,17 +3,15 @@ package com.elopteryx.paint.upload;
 import com.elopteryx.paint.upload.impl.ValueHolder;
 
 import javax.annotation.Nonnull;
-import java.io.Closeable;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
 
 /**
  * A value holder class, allowing the caller to provide
- * a byte channel or an output stream.
+ * various output objects, like a byte channel or an output stream.
  */
-public class PartOutput extends ValueHolder implements Closeable {
+public class PartOutput extends ValueHolder {
 
     private PartOutput() {
         // No need to allow public access
@@ -43,25 +41,12 @@ public class PartOutput extends ValueHolder implements Closeable {
 
     /**
      * Creates a new instance from the given path object.
-     * @param path A stream which can be used for writing
+     * @param path A file path which can be used for writing
      * @return A new PartOutput instance
      */
     public static PartOutput from(@Nonnull Path path) {
         PartOutput partOutput = new PartOutput();
         partOutput.value = path;
         return partOutput;
-    }
-
-    /**
-     * Closes the value object. Because all possible value
-     * types are closeable this method can be used instead
-     * without retrieving the actual object.
-     * @throws IOException If an error occurred with closing
-     */
-    @Override
-    public void close() throws IOException {
-        //TODO close the used writablechannel, and remove this
-        if(value != null)
-            ((Closeable)value).close();
     }
 }

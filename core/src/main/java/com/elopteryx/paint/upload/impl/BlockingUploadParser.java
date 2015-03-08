@@ -84,7 +84,8 @@ public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadPar
      * the method will not finish until the upload process finished, either
      * successfully or not.
      * @return The upload context
-     * @throws IOException If an error occurred with the servlet stream
+     * @throws IOException If an error occurred with the IO
+     * @throws ServletException If an error occurred with the servlet stream
      */
     public UploadContext doBlockingParse() throws IOException, ServletException {
         init();

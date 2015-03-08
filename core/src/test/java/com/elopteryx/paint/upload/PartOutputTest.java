@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.nio.channels.Channel;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -26,9 +28,7 @@ public class PartOutputTest {
         assertFalse(output.safeToCast(OutputStream.class));
         assertFalse(output.safeToCast(ByteArrayOutputStream.class));
 
-        assertNotNull(output.get(WritableByteChannel.class));
-
-        output.close();
+        assertNotNull(output.unwrap(WritableByteChannel.class));
     }
 
     @Test
@@ -41,8 +41,16 @@ public class PartOutputTest {
         assertFalse(output.safeToCast(Channel.class));
         assertFalse(output.safeToCast(WritableByteChannel.class));
 
-        assertNotNull(output.get(OutputStream.class));
+        assertNotNull(output.unwrap(OutputStream.class));
+    }
 
-        output.close();
+    @Test
+    public void create_path_output() throws IOException {
+        Path path = Paths.get("");
+        PartOutput output = PartOutput.from(path);
+
+        assertTrue(output.safeToCast(Path.class));
+
+        assertNotNull(output.unwrap(Path.class));
     }
 }

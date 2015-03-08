@@ -28,6 +28,8 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Base class for the parser implementations. This holds the common methods, like the more specific
  * validation and the calling of the user-supplied functions.
@@ -129,17 +131,15 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
     private void validate() throws IOException {
         PartOutput output = null;
         if(partBeginCallback != null) {
-            output = partBeginCallback.onPartBegin(context, checkBuffer);
-            if (output != null) {
-                if (output.safeToCast(WritableByteChannel.class))
-                    writableChannel = output.get(WritableByteChannel.class);
-                else if (output.safeToCast(OutputStream.class))
-                    writableChannel = Channels.newChannel(output.get(OutputStream.class));
-                else if (output.safeToCast(Path.class))
-                    writableChannel = Files.newByteChannel(output.get(Path.class)); //TODO write a test for this
-                else
-                    throw new IllegalArgumentException("Invalid output object!");
-            }
+            output = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
+            if (output.safeToCast(WritableByteChannel.class))
+                writableChannel = output.unwrap(WritableByteChannel.class);
+            else if (output.safeToCast(OutputStream.class))
+                writableChannel = Channels.newChannel(output.unwrap(OutputStream.class));
+            else if (output.safeToCast(Path.class))
+                writableChannel = Files.newByteChannel(output.unwrap(Path.class)); //TODO write a test for this
+            else
+                throw new IllegalArgumentException("Invalid output object!");
         }
         if(output == null) {
             writableChannel = new NullChannel();
@@ -160,6 +160,7 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
         }
         checkBuffer.clear();
         context.updatePartBytesRead();
+        writableChannel.close();
         if(partEndCallback != null)
             partEndCallback.onPartEnd(context);
     }

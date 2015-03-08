@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channel;
@@ -149,8 +150,8 @@ public class AsyncUploadParserTest {
                     .onPartEnd(new OnPartEnd() {
                         @Override
                         public void onPartEnd(UploadContext context) throws IOException {
-                            Channel channel = context.getCurrentOutput().get(Channel.class);
-                            if(channel.isOpen())
+                            Channel channel = context.getCurrentOutput().unwrap(Channel.class);
+                            if (channel.isOpen())
                                 channel.close();
                         }
                     })
@@ -211,8 +212,6 @@ public class AsyncUploadParserTest {
                     .onPartEnd(new OnPartEnd() {
                         @Override
                         public void onPartEnd(UploadContext context) throws IOException {
-                            if (context.getCurrentOutput() != null)
-                                context.getCurrentOutput().close();
                             System.out.println(context.getCurrentPart().getKnownSize());
                             System.out.println("Part success!");
                         }
@@ -231,7 +230,7 @@ public class AsyncUploadParserTest {
 
                             UploadResponse uploadResponse = context.getResponse();
                             if (uploadResponse.safeToCast(HttpServletResponse.class))
-                                uploadResponse.get(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
+                                uploadResponse.unwrap(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
                             for (ByteArrayOutputStream baos : formFields)
                                 System.out.println(baos.toString());
                             context.getRequest().getAsyncContext().complete();
