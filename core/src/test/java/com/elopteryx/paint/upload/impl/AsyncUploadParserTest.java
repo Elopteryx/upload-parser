@@ -28,6 +28,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -178,6 +179,7 @@ public class AsyncUploadParserTest {
 
             AsyncUploadParser parser = UploadParser.newAsyncParser(request)
                     .onPartBegin(new OnPartBegin() {
+                        @Nonnull
                         @Override
                         public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
                             System.out.println("Start!");

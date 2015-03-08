@@ -1,21 +1,19 @@
 package com.elopteryx.paint.upload;
 
+import com.elopteryx.paint.upload.impl.ValueHolder;
+
 import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.Path;
 
 /**
  * A value holder class, allowing the caller to provide
  * a byte channel or an output stream.
  */
-public class PartOutput implements Closeable {
-
-    /**
-     * The value object
-     */
-    private Closeable value;
+public class PartOutput extends ValueHolder implements Closeable {
 
     private PartOutput() {
         // No need to allow public access
@@ -44,25 +42,14 @@ public class PartOutput implements Closeable {
     }
 
     /**
-     * Returns whether it is safe to retrieve the value object
-     * with the class parameter.
-     * @param clazz The class type to check
-     * @param <T> Type parameter
-     * @return Whether it is safe to cast or not
+     * Creates a new instance from the given path object.
+     * @param path A stream which can be used for writing
+     * @return A new PartOutput instance
      */
-    public <T> boolean safeToCast(Class<T> clazz) {
-        return clazz.isAssignableFrom(value.getClass());
-    }
-
-    /**
-     * Retrieves the value object, casting it to the
-     * given type.
-     * @param clazz The class to cast
-     * @param <T> Type parameter
-     * @return The stored value object
-     */
-    public <T> T get(Class<T> clazz) {
-        return clazz.cast(value);
+    public static PartOutput from(@Nonnull Path path) {
+        PartOutput partOutput = new PartOutput();
+        partOutput.value = path;
+        return partOutput;
     }
 
     /**
@@ -73,7 +60,8 @@ public class PartOutput implements Closeable {
      */
     @Override
     public void close() throws IOException {
+        //TODO close the used writablechannel, and remove this
         if(value != null)
-            value.close();
+            ((Closeable)value).close();
     }
 }

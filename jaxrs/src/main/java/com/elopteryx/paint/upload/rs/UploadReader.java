@@ -13,6 +13,7 @@ import com.elopteryx.paint.upload.impl.PartStreamHeaders;
 import com.elopteryx.paint.upload.impl.UploadContextImpl;
 import com.elopteryx.paint.upload.impl.AbstractUploadParser;
 
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
@@ -97,6 +98,7 @@ public class UploadReader<T> extends AbstractUploadParser<UploadReader<T>> imple
         return null;
     }
 
+    @Nonnull
     @Override
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
         return null;

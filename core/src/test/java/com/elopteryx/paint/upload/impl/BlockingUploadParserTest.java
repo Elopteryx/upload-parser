@@ -9,6 +9,7 @@ import com.elopteryx.paint.upload.UploadParser;
 import com.elopteryx.paint.upload.UploadResponse;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,6 +44,7 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
     }
 
     @Override
+    @Nonnull
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         strings.add(baos);

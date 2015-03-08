@@ -15,6 +15,7 @@
  */
 package com.elopteryx.paint.upload;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -31,6 +32,7 @@ public interface OnPartBegin {
      * @return A non-null output object (a channel or stream) to write out the part
      * @throws IOException If an error occurred with the channel
      */
+    @Nonnull
     PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException;
 
 }

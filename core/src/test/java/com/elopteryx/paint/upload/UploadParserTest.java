@@ -2,10 +2,10 @@ package com.elopteryx.paint.upload;
 
 import com.elopteryx.paint.upload.impl.AsyncUploadParser;
 import com.elopteryx.paint.upload.impl.BlockingUploadParser;
-import com.elopteryx.paint.upload.impl.AbstractUploadParser;
 import com.elopteryx.paint.upload.util.MockAsyncContext;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +46,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.isAsyncSupported()).thenReturn(true);
 
-        AbstractUploadParser asyncParser = UploadParser.newAsyncParser(request).withResponse(UploadResponse.from(response));
+        UploadParser asyncParser = UploadParser.newAsyncParser(request).withResponse(UploadResponse.from(response));
         assertThat(asyncParser, instanceOf(AsyncUploadParser.class));
     }
 
@@ -57,7 +57,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
         
         when(request.isAsyncSupported()).thenReturn(false);
 
-        AbstractUploadParser blockingParser = UploadParser.newBlockingParser(request).withResponse(UploadResponse.from(response));
+        UploadParser blockingParser = UploadParser.newBlockingParser(request).withResponse(UploadResponse.from(response));
         assertThat(blockingParser, instanceOf(BlockingUploadParser.class));
     }
 
@@ -86,6 +86,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Override
+    @Nonnull
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
         if(new Random().nextInt() % 2 == 0)
             return PartOutput.from(Files.newByteChannel(Paths.get("")));

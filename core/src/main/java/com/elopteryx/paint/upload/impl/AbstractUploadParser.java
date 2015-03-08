@@ -25,6 +25,8 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Base class for the parser implementations. This holds the common methods, like the more specific
@@ -133,6 +135,8 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
                     writableChannel = output.get(WritableByteChannel.class);
                 else if (output.safeToCast(OutputStream.class))
                     writableChannel = Channels.newChannel(output.get(OutputStream.class));
+                else if (output.safeToCast(Path.class))
+                    writableChannel = Files.newByteChannel(output.get(Path.class)); //TODO write a test for this
                 else
                     throw new IllegalArgumentException("Invalid output object!");
             }
