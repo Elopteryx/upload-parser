@@ -27,7 +27,11 @@ import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.EnumSet;
 
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -137,7 +141,7 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
             else if (output.safeToCast(OutputStream.class))
                 writableChannel = Channels.newChannel(output.unwrap(OutputStream.class));
             else if (output.safeToCast(Path.class))
-                writableChannel = Files.newByteChannel(output.unwrap(Path.class)); //TODO write a test for this
+                writableChannel = Files.newByteChannel(output.unwrap(Path.class), EnumSet.of(CREATE, TRUNCATE_EXISTING, WRITE));
             else
                 throw new IllegalArgumentException("Invalid output object!");
         }
