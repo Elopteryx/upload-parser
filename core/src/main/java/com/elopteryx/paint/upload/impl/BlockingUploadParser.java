@@ -20,6 +20,7 @@ import com.elopteryx.paint.upload.errors.MultipartException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
 
 import javax.annotation.Nonnull;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,7 +86,7 @@ public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadPar
      * @return The upload context
      * @throws IOException If an error occurred with the servlet stream
      */
-    public UploadContext doBlockingParse() throws IOException {
+    public UploadContext doBlockingParse() throws IOException, ServletException {
         init();
         try {
             while(true) {

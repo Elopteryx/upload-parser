@@ -154,7 +154,11 @@ public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> i
      */
     @Override
     public void onError(Throwable t) {
-        if(errorCallback != null)
-            errorCallback.onError(context, t);
+        try {
+            if(errorCallback != null)
+                errorCallback.onError(context, t);
+        } catch (IOException | ServletException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
