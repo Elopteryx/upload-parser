@@ -53,12 +53,12 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
     /**
      * The channel to where the current part is written.
      */
-    protected WritableByteChannel writableChannel;
+    private WritableByteChannel writableChannel;
 
     /**
      * The known size of the request.
      */
-    protected long requestSize;
+    private long requestSize;
 
     /**
      * The context instance.

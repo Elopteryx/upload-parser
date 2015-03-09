@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 
-public class MockServletInputStream extends ServletInputStream {
+class MockServletInputStream extends ServletInputStream {
 
     private static final String fileName = "foo.txt";
     private static final String requestData =

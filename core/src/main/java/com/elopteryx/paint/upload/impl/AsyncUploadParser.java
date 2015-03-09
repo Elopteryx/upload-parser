@@ -43,7 +43,7 @@ public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> i
     /**
      * The request object.
      */
-    protected final HttpServletRequest request;
+    private final HttpServletRequest request;
 
     public AsyncUploadParser(@Nonnull HttpServletRequest request) {
         this.request = requireNonNull(request);
