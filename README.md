@@ -115,7 +115,7 @@ You can also integrate the parser with web frameworks. The following example sho
         @POST
         @Path("upload")
         public void multipart(@Context HttpServletRequest request, @Suspended final AsyncResponse asyncResponse) throws IOException, ServletException {
-            UploadParser.newAsyncParser(request, response)
+            UploadParser.newAsyncParser(request)
                 .onPartBegin(this)
                 .onPartEnd(this)
                 .onRequestComplete(this)
