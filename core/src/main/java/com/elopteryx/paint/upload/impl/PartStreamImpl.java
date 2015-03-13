@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.elopteryx.paint.upload.impl;
 
 import com.elopteryx.paint.upload.PartStream;
@@ -107,8 +108,7 @@ public class PartStreamImpl implements PartStream {
     /**
      * Returns whether the part is a form field.
      *
-     * @return True, if the part is a form field,
-     * otherwise false.
+     * @return True, if the part is a form field, otherwise false.
      */
     @Override
     public boolean isFile() {
@@ -138,13 +138,13 @@ public class PartStreamImpl implements PartStream {
         if (fileName != null && fileName.indexOf('\u0000') != -1) {
             final StringBuilder sb = new StringBuilder();
             for (int i = 0; i < fileName.length(); i++) {
-                char c = fileName.charAt(i);
-                switch (c) {
+                char character = fileName.charAt(i);
+                switch (character) {
                     case 0:
                         sb.append("\\0");
                         break;
                     default:
-                        sb.append(c);
+                        sb.append(character);
                         break;
                 }
             }

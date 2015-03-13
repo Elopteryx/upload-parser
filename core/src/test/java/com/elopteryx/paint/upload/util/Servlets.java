@@ -1,13 +1,18 @@
 package com.elopteryx.paint.upload.util;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 public class Servlets {
 
+    /**
+     * Creates a new mock servlet request.
+     * @return The mocked request.
+     * @throws Exception If an error occurred
+     */
     public static HttpServletRequest newRequest() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
@@ -20,6 +25,11 @@ public class Servlets {
         return request;
     }
 
+    /**
+     * Creates a new mock servlet response.
+     * @return The mocked response.
+     * @throws Exception If an error occurred
+     */
     public static HttpServletResponse newResponse() {
         HttpServletResponse response = mock(HttpServletResponse.class);
 

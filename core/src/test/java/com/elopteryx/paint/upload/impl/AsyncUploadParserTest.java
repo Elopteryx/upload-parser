@@ -1,5 +1,10 @@
 package com.elopteryx.paint.upload.impl;
 
+import static org.junit.Assert.assertTrue;
+
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.elopteryx.paint.upload.OnError;
 import com.elopteryx.paint.upload.OnPartBegin;
 import com.elopteryx.paint.upload.OnPartEnd;
@@ -9,6 +14,7 @@ import com.elopteryx.paint.upload.PartStream;
 import com.elopteryx.paint.upload.UploadParser;
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.UploadResponse;
+
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
@@ -28,12 +34,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.annotation.Nonnull;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -42,11 +42,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
-import static org.junit.Assert.assertTrue;
-
-import static java.nio.charset.StandardCharsets.ISO_8859_1;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import javax.annotation.Nonnull;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class AsyncUploadParserTest {
 
@@ -58,15 +59,21 @@ public class AsyncUploadParserTest {
     private static final String textValue2 = "abcdef";
     
     private Undertow server;
-    
+
+    /**
+     * Sets up the test environment, generates data to upload, starts an
+     * Undertow instance which will receive the client requests.
+     * @throws ServletException If an error occurred with the servlets
+     */
     @Before
     public void setUp() throws ServletException {
         emptyFile = new byte[0];
         smallFile = "0123456789".getBytes(UTF_8);
         Random random = new Random();
         StringBuilder builder = new StringBuilder();
-        for(int i = 0; i < 10000; i++)
+        for (int i = 0; i < 10000; i++) {
             builder.append(random.nextInt(100));
+        }
         largeFile = builder.toString().getBytes(UTF_8);
 
         DeploymentInfo servletBuilder = Servlets.deployment()
@@ -150,8 +157,9 @@ public class AsyncUploadParserTest {
                         @Override
                         public void onPartEnd(UploadContext context) throws IOException {
                             Channel channel = context.getCurrentOutput().unwrap(Channel.class);
-                            if (channel.isOpen())
+                            if (channel.isOpen()) {
                                 channel.close();
+                            }
                         }
                     })
                     .onRequestComplete(new OnRequestComplete() {
@@ -172,8 +180,9 @@ public class AsyncUploadParserTest {
         protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
                 throws ServletException, IOException {
 
-            if (!UploadParser.isMultipart(request))
+            if (!UploadParser.isMultipart(request)) {
                 throw new ServletException("Not multipart!");
+            }
 
             final List<ByteArrayOutputStream> formFields = new ArrayList<>();
 
@@ -187,20 +196,23 @@ public class AsyncUploadParserTest {
                             PartStream part = context.getCurrentPart();
                             String name = part.getName();
                             if (part.isFile()) {
-                                if ("".equals(part.getSubmittedFileName()))
+                                if ("".equals(part.getSubmittedFileName())) {
                                     throw new IOException("No file was chosen for the form field!");
+                                }
                                 System.out.println("File field " + name + " with file name "
                                         + part.getSubmittedFileName() + " detected!");
-                                for (String header : part.getHeaderNames())
+                                for (String header : part.getHeaderNames()) {
                                     System.out.println(header + " " + part.getHeader(header));
+                                }
                                 part.getHeaders("content-type");
                                 System.out.println(part.getContentType());
                                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                                 formFields.add(baos);
                                 return PartOutput.from(baos);
                             } else {
-                                for (String header : part.getHeaderNames())
+                                for (String header : part.getHeaderNames()) {
                                     System.out.println(header + " " + part.getHeader(header));
+                                }
                                 System.out.println(part.getContentType());
                                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                                 formFields.add(baos);
@@ -228,10 +240,12 @@ public class AsyncUploadParserTest {
                             assertTrue(Arrays.equals(formFields.get(4).toByteArray(), textValue2.getBytes(ISO_8859_1)));
 
                             UploadResponse uploadResponse = context.getResponse();
-                            if (uploadResponse.safeToCast(HttpServletResponse.class))
+                            if (uploadResponse.safeToCast(HttpServletResponse.class)) {
                                 uploadResponse.unwrap(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
-                            for (ByteArrayOutputStream baos : formFields)
+                            }
+                            for (ByteArrayOutputStream baos : formFields) {
                                 System.out.println(baos.toString());
+                            }
                             context.getRequest().getAsyncContext().complete();
                         }
                     })
@@ -240,8 +254,9 @@ public class AsyncUploadParserTest {
                         public void onError(UploadContext context, Throwable throwable) {
                             System.out.println("Error!");
                             throwable.printStackTrace();
-                            for (ByteArrayOutputStream baos : formFields)
+                            for (ByteArrayOutputStream baos : formFields) {
                                 System.out.println(baos.toString());
+                            }
                             try {
                                 response.sendError(500);
                             } catch (IOException e) {

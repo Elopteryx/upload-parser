@@ -55,8 +55,8 @@ uploadArchives {
                 groupId "com.github.elopteryx"
                 artifactId "paint-upload-core"
 
-                description "Paint Upload is an asynchronous multipart parser for servlets with version 3.1 or above."
-                url "http://elopteryx.github.io/paint-upload-site"
+                description "Paint Upload is an asynchronous file upload library for servlets."
+                url "https://github.com/Elopteryx/paint-upload"
 
                 scm {
                     connection "scm:git:git@github.com/Elopteryx/paint-upload.git"

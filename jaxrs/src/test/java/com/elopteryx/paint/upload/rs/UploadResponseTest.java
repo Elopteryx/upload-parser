@@ -1,11 +1,11 @@
 package com.elopteryx.paint.upload.rs;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.container.AsyncResponse;
-
-import static org.mockito.Mockito.mock;
 
 public class UploadResponseTest {
 

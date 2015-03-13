@@ -15,11 +15,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package com.elopteryx.paint.upload.impl;
+
+import static java.nio.charset.StandardCharsets.US_ASCII;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 /**
  * An efficient and flexible MIME Base64 implementation.
@@ -32,10 +34,10 @@ class Base64Decoder {
     private static final byte[] DECODING_TABLE = new byte[80];
 
     static {
-        ENCODING_TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".getBytes(StandardCharsets.US_ASCII);
+        ENCODING_TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".getBytes(US_ASCII);
         for (int i = 0; i < ENCODING_TABLE.length; i++) {
-            int v = (ENCODING_TABLE[i] & 0xFF) - 43;
-            DECODING_TABLE[v] = (byte)(i + 1);  // zero = illegal
+            int offSet = (ENCODING_TABLE[i] & 0xFF) - 43;
+            DECODING_TABLE[offSet] = (byte)(i + 1);  // zero = illegal
         }
     }
 
@@ -50,14 +52,14 @@ class Base64Decoder {
         return nextByte(buffer.get() & 0xFF, state, last, ignoreErrors);
     }
 
-    private static int nextByte(int c, int state, int last, boolean ignoreErrors) throws IOException {
+    private static int nextByte(int charInt, int state, int last, boolean ignoreErrors) throws IOException {
         if (last == MARK) {
-            if (c != '=') {
+            if (charInt != '=') {
                 throw new IOException("Expected padding character");
             }
             return DONE;
         }
-        if (c == '=') {
+        if (charInt == '=') {
             if (state == 2) {
                 return MARK;
             } else if (state == 3) {
@@ -66,23 +68,23 @@ class Base64Decoder {
                 throw new IOException("Unexpected padding character");
             }
         }
-        if (c == ' ' || c == '\t' || c == '\r' || c == '\n') {
+        if (charInt == ' ' || charInt == '\t' || charInt == '\r' || charInt == '\n') {
             return SKIP;
         }
-        if (c < 43 || c > 122) {
+        if (charInt < 43 || charInt > 122) {
             if (ignoreErrors) {
                 return ERROR;
             }
-            throw new IOException("Invalid base64 character encountered: " + c);
+            throw new IOException("Invalid base64 character encountered: " + charInt);
         }
-        int b = (DECODING_TABLE[c - 43] & 0xFF) - 1;
-        if (b < 0) {
+        int byteInt = (DECODING_TABLE[charInt - 43] & 0xFF) - 1;
+        if (byteInt < 0) {
             if (ignoreErrors) {
                 return ERROR;
             }
-            throw new IOException("Invalid base64 character encountered: " + c);
+            throw new IOException("Invalid base64 character encountered: " + charInt);
         }
-        return b;
+        return byteInt;
     }
 
     /**
@@ -98,112 +100,113 @@ class Base64Decoder {
      * @throws java.io.IOException if the encoded data is corrupted
      */
     public void decode(ByteBuffer source, ByteBuffer target) throws IOException {
-        if (target == null)
+        if (target == null) {
             throw new IllegalStateException();
+        }
 
         int last = this.last;
         int state = this.state;
 
         int remaining = source.remaining();
         int targetRemaining = target.remaining();
-        int b = 0;
+        int byteInt = 0;
         while (remaining-- > 0 && targetRemaining > 0) {
-            b = nextByte(source, state, last, false);
-            if (b == MARK) {
+            byteInt = nextByte(source, state, last, false);
+            if (byteInt == MARK) {
                 last = MARK;
                 if (--remaining <= 0) {
                     break;
                 }
-                b = nextByte(source, state, last, false);
+                byteInt = nextByte(source, state, last, false);
             }
-            if (b == DONE) {
+            if (byteInt == DONE) {
                 last = state = 0;
                 break;
             }
-            if (b == SKIP) {
+            if (byteInt == SKIP) {
                 continue;
             }
             //  ( 6 | 2) (4 | 4) (2 | 6)
             if (state == 0) {
-                last = b << 2;
+                last = byteInt << 2;
                 state++;
                 if (remaining-- <= 0) {
                     break;
                 }
-                b = nextByte(source, state, last, false);
-                if ((b & 0xF000) != 0) {
+                byteInt = nextByte(source, state, last, false);
+                if ((byteInt & 0xF000) != 0) {
                     source.position(source.position() - 1);
                     continue;
                 }
             }
             if (state == 1) {
-                target.put((byte)(last | (b >>> 4)));
-                last = (b & 0x0F) << 4;
+                target.put((byte)(last | (byteInt >>> 4)));
+                last = (byteInt & 0x0F) << 4;
                 state++;
                 if (remaining-- <= 0 || --targetRemaining <= 0) {
                     break;
                 }
-                b = nextByte(source, state, last, false);
-                if ((b & 0xF000) != 0) {
+                byteInt = nextByte(source, state, last, false);
+                if ((byteInt & 0xF000) != 0) {
                     source.position(source.position() - 1);
                     continue;
                 }
             }
             if (state == 2) {
-                target.put((byte) (last | (b >>> 2)));
-                last = (b & 0x3) << 6;
+                target.put((byte) (last | (byteInt >>> 2)));
+                last = (byteInt & 0x3) << 6;
                 state++;
                 if (remaining-- <= 0 || --targetRemaining <= 0) {
                     break;
                 }
-                b = nextByte(source, state, last, false);
-                if ((b & 0xF000) != 0) {
+                byteInt = nextByte(source, state, last, false);
+                if ((byteInt & 0xF000) != 0) {
                     source.position(source.position() - 1);
                     continue;
                 }
             }
             if (state == 3) {
-                target.put((byte)(last | b));
+                target.put((byte)(last | byteInt));
                 last = state = 0;
                 targetRemaining--;
             }
         }
 
         if (remaining > 0) {
-            drain(source, b, state, last);
+            drain(source, byteInt, state, last);
         }
 
         this.last = last;
         this.state = state;
     }
 
-    private static void drain(ByteBuffer source, int b, int state, int last) {
-        while (b != DONE && source.remaining() > 0) {
+    private static void drain(ByteBuffer source, int byteInt, int state, int last) {
+        while (byteInt != DONE && source.remaining() > 0) {
             try {
-                b = nextByte(source, state, last, true);
+                byteInt = nextByte(source, state, last, true);
             } catch (IOException e) {
-                b = 0;
+                byteInt = 0;
             }
 
-            if (b == MARK) {
+            if (byteInt == MARK) {
                 last = MARK;
                 continue;
             }
 
             // Not WS/pad
-            if ((b & 0xF000) == 0) {
+            if ((byteInt & 0xF000) == 0) {
                 source.position(source.position() - 1);
                 break;
             }
         }
 
-        if (b == DONE) {
+        if (byteInt == DONE) {
             // SKIP one line of trailing whitespace
             while (source.remaining() > 0) {
-                b = source.get();
-                if (b == '\n') {
+                byteInt = source.get();
+                if (byteInt == '\n') {
                     break;
-                }  else if (b != ' ' && b != '\t' && b != '\r') {
+                }  else if (byteInt != ' ' && byteInt != '\t' && byteInt != '\r') {
                     source.position(source.position() - 1);
                     break;
                 }

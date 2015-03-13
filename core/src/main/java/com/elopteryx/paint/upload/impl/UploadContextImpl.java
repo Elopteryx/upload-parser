@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.elopteryx.paint.upload.impl;
 
 import com.elopteryx.paint.upload.PartOutput;
@@ -20,12 +21,12 @@ import com.elopteryx.paint.upload.PartStream;
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.UploadResponse;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Meta data holder of an upload operation. Its fields are

@@ -23,7 +23,7 @@ public class MockAsyncContext implements AsyncContext {
 
     private String dispatchedPath;
 
-    private long timeout = 10 * 1000L;	// 10 seconds is Tomcat's default
+    private long timeout = 10 * 1000L; // 10 seconds is Tomcat's default
 
     private final List<Runnable> dispatchHandlers = new ArrayList<>();
 
@@ -71,8 +71,7 @@ public class MockAsyncContext implements AsyncContext {
         for (AsyncListener listener : this.listeners) {
             try {
                 listener.onComplete(new AsyncEvent(this, this.request, this.response));
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new IllegalStateException("AsyncListener failure", e);
             }
         }

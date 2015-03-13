@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.elopteryx.paint.upload.impl;
+
+import static java.util.Objects.requireNonNull;
 
 import com.elopteryx.paint.upload.errors.MultipartException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import javax.annotation.Nonnull;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
-import static java.util.Objects.requireNonNull;
-
 
 /**
  * The asynchronous implementation of the parser. This parser can be used to perform a parse
@@ -59,9 +59,10 @@ public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> i
         // Fail fast mode
         if (maxRequestSize > -1) {
             long requestSize = request.getContentLengthLong();
-            if (requestSize > maxRequestSize)
-                throw new RequestSizeException("The size of the request (" + requestSize +
-                        ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
+            if (requestSize > maxRequestSize) {
+                throw new RequestSizeException("The size of the request (" + requestSize
+                        + ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
+            }
         }
 
         checkBuffer = ByteBuffer.allocate(sizeThreshold);
@@ -72,7 +73,7 @@ public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> i
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
             boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
-                throw new RuntimeException("Could not find boundary in multipart request with ContentType: "+mimeType+", multipart data will not be available");
+                throw new RuntimeException("Could not find boundary in multipart request with ContentType: " + mimeType + ", multipart data will not be available");
             }
             Charset charset = request.getCharacterEncoding() != null ? Charset.forName(request.getCharacterEncoding()) : StandardCharsets.ISO_8859_1;
             parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
@@ -88,10 +89,12 @@ public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> i
      */
     public void setupAsyncParse() throws IOException {
         init();
-        if(!request.isAsyncSupported())
+        if (!request.isAsyncSupported()) {
             throw new IllegalStateException("The servlet does not support async mode! Enable it or use a blocking parser.");
-        if (!request.isAsyncStarted())
+        }
+        if (!request.isAsyncStarted()) {
             request.startAsync();
+        }
         servletInputStream.setReadListener(this);
     }
 
@@ -116,13 +119,14 @@ public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> i
      * @throws IOException if an I/O related error has occurred during processing
      */
     private boolean parseCurrentItem() throws IOException {
-        int c = servletInputStream.read(buf);
-        if (c == -1) {
-            if (!parseState.isComplete())
+        int count = servletInputStream.read(buf);
+        if (count == -1) {
+            if (!parseState.isComplete()) {
                 throw new MultipartException();
+            }
         } else {
-            checkRequestSize(c);
-            parseState.parse(ByteBuffer.wrap(buf, 0, c));
+            checkRequestSize(count);
+            parseState.parse(ByteBuffer.wrap(buf, 0, count));
         }
         return !parseState.isComplete();
     }
@@ -137,12 +141,14 @@ public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> i
         // in case of fast uploads or small sizes the initial parse can read the whole
         // input stream, causing the {@link #onDataAvailable} not to be called even once.
         while (true) {
-            if (!parseCurrentItem())
+            if (!parseCurrentItem()) {
                 break;
+            }
         }
         try {
-            if(requestCallback != null)
+            if (requestCallback != null) {
                 requestCallback.onRequestComplete(context);
+            }
         } catch (ServletException e) {
             throw new RuntimeException(e);
         }
@@ -150,13 +156,14 @@ public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> i
 
     /**
      * Invoked when an error occurs processing the request.
-     * @param t The unhandled error that happened
+     * @param throwable The unhandled error that happened
      */
     @Override
-    public void onError(Throwable t) {
+    public void onError(Throwable throwable) {
         try {
-            if(errorCallback != null)
-                errorCallback.onError(context, t);
+            if (errorCallback != null) {
+                errorCallback.onError(context, throwable);
+            }
         } catch (IOException | ServletException e) {
             throw new RuntimeException(e);
         }

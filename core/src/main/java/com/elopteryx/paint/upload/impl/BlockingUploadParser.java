@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.elopteryx.paint.upload.impl;
+
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.util.Objects.requireNonNull;
 
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.errors.MultipartException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
 
-import javax.annotation.Nonnull;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
-import static java.util.Objects.requireNonNull;
+import javax.annotation.Nonnull;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * The blocking implementation of the parser. This parser can be used to perform a
@@ -57,9 +58,10 @@ public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadPar
         // Fail fast mode
         if (maxRequestSize > -1) {
             long requestSize = request.getContentLengthLong();
-            if (requestSize > maxRequestSize)
-                throw new RequestSizeException("The size of the request (" + requestSize +
-                        ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
+            if (requestSize > maxRequestSize) {
+                throw new RequestSizeException("The size of the request (" + requestSize
+                        + ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
+            }
         }
 
         checkBuffer = ByteBuffer.allocate(sizeThreshold);
@@ -70,9 +72,9 @@ public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadPar
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
             boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
-                throw new RuntimeException("Could not find boundary in multipart request with ContentType: "+mimeType+", multipart data will not be available");
+                throw new RuntimeException("Could not find boundary in multipart request with ContentType: " + mimeType + ", multipart data will not be available");
             }
-            Charset charset = request.getCharacterEncoding() != null ? Charset.forName(request.getCharacterEncoding()) : StandardCharsets.ISO_8859_1;
+            Charset charset = request.getCharacterEncoding() != null ? Charset.forName(request.getCharacterEncoding()) : ISO_8859_1;
             parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
         }
 
@@ -90,23 +92,26 @@ public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadPar
     public UploadContext doBlockingParse() throws IOException, ServletException {
         init();
         try {
-            while(true) {
-                int c = inputStream.read(buf);
-                if (c == -1) {
-                    if (!parseState.isComplete())
+            while (true) {
+                int count = inputStream.read(buf);
+                if (count == -1) {
+                    if (!parseState.isComplete()) {
                         throw new MultipartException();
-                    else
+                    } else {
                         break;
-                } else if(c > 0) {
-                    checkRequestSize(c);
-                    parseState.parse(ByteBuffer.wrap(buf, 0, c));
+                    }
+                } else if (count > 0) {
+                    checkRequestSize(count);
+                    parseState.parse(ByteBuffer.wrap(buf, 0, count));
                 }
             }
-            if(requestCallback != null)
+            if (requestCallback != null) {
                 requestCallback.onRequestComplete(context);
+            }
         } catch (Exception e) {
-            if(errorCallback != null)
+            if (errorCallback != null) {
                 errorCallback.onError(context, e);
+            }
         }
         return context;
     }

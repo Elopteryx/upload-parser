@@ -1,8 +1,6 @@
 /**
- * The top level of the package hierarchy which contains the
- * public API of this library. Interfaces and classes here will
- * not be changed frequently.
- *
- * These classes are parts of the Jax-Rs extensions.
+ * The top level of the package hierarchy which contains
+ * experiments related to using the core library in a
+ * Jax-Rs environment.
  */
 package com.elopteryx.paint.upload.rs;

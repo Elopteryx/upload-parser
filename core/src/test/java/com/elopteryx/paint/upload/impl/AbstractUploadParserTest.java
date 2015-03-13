@@ -1,16 +1,17 @@
 package com.elopteryx.paint.upload.impl;
 
-import com.elopteryx.paint.upload.UploadParser;
-import com.elopteryx.paint.upload.errors.PartSizeException;
-import com.elopteryx.paint.upload.errors.RequestSizeException;
-import org.junit.Test;
-
-import javax.servlet.http.HttpServletRequest;
-
 import static org.mockito.Mockito.when;
 import static com.elopteryx.paint.upload.util.Servlets.newRequest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import com.elopteryx.paint.upload.UploadParser;
+import com.elopteryx.paint.upload.errors.PartSizeException;
+import com.elopteryx.paint.upload.errors.RequestSizeException;
+
+import org.junit.Test;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class AbstractUploadParserTest {
 
@@ -48,8 +49,9 @@ public class AbstractUploadParserTest {
     public void parser_should_throw_exception_for_request_size() throws Exception {
         AbstractUploadParser parser = runSetupForSize(0, smallSize, -1);
         try {
-            for(int i = 0; i < 11; i++)
+            for (int i = 0; i < 11; i++) {
                 parser.checkRequestSize(100);
+            }
         } catch (RequestSizeException e) {
             assertEquals(e.getPermittedSize(), smallSize);
             assertTrue(e.getActualSize() > smallSize);
@@ -61,8 +63,9 @@ public class AbstractUploadParserTest {
     public void parser_should_throw_exception_for_part_size() throws Exception {
         AbstractUploadParser parser = runSetupForSize(0, -1, smallSize);
         try {
-            for(int i = 0; i < 11; i++)
+            for (int i = 0; i < 11; i++) {
                 parser.checkPartSize(100);
+            }
         } catch (PartSizeException e) {
             assertEquals(e.getPermittedSize(), smallSize);
             assertTrue(e.getActualSize() > smallSize);

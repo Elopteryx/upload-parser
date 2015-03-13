@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.elopteryx.paint.upload.impl;
 
-import com.elopteryx.paint.upload.PartOutput;
-import com.elopteryx.paint.upload.UploadParser;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
+import static java.util.Objects.requireNonNull;
+
 import com.elopteryx.paint.upload.errors.PartSizeException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
+import com.elopteryx.paint.upload.PartOutput;
+import com.elopteryx.paint.upload.UploadParser;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,11 +34,6 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.EnumSet;
-
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Base class for the parser implementations. This holds the common methods, like the more specific
@@ -83,9 +84,10 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
      */
     protected void checkPartSize(int additional) {
         long partSize = context.incrementAndGetPartBytesRead(additional);
-        if (maxPartSize > -1 && partSize > maxPartSize)
-            throw new PartSizeException("The size of the part (" + partSize +
-                    ") is greater than the allowed size (" + maxPartSize + ")!", partSize, maxPartSize);
+        if (maxPartSize > -1 && partSize > maxPartSize) {
+            throw new PartSizeException("The size of the part (" + partSize
+                    + ") is greater than the allowed size (" + maxPartSize + ")!", partSize, maxPartSize);
+        }
     }
 
     /**
@@ -95,9 +97,10 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
      */
     protected void checkRequestSize(int additional) {
         requestSize += additional;
-        if (maxRequestSize > -1 && requestSize > maxRequestSize)
-            throw new RequestSizeException("The size of the request (" + requestSize +
-                    ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
+        if (maxRequestSize > -1 && requestSize > maxRequestSize) {
+            throw new RequestSizeException("The size of the request (" + requestSize
+                    + ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
+        }
     }
 
     @Override
@@ -117,7 +120,7 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
         if (context.isBuffering() && (context.getPartBytesRead() >= sizeThreshold)) {
             validate();
         }
-        if(!context.isBuffering()) {
+        if (!context.isBuffering()) {
             while (buffer.hasRemaining()) {
                 writableChannel.write(buffer);
             }
@@ -134,18 +137,19 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
 
     private void validate() throws IOException {
         PartOutput output = null;
-        if(partBeginCallback != null) {
+        if (partBeginCallback != null) {
             output = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
-            if (output.safeToCast(WritableByteChannel.class))
+            if (output.safeToCast(WritableByteChannel.class)) {
                 writableChannel = output.unwrap(WritableByteChannel.class);
-            else if (output.safeToCast(OutputStream.class))
+            } else if (output.safeToCast(OutputStream.class)) {
                 writableChannel = Channels.newChannel(output.unwrap(OutputStream.class));
-            else if (output.safeToCast(Path.class))
+            } else if (output.safeToCast(Path.class)) {
                 writableChannel = Files.newByteChannel(output.unwrap(Path.class), EnumSet.of(CREATE, TRUNCATE_EXISTING, WRITE));
-            else
+            } else {
                 throw new IllegalArgumentException("Invalid output object!");
+            }
         }
-        if(output == null) {
+        if (output == null) {
             writableChannel = new NullChannel();
             output = PartOutput.from(writableChannel);
         }
@@ -159,13 +163,14 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
 
     @Override
     public void endPart() throws IOException {
-        if(context.isBuffering()) {
+        if (context.isBuffering()) {
             validate();
         }
         checkBuffer.clear();
         context.updatePartBytesRead();
         writableChannel.close();
-        if(partEndCallback != null)
+        if (partEndCallback != null) {
             partEndCallback.onPartEnd(context);
+        }
     }
 }

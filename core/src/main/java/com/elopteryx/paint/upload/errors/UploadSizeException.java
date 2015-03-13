@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.elopteryx.paint.upload.errors;
 
 /**
@@ -31,7 +32,7 @@ public abstract class UploadSizeException extends RuntimeException {
     private final long permitted;
 
     /**
-     * Exception thrown when there is a maximum size limit and it is exceeded for the first time
+     * Exception thrown when there is a maximum size limit and it is exceeded for the first time.
      * @param message The message of the exception
      * @param actual The known size at the time of the exception in bytes
      * @param permitted The maximum permitted size in bytes

@@ -21,6 +21,7 @@ subprojects {
     apply plugin: "com.github.ben-manes.versions"
     apply plugin: "com.github.kt3k.coveralls"
     apply plugin: "jacoco"
+    apply plugin: "checkstyle"
 
     configurations {
         provided
@@ -74,6 +75,11 @@ subprojects {
         archives jar
         archives sourcesJar
         archives javadocJar
+    }
+
+    checkstyle {
+        toolVersion = "6.4.1"
+        configFile = new File("${projectDir}/../config/checkstyle/checkstyle.xml")
     }
 
     signing {

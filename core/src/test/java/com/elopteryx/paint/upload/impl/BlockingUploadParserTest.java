@@ -1,5 +1,9 @@
 package com.elopteryx.paint.upload.impl;
 
+import static com.elopteryx.paint.upload.util.Servlets.newRequest;
+import static com.elopteryx.paint.upload.util.Servlets.newResponse;
+import static org.mockito.Mockito.when;
+
 import com.elopteryx.paint.upload.OnError;
 import com.elopteryx.paint.upload.OnPartBegin;
 import com.elopteryx.paint.upload.OnPartEnd;
@@ -7,21 +11,17 @@ import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.UploadParser;
 import com.elopteryx.paint.upload.UploadResponse;
-import org.junit.Test;
 
-import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.elopteryx.paint.upload.util.Servlets.newRequest;
-import static com.elopteryx.paint.upload.util.Servlets.newResponse;
-import static org.mockito.Mockito.when;
+import javax.annotation.Nonnull;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError {
     

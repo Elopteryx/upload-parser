@@ -13,9 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.elopteryx.paint.upload.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * This class provides support for accessing the headers for a file or form
@@ -56,7 +63,7 @@ public class PartStreamHeaders {
     void addHeader(String name, String value) {
         String nameLower = name.toLowerCase(Locale.ENGLISH);
         List<String> headers = headerNameToValueListMap.get(nameLower);
-        if(headers == null) {
+        if (headers == null) {
             headers = new ArrayList<>();
             headerNameToValueListMap.put(nameLower, headers);
         }
@@ -80,8 +87,8 @@ public class PartStreamHeaders {
         int end;
         int start = pos + BOUNDARY.length() + 1;
         for (end = start; end < header.length(); ++end) {
-            char c = header.charAt(end);
-            if (c == ' ' || c == '\t' || c == ';') {
+            char character = header.charAt(end);
+            if (character == ' ' || character == '\t' || character == ';') {
                 break;
             }
         }
@@ -103,15 +110,15 @@ public class PartStreamHeaders {
         int pos = -1;
         boolean inQuotes = false;
         for (int i = 0; i < header.length() - 1; ++i) { //-1 because we need room for the = at the end
-            char c = header.charAt(i);
+            char character = header.charAt(i);
             if (inQuotes) {
-                if (c == '"') {
+                if (character == '"') {
                     inQuotes = false;
                 }
             } else {
-                if (key.charAt(keyPosition) == c) {
+                if (key.charAt(keyPosition) == character) {
                     keyPosition++;
-                } else if (c == '"') {
+                } else if (character == '"') {
                     keyPosition = 0;
                     inQuotes = true;
                 } else {
@@ -137,8 +144,8 @@ public class PartStreamHeaders {
         if (header.charAt(start) == '"') {
             start++;
             for (end = start; end < header.length(); ++end) {
-                char c = header.charAt(end);
-                if (c == '"') {
+                char character = header.charAt(end);
+                if (character == '"') {
                     break;
                 }
             }
@@ -147,8 +154,8 @@ public class PartStreamHeaders {
         } else {
             //no quotes
             for (end = start; end < header.length(); ++end) {
-                char c = header.charAt(end);
-                if (c == ' ' || c == '\t') {
+                char character = header.charAt(end);
+                if (character == ' ' || character == '\t') {
                     break;
                 }
             }

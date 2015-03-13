@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.elopteryx.paint.upload;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import javax.annotation.Nonnull;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * The context object which is passed to the user-supplied functions,
@@ -44,7 +44,6 @@ public interface UploadContext {
      *
      * @return The response object, or null if it was not supplied
      */
-    @Nullable
     UploadResponse getResponse();
 
     /**
@@ -64,7 +63,6 @@ public interface UploadContext {
      *
      * @return The latest output provided by the caller
      */
-    @Nullable
     PartOutput getCurrentOutput();
 
     /**

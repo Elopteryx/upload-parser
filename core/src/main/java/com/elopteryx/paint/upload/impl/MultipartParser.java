@@ -63,10 +63,16 @@ public class MultipartParser {
         void endPart() throws IOException;
     }
 
+    /**
+     * Begins parsing the multipart input, sets up the necessary objects.
+     * @param handler The part handler, which is to be called at certain points.
+     * @param boundary The boundary value for the multipart stream.
+     * @param requestCharset The charset of the input.
+     * @return A new state object to allow calling the parser.
+     */
     public static ParseState beginParse(final PartHandler handler, final byte[] boundary, final Charset requestCharset) {
 
-        // We prepend CR/LF to the boundary to chop trailing CR/LF from
-        // body-data tokens.
+        // We prepend CR/LF to the boundary to chop trailing CR/LF from body-data tokens.
         byte[] boundaryToken = new byte[boundary.length + BOUNDARY_PREFIX.length];
         System.arraycopy(BOUNDARY_PREFIX, 0, boundaryToken, 0, BOUNDARY_PREFIX.length);
         System.arraycopy(boundary, 0, boundaryToken, BOUNDARY_PREFIX.length, boundary.length);
@@ -76,12 +82,13 @@ public class MultipartParser {
     public static class ParseState {
         private final PartHandler partHandler;
         private final Charset requestCharset;
+
         /**
-         * The boundary, complete with the initial CRLF--
+         * The boundary, complete with the initial CRLF--.
          */
         private final byte[] boundary;
 
-        //0=preamble
+        // 0=preamble
         private volatile int state = 0;
         private volatile int subState = Integer.MAX_VALUE; // used for preamble parsing
         private volatile ByteArrayOutputStream currentString = null;
@@ -89,13 +96,23 @@ public class MultipartParser {
         private volatile PartStreamHeaders headers;
         private volatile Encoding encodingHandler;
 
-
+        /**
+         * Public constructor.
+         * @param partHandler The part handler, which is to be called at certain points.
+         * @param requestCharset The charset of the input.
+         * @param boundary The boundary value for the multipart stream.
+         */
         public ParseState(final PartHandler partHandler, Charset requestCharset, final byte[] boundary) {
             this.partHandler = partHandler;
             this.requestCharset = requestCharset;
             this.boundary = boundary;
         }
 
+        /**
+         * Parses the given data. This method can be called by the blocking and async upload parser as well.
+         * @param buffer THe buffer containing new data to process
+         * @throws IOException If an error occurred with the I/O
+         */
         public void parse(ByteBuffer buffer) throws IOException {
             while (buffer.hasRemaining()) {
                 switch (state) {
@@ -359,28 +376,28 @@ public class MultipartParser {
             buffer.clear();
             try {
                 while (rawData.hasRemaining()) {
-                    byte b = rawData.get();
+                    byte readByte = rawData.get();
                     if (equalsSeen) {
                         if (firstCharacter == 0) {
-                            if (b == '\n' || b == '\r') {
+                            if (readByte == '\n' || readByte == '\r') {
                                 //soft line break
                                 //ignore
                                 equalsSeen = false;
                             } else {
-                                firstCharacter = b;
+                                firstCharacter = readByte;
                             }
                         } else {
                             int result = Character.digit((char) firstCharacter, 16);
                             result <<= 4; //shift it 4 bytes and then add the next value to the end
-                            result += Character.digit((char) b, 16);
+                            result += Character.digit((char) readByte, 16);
                             buffer.put((byte) result);
                             equalsSeen = false;
                             firstCharacter = 0;
                         }
-                    } else if (b == '=') {
+                    } else if (readByte == '=') {
                         equalsSeen = true;
                     } else {
-                        buffer.put(b);
+                        buffer.put(readByte);
                         if (!buffer.hasRemaining()) {
                             buffer.flip();
                             handler.data(buffer);

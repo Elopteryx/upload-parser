@@ -6,7 +6,7 @@ dependencies {
     /* Servlet API. */
     provided "javax.servlet:javax.servlet-api:3.1.0"
 
-    /* Restful web services API and implementation. */
+    /* Restful web services API. */
     provided "javax.ws.rs:javax.ws.rs-api:2.0.1"
 
     /* Annotations for code documentation. */
@@ -22,6 +22,12 @@ dependencies {
     /* Http server. */
     testCompile "io.undertow:undertow-core:1.1.2.Final"
     testCompile "io.undertow:undertow-servlet:1.1.2.Final"
+
+    /* Restful web services implementation. */
+    testCompile "org.jboss.resteasy:resteasy-cdi:3.0.10.Final"
+    testCompile "org.jboss.resteasy:resteasy-jaxrs:3.0.10.Final"
+    testCompile "org.jboss.resteasy:async-http-servlet-3.0:3.0.10.Final"
+    testCompile "org.jboss.resteasy:resteasy-client:3.0.10.Final"
 
     /* Object mocking. */
     testCompile "org.mockito:mockito-core:2.0.5-beta"

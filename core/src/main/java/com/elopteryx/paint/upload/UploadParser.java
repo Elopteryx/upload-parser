@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.elopteryx.paint.upload;
 
 import com.elopteryx.paint.upload.impl.AsyncUploadParser;
 import com.elopteryx.paint.upload.impl.BlockingUploadParser;
 
+import java.util.Locale;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Locale;
+import javax.servlet.ServletException;
 
 /**
  * The public API class for the library. Provides a fluent API for the users to
@@ -183,8 +184,9 @@ public class UploadParser<T extends UploadParser<T>> {
      */
     @CheckReturnValue
     public static AsyncUploadParser newAsyncParser(@Nonnull HttpServletRequest request) throws ServletException {
-        if (!isMultipart(request))
+        if (!isMultipart(request)) {
             throw new ServletException("Not a multipart request!");
+        }
         return new AsyncUploadParser(request);
     }
 
@@ -196,8 +198,9 @@ public class UploadParser<T extends UploadParser<T>> {
      */
     @CheckReturnValue
     public static BlockingUploadParser newBlockingParser(@Nonnull HttpServletRequest request) throws ServletException {
-        if (!isMultipart(request))
+        if (!isMultipart(request)) {
             throw new ServletException("Not a multipart request!");
+        }
         return new BlockingUploadParser(request);
     }
 }

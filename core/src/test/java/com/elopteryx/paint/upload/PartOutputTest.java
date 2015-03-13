@@ -1,5 +1,9 @@
 package com.elopteryx.paint.upload;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -10,10 +14,6 @@ import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
 
 public class PartOutputTest {
 

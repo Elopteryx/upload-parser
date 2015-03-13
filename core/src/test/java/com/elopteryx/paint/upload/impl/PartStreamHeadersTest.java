@@ -1,52 +1,52 @@
 package com.elopteryx.paint.upload.impl;
 
-import org.junit.Test;
-
-import java.util.Iterator;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Test;
+
+import java.util.Iterator;
+
 public class PartStreamHeadersTest {
 
     @Test
     public void add_and_retrieve_headers() throws Exception {
-        PartStreamHeaders aMutableFileItemHeaders = new PartStreamHeaders();
-        aMutableFileItemHeaders.addHeader("Content-Disposition", "form-data; name=\"FileItem\"; filename=\"file1.txt\"");
-        aMutableFileItemHeaders.addHeader("Content-Type", "text/plain");
+        PartStreamHeaders partStreamHeaders = new PartStreamHeaders();
+        partStreamHeaders.addHeader("Content-Disposition", "form-data; name=\"FileItem\"; filename=\"file1.txt\"");
+        partStreamHeaders.addHeader("Content-Type", "text/plain");
 
-        aMutableFileItemHeaders.addHeader("TestHeader", "headerValue1");
-        aMutableFileItemHeaders.addHeader("TestHeader", "headerValue2");
-        aMutableFileItemHeaders.addHeader("TestHeader", "headerValue3");
-        aMutableFileItemHeaders.addHeader("testheader", "headerValue4");
+        partStreamHeaders.addHeader("TestHeader", "headerValue1");
+        partStreamHeaders.addHeader("TestHeader", "headerValue2");
+        partStreamHeaders.addHeader("TestHeader", "headerValue3");
+        partStreamHeaders.addHeader("testheader", "headerValue4");
 
-        Iterator<String> headerNameEnumeration = aMutableFileItemHeaders.getHeaderNames().iterator();
+        Iterator<String> headerNameEnumeration = partStreamHeaders.getHeaderNames().iterator();
         assertEquals("content-disposition", headerNameEnumeration.next());
         assertEquals("content-type", headerNameEnumeration.next());
         assertEquals("testheader", headerNameEnumeration.next());
         assertFalse(headerNameEnumeration.hasNext());
 
-        assertEquals(aMutableFileItemHeaders.getHeader("Content-Disposition"), "form-data; name=\"FileItem\"; filename=\"file1.txt\"");
-        assertEquals(aMutableFileItemHeaders.getHeader("Content-Type"), "text/plain");
-        assertEquals(aMutableFileItemHeaders.getHeader("content-type"), "text/plain");
-        assertEquals(aMutableFileItemHeaders.getHeader("TestHeader"), "headerValue1");
-        assertNull(aMutableFileItemHeaders.getHeader("DummyHeader"));
+        assertEquals(partStreamHeaders.getHeader("Content-Disposition"), "form-data; name=\"FileItem\"; filename=\"file1.txt\"");
+        assertEquals(partStreamHeaders.getHeader("Content-Type"), "text/plain");
+        assertEquals(partStreamHeaders.getHeader("content-type"), "text/plain");
+        assertEquals(partStreamHeaders.getHeader("TestHeader"), "headerValue1");
+        assertNull(partStreamHeaders.getHeader("DummyHeader"));
 
         Iterator<String> headerValueEnumeration;
 
-        headerValueEnumeration = aMutableFileItemHeaders.getHeaders("Content-Type").iterator();
+        headerValueEnumeration = partStreamHeaders.getHeaders("Content-Type").iterator();
         assertTrue(headerValueEnumeration.hasNext());
         assertEquals(headerValueEnumeration.next(), "text/plain");
         assertFalse(headerValueEnumeration.hasNext());
 
-        headerValueEnumeration = aMutableFileItemHeaders.getHeaders("content-type").iterator();
+        headerValueEnumeration = partStreamHeaders.getHeaders("content-type").iterator();
         assertTrue(headerValueEnumeration.hasNext());
         assertEquals(headerValueEnumeration.next(), "text/plain");
         assertFalse(headerValueEnumeration.hasNext());
 
-        headerValueEnumeration = aMutableFileItemHeaders.getHeaders("TestHeader").iterator();
+        headerValueEnumeration = partStreamHeaders.getHeaders("TestHeader").iterator();
         assertTrue(headerValueEnumeration.hasNext());
         assertEquals(headerValueEnumeration.next(), "headerValue1");
         assertTrue(headerValueEnumeration.hasNext());
@@ -57,7 +57,7 @@ public class PartStreamHeadersTest {
         assertEquals(headerValueEnumeration.next(), "headerValue4");
         assertFalse(headerValueEnumeration.hasNext());
 
-        headerValueEnumeration = aMutableFileItemHeaders.getHeaders("DummyHeader").iterator();
+        headerValueEnumeration = partStreamHeaders.getHeaders("DummyHeader").iterator();
         assertFalse(headerValueEnumeration.hasNext());
     }
 

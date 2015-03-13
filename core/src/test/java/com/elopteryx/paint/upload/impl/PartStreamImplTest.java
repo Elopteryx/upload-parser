@@ -1,11 +1,12 @@
 package com.elopteryx.paint.upload.impl;
 
-import com.elopteryx.paint.upload.PartStream;
-import org.junit.Test;
-
 import static com.elopteryx.paint.upload.util.Randoms.randomString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import com.elopteryx.paint.upload.PartStream;
+
+import org.junit.Test;
 
 public class PartStreamImplTest {
 

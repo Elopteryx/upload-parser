@@ -1,12 +1,12 @@
 package com.elopteryx.paint.upload.impl;
 
+import static java.nio.charset.StandardCharsets.US_ASCII;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-
-import static java.nio.charset.StandardCharsets.US_ASCII;
-import static org.junit.Assert.assertEquals;
 
 public class QuotedPrintableEncodingTest {
 
@@ -38,15 +38,19 @@ public class QuotedPrintableEncodingTest {
     private static void checkEncoding(final String original, String encoded) throws IOException {
         MultipartParser.QuotedPrintableEncoding encoding = new MultipartParser.QuotedPrintableEncoding();
         encoding.handle(new MultipartParser.PartHandler() {
+
             @Override
             public void beginPart(PartStreamHeaders headers) {}
+
             @Override
             public void data(ByteBuffer buffer) throws IOException {
                 String parserResult = new String(buffer.array(), US_ASCII).trim();
                 assertEquals(parserResult, original.trim());
             }
+
             @Override
             public void endPart() throws IOException {}
+
         }, ByteBuffer.wrap(encoded.getBytes(US_ASCII)));
     }
 

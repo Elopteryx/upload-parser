@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.elopteryx.paint.upload;
 
+import java.util.Collection;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nullable;
-import java.util.Collection;
 
 /**
  * This interface represents a part item, which is being
@@ -73,8 +74,7 @@ public interface PartStream {
      * Consequently, if this returns true then the {@link PartStream#getSubmittedFileName}
      * will return with a non-null value and vice-versa.
      *
-     * @return true if the instance represents an uploaded file;
-     * false if it represents a simple form field.
+     * @return true if the instance represents an uploaded file; false if it represents a simple form field.
      */
     boolean isFile();
 
@@ -86,8 +86,7 @@ public interface PartStream {
      * is case insensitive. You can use this method with any request header.
      *
      * @param name a String specifying the header name
-     * @return a String containing the value of the requested header, or
-     * null if the part does not have a header of that name
+     * @return a String containing the value of the requested header, or null if the part does not have a header of that name
      */
     @Nullable
     String getHeader(String name);

@@ -10,25 +10,25 @@ class MockServletInputStream extends ServletInputStream {
 
     private static final String fileName = "foo.txt";
     private static final String requestData =
-            "-----1234\r\n" +
-                    "Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"\r\n" +
-                    "Content-Type: text/whatever\r\n" +
-                    "\r\n" +
-                    "This is the content of the file\n" +
-                    "\r\n" +
-                    "-----1234\r\n" +
-                    "Content-Disposition: form-data; name=\"field\"\r\n" +
-                    "\r\n" +
-                    "fieldValue\r\n" +
-                    "-----1234\r\n" +
-                    "Content-Disposition: form-data; name=\"multi\"\r\n" +
-                    "\r\n" +
-                    "value1\r\n" +
-                    "-----1234\r\n" +
-                    "Content-Disposition: form-data; name=\"multi\"\r\n" +
-                    "\r\n" +
-                    "value2\r\n" +
-                    "-----1234--\r\n";
+            "-----1234\r\n"
+                    + "Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"\r\n"
+                    + "Content-Type: text/whatever\r\n"
+                    + "\r\n"
+                    + "This is the content of the file\n"
+                    + "\r\n"
+                    + "-----1234\r\n"
+                    + "Content-Disposition: form-data; name=\"field\"\r\n"
+                    + "\r\n"
+                    + "fieldValue\r\n"
+                    + "-----1234\r\n"
+                    + "Content-Disposition: form-data; name=\"multi\"\r\n"
+                    + "\r\n"
+                    + "value1\r\n"
+                    + "-----1234\r\n"
+                    + "Content-Disposition: form-data; name=\"multi\"\r\n"
+                    + "\r\n"
+                    + "value2\r\n"
+                    + "-----1234--\r\n";
     
     private ByteArrayInputStream sourceStream;
 
