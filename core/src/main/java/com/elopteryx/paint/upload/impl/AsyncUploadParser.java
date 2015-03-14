@@ -16,6 +16,7 @@
 
 package com.elopteryx.paint.upload.impl;
 
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.util.Objects.requireNonNull;
 
 import com.elopteryx.paint.upload.errors.MultipartException;
@@ -24,7 +25,6 @@ import com.elopteryx.paint.upload.errors.RequestSizeException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import javax.annotation.Nonnull;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
@@ -73,9 +73,12 @@ public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> i
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
             boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
-                throw new RuntimeException("Could not find boundary in multipart request with ContentType: " + mimeType + ", multipart data will not be available");
+                throw new RuntimeException("Could not find boundary in multipart request with ContentType: "
+                        + mimeType
+                        + ", multipart data will not be available");
             }
-            Charset charset = request.getCharacterEncoding() != null ? Charset.forName(request.getCharacterEncoding()) : StandardCharsets.ISO_8859_1;
+            String encodingHeader = request.getCharacterEncoding();
+            Charset charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
             parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
         }
 

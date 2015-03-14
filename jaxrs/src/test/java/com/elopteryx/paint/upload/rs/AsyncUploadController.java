@@ -25,7 +25,7 @@ public class AsyncUploadController implements OnPartBegin, OnRequestComplete, On
 
     /**
      * This endpoint serves multipart requests, using a newly created upload parser.
-     * @param request THe servlet request
+     * @param request The servlet request
      * @param asyncResponse The Jax-Rs async response
      * @throws IOException If an error occurred with the I/O
      * @throws ServletException If an error occurred with the servlet
@@ -44,6 +44,20 @@ public class AsyncUploadController implements OnPartBegin, OnRequestComplete, On
     @POST
     @Path("uploadWithReader")
     public Response multipart(UploadContext context) throws IOException, ServletException {
+        return Response.status(200).build();
+    }
+
+    @POST
+    @Path("uploadWithReaderAndPartLimit")
+    public Response multipartSizeLimited(@UploadConfig(maxPartSize = 4096) UploadContext context) throws IOException, ServletException {
+        // This should be called only when each part size is smaller than the limit
+        return Response.status(200).build();
+    }
+
+    @POST
+    @Path("uploadWithReaderAndRequestLimit")
+    public Response multipartRequestSizeLimited(@UploadConfig(maxRequestSize = 4096) UploadContext context) throws IOException, ServletException {
+        // This should be called only when the request size is smaller than the limit
         return Response.status(200).build();
     }
 

@@ -72,9 +72,12 @@ public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadPar
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
             boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
-                throw new RuntimeException("Could not find boundary in multipart request with ContentType: " + mimeType + ", multipart data will not be available");
+                throw new RuntimeException("Could not find boundary in multipart request with ContentType: "
+                        + mimeType
+                        + ", multipart data will not be available");
             }
-            Charset charset = request.getCharacterEncoding() != null ? Charset.forName(request.getCharacterEncoding()) : ISO_8859_1;
+            String encodingHeader = request.getCharacterEncoding();
+            Charset charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
             parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
         }
 

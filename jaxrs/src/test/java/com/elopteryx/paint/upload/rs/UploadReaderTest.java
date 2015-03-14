@@ -4,6 +4,9 @@ import static org.junit.Assert.assertTrue;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.elopteryx.paint.upload.rs.errors.PartSizeMapper;
+import com.elopteryx.paint.upload.rs.errors.RequestSizeMapper;
+
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
@@ -26,9 +29,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 public class UploadReaderTest {
 
@@ -44,7 +49,7 @@ public class UploadReaderTest {
     /**
      * Sets up the test environment, generates data to upload, starts an
      * Undertow instance which will receive the client requests.
-     * @throws javax.servlet.ServletException If an error occurred with the servlets
+     * @throws ServletException If an error occurred with the servlets
      */
     @Before
     public void setUp() throws ServletException {
@@ -59,7 +64,7 @@ public class UploadReaderTest {
 
         ResteasyDeployment deployment = new ResteasyDeployment();
         deployment.getActualResourceClasses().add(AsyncUploadController.class);
-        deployment.getActualProviderClasses().add(UploadReader.class);
+        deployment.getActualProviderClasses().addAll(Arrays.asList(CustomUploadReader.class, PartSizeMapper.class, RequestSizeMapper.class));
 
         ServletInfo restEasyServlet = Servlets.servlet("RestEasyServlet", HttpServlet30Dispatcher.class)
                 .setAsyncSupported(true)
@@ -86,16 +91,25 @@ public class UploadReaderTest {
 
     @Test
     public void test_the_upload_parser_with_jax_rs() throws IOException {
-        performRequest("http://localhost:8080" + "/upload" + "/uploadWithParser");
-
+        performRequest("http://localhost:8080" + "/upload" + "/uploadWithParser", HttpServletResponse.SC_OK);
     }
 
     @Test
     public void test_the_upload_reader_with_jax_rs() throws IOException {
-        performRequest("http://localhost:8080" + "/upload" + "/uploadWithReader");
+        performRequest("http://localhost:8080" + "/upload" + "/uploadWithReader", HttpServletResponse.SC_OK);
     }
 
-    private void performRequest(String url) throws IOException {
+    @Test
+    public void test_the_upload_reader_with_jax_rs_part_size_limited() throws IOException {
+        performRequest("http://localhost:8080" + "/upload" + "/uploadWithReaderAndPartLimit", HttpServletResponse.SC_NOT_ACCEPTABLE);
+    }
+
+    @Test
+    public void test_the_upload_reader_with_jax_rs_request_size_limited() throws IOException {
+        performRequest("http://localhost:8080" + "/upload" + "/uploadWithReaderAndRequestLimit", HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
+    }
+
+    private void performRequest(String url, int expectedStatus) throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httppost = new HttpPost(url);
 
@@ -114,7 +128,7 @@ public class UploadReaderTest {
                 System.out.println("----------------------------------------");
                 System.out.println(response.getStatusLine());
                 HttpEntity resEntity = response.getEntity();
-                assertTrue(response.getStatusLine().getStatusCode() == 200);
+                assertTrue(response.getStatusLine().getStatusCode() == expectedStatus);
                 if (resEntity != null) {
                     System.out.println("Response content length: " + resEntity.getContentLength());
                 }

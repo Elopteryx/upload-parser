@@ -18,17 +18,13 @@ package com.elopteryx.paint.upload.rs;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
-import com.elopteryx.paint.upload.OnError;
 import com.elopteryx.paint.upload.OnPartBegin;
 import com.elopteryx.paint.upload.OnPartEnd;
-import com.elopteryx.paint.upload.OnRequestComplete;
-import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.errors.MultipartException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
 import com.elopteryx.paint.upload.impl.AbstractUploadParser;
 import com.elopteryx.paint.upload.impl.MultipartParser;
-import com.elopteryx.paint.upload.impl.NullChannel;
 import com.elopteryx.paint.upload.impl.PartStreamHeaders;
 import com.elopteryx.paint.upload.impl.UploadContextImpl;
 
@@ -38,8 +34,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import javax.annotation.Nonnull;
-import javax.servlet.ServletException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -48,12 +42,15 @@ import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
 
 /**
- * This class is an example of a message body reader for multipart requests. It works like the blocking
- * upload parser.
+ * This class is a message body reader for multipart requests. It works like the blocking
+ * upload parser. Actual readers should extend this and implement the callback interfaces,
+ * which are the part begin and end callbacks. No onRequestComplete, because that should go
+ * into the controller method and no onError, because that should be handled by an
+ * exception mapper.
  */
 @Provider
 @Consumes(MediaType.MULTIPART_FORM_DATA)
-public class UploadReader extends AbstractUploadParser<UploadReader> implements MessageBodyReader<UploadContext>, OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
+public abstract class UploadReader extends AbstractUploadParser<UploadReader> implements MessageBodyReader<UploadContext>, OnPartBegin, OnPartEnd {
 
     private static final String CONTENT_LENGTH = "Content-Length";
 
@@ -69,9 +66,18 @@ public class UploadReader extends AbstractUploadParser<UploadReader> implements 
                       MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
             throws IOException, WebApplicationException {
 
-
         partBeginCallback = this;
         partEndCallback = this;
+
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof UploadConfig) {
+                UploadConfig config = (UploadConfig)annotation;
+                sizeThreshold(config.sizeThreshold());
+                maxPartSize(config.maxPartSize());
+                maxRequestSize(config.maxRequestSize());
+                break;
+            }
+        }
 
         //Fail fast mode
         if (maxRequestSize > -1) {
@@ -90,52 +96,28 @@ public class UploadReader extends AbstractUploadParser<UploadReader> implements 
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
             boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
-                throw new RuntimeException("Could not find boundary in multipart request with ContentType: " + mimeType + ", multipart data will not be available");
+                throw new RuntimeException("Could not find boundary in multipart request with ContentType: "
+                        + mimeType
+                        + ", multipart data will not be available");
             }
-            Charset charset = httpHeaders.getFirst(CONTENT_ENCODING) != null ? Charset.forName(httpHeaders.getFirst(CONTENT_ENCODING)) : ISO_8859_1;
+            String encodingHeader = httpHeaders.getFirst(CONTENT_ENCODING);
+            Charset charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
             parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
         }
 
-        try {
-            while (true) {
-                int count = entityStream.read(buf);
-                if (count == -1) {
-                    if (!parseState.isComplete()) {
-                        throw new MultipartException();
-                    } else {
-                        break;
-                    }
-                } else if (count > 0) {
-                    checkRequestSize(count);
-                    parseState.parse(ByteBuffer.wrap(buf, 0, count));
+        while (true) {
+            int count = entityStream.read(buf);
+            if (count == -1) {
+                if (!parseState.isComplete()) {
+                    throw new MultipartException();
+                } else {
+                    break;
                 }
+            } else if (count > 0) {
+                checkRequestSize(count);
+                parseState.parse(ByteBuffer.wrap(buf, 0, count));
             }
-            onRequestComplete(context);
-        } catch (Exception e) {
-            onError(context, e);
         }
         return context;
-    }
-
-    @Nonnull
-    @Override
-    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-        // Intentionally written to return a null channel, subclasses should override it
-        return PartOutput.from(new NullChannel());
-    }
-
-    @Override
-    public void onPartEnd(UploadContext context) throws IOException {
-        // Intentionally left empty, subclasses can optionally override it
-    }
-
-    @Override
-    public void onRequestComplete(UploadContext context) throws IOException, ServletException {
-        // Intentionally left empty, subclasses should override it
-    }
-
-    @Override
-    public void onError(UploadContext context, Throwable throwable) {
-        // Intentionally left empty, subclasses can optionally override it
     }
 }
