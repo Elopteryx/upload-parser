@@ -51,7 +51,6 @@ public class MultipartParserTest {
         assertEquals("Just some chinese characters I copied from the internet, no idea what it says.", handler.parts.get(0).data.toString());
 
         assertEquals("text/plain", handler.parts.get(0).map.getHeader(PartStreamHeaders.CONTENT_TYPE));
-        assertEquals("attachment; filename=个专为语文教学而设计的电脑软件.txt", handler.parts.get(0).map.getHeader(PartStreamHeaders.CONTENT_DISPOSITION));
     }
 
     @Test

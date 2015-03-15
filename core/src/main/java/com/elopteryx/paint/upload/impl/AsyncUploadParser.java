@@ -73,7 +73,7 @@ public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> i
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
             boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
-                throw new RuntimeException("Could not find boundary in multipart request with ContentType: "
+                throw new IllegalArgumentException("Could not find boundary in multipart request with ContentType: "
                         + mimeType
                         + ", multipart data will not be available");
             }

@@ -1,9 +1,11 @@
 package com.elopteryx.paint.upload.impl;
 
-import static org.junit.Assert.assertTrue;
-
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
+import static org.junit.Assert.assertTrue;
 
 import com.elopteryx.paint.upload.OnError;
 import com.elopteryx.paint.upload.OnPartBegin;
@@ -15,6 +17,8 @@ import com.elopteryx.paint.upload.UploadParser;
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.UploadResponse;
 
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
@@ -38,8 +42,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channel;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 import javax.annotation.Nonnull;
@@ -60,13 +68,15 @@ public class IntegrationTest {
     
     private static Undertow server;
 
+    private static FileSystem fileSystem;
+
     /**
      * Sets up the test environment, generates data to upload, starts an
      * Undertow instance which will receive the client requests.
      * @throws ServletException If an error occurred with the servlets
      */
     @BeforeClass
-    public static void setUp() throws ServletException {
+    public static void setUpClass() throws ServletException {
         emptyFile = new byte[0];
         smallFile = "0123456789".getBytes(UTF_8);
         Random random = new Random();
@@ -107,6 +117,8 @@ public class IntegrationTest {
                 .setHandler(path)
                 .build();
         server.start();
+
+        fileSystem = Jimfs.newFileSystem(Configuration.unix());
     }
 
     @Test
@@ -176,12 +188,35 @@ public class IntegrationTest {
                 throws ServletException, IOException {
 
             UploadParser.newAsyncParser(request)
+                    .onPartBegin(new OnPartBegin() {
+                        @Nonnull
+                        @Override
+                        public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+                            if (context.getPartStreams().size() == 1) {
+                                Path dir = IntegrationTest.fileSystem.getPath("");
+                                Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
+                                return PartOutput.from(Files.newByteChannel(temp, EnumSet.of(CREATE, TRUNCATE_EXISTING, WRITE)));
+                            } else if (context.getPartStreams().size() == 2) {
+                                Path dir = IntegrationTest.fileSystem.getPath("");
+                                Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
+                                return PartOutput.from(Files.newOutputStream(temp));
+                            } else if (context.getPartStreams().size() == 3) {
+                                Path dir = IntegrationTest.fileSystem.getPath("");
+                                Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
+                                return PartOutput.from(temp);
+                            } else {
+                                return PartOutput.from(new NullChannel());
+                            }
+                        }
+                    })
                     .onPartEnd(new OnPartEnd() {
                         @Override
                         public void onPartEnd(UploadContext context) throws IOException {
-                            Channel channel = context.getCurrentOutput().unwrap(Channel.class);
-                            if (channel.isOpen()) {
-                                channel.close();
+                            if (context.getCurrentOutput().safeToCast(Channel.class)) {
+                                Channel channel = context.getCurrentOutput().unwrap(Channel.class);
+                                if (channel.isOpen()) {
+                                    channel.close();
+                                }
                             }
                         }
                     })
@@ -227,15 +262,22 @@ public class IntegrationTest {
     @WebServlet(value = "/AsyncErrorUploadServlet", asyncSupported = true)
     public static class AsyncErrorUploadServlet extends HttpServlet {
 
+        private class EvilOutput extends PartOutput {
+            protected EvilOutput(Object value) {
+                super(value);
+            }
+        }
+
         @Override
         protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
                 throws ServletException, IOException {
 
             UploadParser.newAsyncParser(request)
-                    .onRequestComplete(new OnRequestComplete() {
+                    .onPartBegin(new OnPartBegin() {
+                        @Nonnull
                         @Override
-                        public void onRequestComplete(UploadContext context) throws IOException, ServletException {
-                            throw new IOException();
+                        public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+                            return new EvilOutput("This will cause an error!");
                         }
                     })
                     .onError(new OnError() {
@@ -345,17 +387,13 @@ public class IntegrationTest {
                     })
                     .onError(new OnError() {
                         @Override
-                        public void onError(UploadContext context, Throwable throwable) {
+                        public void onError(UploadContext context, Throwable throwable) throws IOException, ServletException {
                             System.out.println("Error!");
                             throwable.printStackTrace();
                             for (ByteArrayOutputStream baos : formFields) {
                                 System.out.println(baos.toString());
                             }
-                            try {
-                                response.sendError(500);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            response.sendError(500);
                         }
                     })
                     .withResponse(UploadResponse.from(response))

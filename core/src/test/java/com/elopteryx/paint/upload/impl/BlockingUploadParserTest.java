@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError {
     
     private List<ByteArrayOutputStream> strings = new ArrayList<>();
-    
+
     @Test
     public void this_should_end_with_multipart_exception() throws Exception {
         HttpServletRequest request = newRequest();
@@ -38,12 +38,22 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
         when(request.isAsyncSupported()).thenReturn(false);
         when(request.getHeader(PartStreamHeaders.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary=----1234");
 
-        BlockingUploadParser parser = UploadParser.newBlockingParser(request)
+        UploadParser.newBlockingParser(request)
                 .onPartBegin(this)
                 .onPartEnd(this)
                 .onError(this)
-                .withResponse(UploadResponse.from(response));
-        parser.doBlockingParse();
+                .withResponse(UploadResponse.from(response))
+                .doBlockingParse();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void this_should_end_with_illegal_argument_exception() throws Exception {
+        HttpServletRequest request = newRequest();
+
+        when(request.isAsyncSupported()).thenReturn(false);
+        when(request.getHeader(PartStreamHeaders.CONTENT_TYPE)).thenReturn("multipart/form-data;");
+
+        UploadParser.newBlockingParser(request).doBlockingParse();
     }
 
     @Override
