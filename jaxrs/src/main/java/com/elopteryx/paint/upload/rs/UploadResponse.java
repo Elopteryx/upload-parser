@@ -24,7 +24,7 @@ import javax.ws.rs.container.AsyncResponse;
  * to wrap an AsyncResponse to retrieve it later if the instance reference
  * is not available.
  */
-public class UploadResponse extends com.elopteryx.paint.upload.UploadResponse { //TODO UploadResponse shouldn't be a value holder, just return with the response object, and extend it
+public class UploadResponse extends com.elopteryx.paint.upload.UploadResponse {
 
     /**
      * Public constructor.

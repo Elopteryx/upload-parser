@@ -2,6 +2,8 @@ package com.elopteryx.paint.upload.impl;
 
 import static com.elopteryx.paint.upload.util.Servlets.newRequest;
 import static com.elopteryx.paint.upload.util.Servlets.newResponse;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 import com.elopteryx.paint.upload.OnError;
@@ -11,6 +13,7 @@ import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.UploadParser;
 import com.elopteryx.paint.upload.UploadResponse;
+import com.elopteryx.paint.upload.errors.MultipartException;
 
 import org.junit.Test;
 
@@ -28,7 +31,7 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
     private List<ByteArrayOutputStream> strings = new ArrayList<>();
     
     @Test
-    public void the_whole_parsing_should_work() throws Exception {
+    public void this_should_end_with_multipart_exception() throws Exception {
         HttpServletRequest request = newRequest();
         HttpServletResponse response = newResponse();
 
@@ -58,6 +61,6 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
 
     @Override
     public void onError(UploadContext context, Throwable throwable) {
-        throwable.printStackTrace();
+        assertThat(throwable, instanceOf(MultipartException.class));
     }
 }

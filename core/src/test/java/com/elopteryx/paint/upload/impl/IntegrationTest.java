@@ -30,8 +30,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -49,7 +49,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class AsyncUploadParserTest {
+public class IntegrationTest {
 
     private static byte[] emptyFile;
     private static byte[] smallFile;
@@ -58,15 +58,15 @@ public class AsyncUploadParserTest {
     private static final String textValue1 = "íéáűúőóüö";
     private static final String textValue2 = "abcdef";
     
-    private Undertow server;
+    private static Undertow server;
 
     /**
      * Sets up the test environment, generates data to upload, starts an
      * Undertow instance which will receive the client requests.
      * @throws ServletException If an error occurred with the servlets
      */
-    @Before
-    public void setUp() throws ServletException {
+    @BeforeClass
+    public static void setUp() throws ServletException {
         emptyFile = new byte[0];
         smallFile = "0123456789".getBytes(UTF_8);
         Random random = new Random();
@@ -77,15 +77,24 @@ public class AsyncUploadParserTest {
         largeFile = builder.toString().getBytes(UTF_8);
 
         DeploymentInfo servletBuilder = Servlets.deployment()
-                .setClassLoader(getClass().getClassLoader())
+                .setClassLoader(IntegrationTest.class.getClassLoader())
                 .setContextPath("/")
                 .setDeploymentName("ROOT.war")
                 .addServlets(
-                        Servlets.servlet("SimpleUploadServlet", SimpleUploadServlet.class)
-                                .addMapping("/Simple")
+                        Servlets.servlet("AsyncSimpleUploadServlet", AsyncSimpleUploadServlet.class)
+                                .addMapping("/AsyncSimple")
                                 .setAsyncSupported(true),
-                        Servlets.servlet("ComplexUploadServlet", ComplexUploadServlet.class)
-                                .addMapping("/Complex")
+                        Servlets.servlet("BlockingSimpleUploadServlet", BlockingSimpleUploadServlet.class)
+                                .addMapping("/BlockingSimple")
+                                .setAsyncSupported(true),
+                        Servlets.servlet("AsyncErrorUploadServlet", AsyncErrorUploadServlet.class)
+                                .addMapping("/AsyncError")
+                                .setAsyncSupported(true),
+                        Servlets.servlet("BlockingErrorUploadServlet", BlockingErrorUploadServlet.class)
+                                .addMapping("/BlockingError")
+                                .setAsyncSupported(true),
+                        Servlets.servlet("AsyncComplexUploadServlet", AsyncComplexUploadServlet.class)
+                                .addMapping("/AsyncComplex")
                                 .setAsyncSupported(true)
                 );
 
@@ -101,17 +110,31 @@ public class AsyncUploadParserTest {
     }
 
     @Test
-    public void test_with_a_real_request_simple() throws IOException {
-        performRequest("http://localhost:8080" + "/Simple");
+    public void test_with_a_real_request_simple_async() throws IOException {
+        performRequest("http://localhost:8080" + "/AsyncSimple", HttpServletResponse.SC_OK);
+    }
 
+    @Test
+    public void test_with_a_real_request_simple_blocking() throws IOException {
+        performRequest("http://localhost:8080" + "/BlockingSimple", HttpServletResponse.SC_OK);
+    }
+
+    @Test
+    public void test_with_a_real_request_error_async() throws IOException {
+        performRequest("http://localhost:8080" + "/AsyncError", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void test_with_a_real_request_error_blocking() throws IOException {
+        performRequest("http://localhost:8080" + "/BlockingError", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     @Test
     public void test_with_a_real_request_complex() throws IOException {
-        performRequest("http://localhost:8080" + "/Complex");
+        performRequest("http://localhost:8080" + "/AsyncComplex", HttpServletResponse.SC_OK);
     }
 
-    private void performRequest(String url) throws IOException {
+    private void performRequest(String url, int expectedStatus) throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httppost = new HttpPost(url);
 
@@ -130,7 +153,7 @@ public class AsyncUploadParserTest {
                 System.out.println("----------------------------------------");
                 System.out.println(response.getStatusLine());
                 HttpEntity resEntity = response.getEntity();
-                assertTrue(response.getStatusLine().getStatusCode() == 200);
+                assertTrue(response.getStatusLine().getStatusCode() == expectedStatus);
                 if (resEntity != null) {
                     System.out.println("Response content length: " + resEntity.getContentLength());
                 }
@@ -139,14 +162,14 @@ public class AsyncUploadParserTest {
         }
     }
 
-    @After
-    public void tearDown() {
+    @AfterClass
+    public static void tearDown() {
         server.stop();
     }
 
 
-    @WebServlet(value = "/SimpleUploadServlet", asyncSupported = true)
-    public static class SimpleUploadServlet extends HttpServlet {
+    @WebServlet(value = "/AsyncSimpleUploadServlet", asyncSupported = true)
+    public static class AsyncSimpleUploadServlet extends HttpServlet {
 
         @Override
         protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
@@ -173,8 +196,79 @@ public class AsyncUploadParserTest {
         }
     }
 
-    @WebServlet(value = "/ComplexUploadServlet", asyncSupported = true)
-    public static class ComplexUploadServlet extends HttpServlet {
+    @WebServlet(value = "/BlockingSimpleUploadServlet", asyncSupported = true)
+    public static class BlockingSimpleUploadServlet extends HttpServlet {
+
+        @Override
+        protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+                throws ServletException, IOException {
+
+            UploadContext context = UploadParser.newBlockingParser(request)
+                    .onPartEnd(new OnPartEnd() {
+                        @Override
+                        public void onPartEnd(UploadContext context) throws IOException {
+                            Channel channel = context.getCurrentOutput().unwrap(Channel.class);
+                            if (channel.isOpen()) {
+                                channel.close();
+                            }
+                        }
+                    })
+                    .onRequestComplete(new OnRequestComplete() {
+                        @Override
+                        public void onRequestComplete(UploadContext context) throws IOException, ServletException {
+                            response.setStatus(200);
+                        }
+                    })
+                    .doBlockingParse();
+            assertTrue(context.getPartStreams().size() == 5);
+        }
+    }
+
+    @WebServlet(value = "/AsyncErrorUploadServlet", asyncSupported = true)
+    public static class AsyncErrorUploadServlet extends HttpServlet {
+
+        @Override
+        protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+                throws ServletException, IOException {
+
+            UploadParser.newAsyncParser(request)
+                    .onRequestComplete(new OnRequestComplete() {
+                        @Override
+                        public void onRequestComplete(UploadContext context) throws IOException, ServletException {
+                            throw new IOException();
+                        }
+                    })
+                    .onError(new OnError() {
+                        @Override
+                        public void onError(UploadContext context, Throwable throwable) throws IOException, ServletException {
+                            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                        }
+                    })
+                    .setupAsyncParse();
+        }
+    }
+
+    @WebServlet(value = "/BlockingErrorUploadServlet", asyncSupported = true)
+    public static class BlockingErrorUploadServlet extends HttpServlet {
+
+        @Override
+        protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+                throws ServletException, IOException {
+
+            UploadParser.newBlockingParser(request)
+                    .onError(new OnError() {
+                        @Override
+                        public void onError(UploadContext context, Throwable throwable) throws IOException, ServletException {
+                            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                        }
+                    })
+                    .maxRequestSize(4096)
+                    .doBlockingParse();
+        }
+    }
+
+    @WebServlet(value = "/AsyncComplexUploadServlet", asyncSupported = true)
+    public static class AsyncComplexUploadServlet extends HttpServlet {
 
         @Override
         protected void doPost(final HttpServletRequest request, final HttpServletResponse response)

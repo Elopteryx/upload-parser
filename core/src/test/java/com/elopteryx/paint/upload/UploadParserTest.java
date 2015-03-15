@@ -10,15 +10,19 @@ import static org.junit.Assert.assertTrue;
 
 import com.elopteryx.paint.upload.impl.AsyncUploadParser;
 import com.elopteryx.paint.upload.impl.BlockingUploadParser;
+import com.elopteryx.paint.upload.impl.NullChannel;
 import com.elopteryx.paint.upload.util.MockAsyncContext;
 
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Random;
+import java.nio.file.Path;
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -26,16 +30,37 @@ import javax.servlet.http.HttpServletResponse;
 
 public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
 
-    @Test(expected = ServletException.class)
-    public void valid_and_invalid_content_type() throws Exception {
+    private FileSystem fileSystem;
+
+    @Before
+    public void setUp() {
+        fileSystem = Jimfs.newFileSystem(Configuration.unix());
+    }
+
+    @Test
+    public void valid_content_type() throws Exception {
         HttpServletRequest request = newRequest();
 
         when(request.getContentType()).thenReturn("multipart/");
         assertTrue(UploadParser.isMultipart(request));
+    }
+
+    @Test(expected = ServletException.class)
+    public void invalid_content_type_async() throws Exception {
+        HttpServletRequest request = newRequest();
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
         assertFalse(UploadParser.isMultipart(request));
         UploadParser.newAsyncParser(request).withResponse(UploadResponse.from(newResponse()));
+    }
+
+    @Test(expected = ServletException.class)
+    public void invalid_content_type_blocking() throws Exception {
+        HttpServletRequest request = newRequest();
+
+        when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
+        assertFalse(UploadParser.isMultipart(request));
+        UploadParser.newBlockingParser(request).withResponse(UploadResponse.from(newResponse()));
     }
 
     @Test
@@ -60,7 +85,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Test
-    public void use_the_full_api() throws Exception {
+    public void use_the_full_api_async() throws Exception {
         HttpServletRequest request = newRequest();
         HttpServletResponse response = newResponse();
 
@@ -75,6 +100,14 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
                 .maxPartSize(1024 * 1024 * 50)
                 .maxRequestSize(1024 * 1024 * 50)
                 .setupAsyncParse();
+    }
+
+    @Test
+    public void use_the_full_api_blocking() throws Exception {
+        HttpServletRequest request = newRequest();
+        HttpServletResponse response = newResponse();
+
+        when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
 
         UploadParser.newBlockingParser(request)
                 .onPartBegin(this)
@@ -83,14 +116,67 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
                 .onError(this);
     }
 
+    @Test
+    public void output_channel() throws Exception {
+        HttpServletRequest request = newRequest();
+        HttpServletResponse response = newResponse();
+
+        when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
+
+        UploadParser.newBlockingParser(request)
+                .onPartBegin(new OnPartBegin() {
+                    @Nonnull
+                    @Override
+                    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+                        Path test = fileSystem.getPath("test1");
+                        Files.createFile(test);
+                        return PartOutput.from(Files.newByteChannel(test));
+                    }
+                });
+    }
+
+    @Test
+    public void output_stream() throws Exception {
+        HttpServletRequest request = newRequest();
+        HttpServletResponse response = newResponse();
+
+        when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
+
+        UploadParser.newBlockingParser(request)
+                .onPartBegin(new OnPartBegin() {
+                    @Nonnull
+                    @Override
+                    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+                        Path test = fileSystem.getPath("test2");
+                        Files.createFile(test);
+                        return PartOutput.from(Files.newOutputStream(test));
+                    }
+                });
+    }
+
+    @Test
+    public void output_path() throws Exception {
+        HttpServletRequest request = newRequest();
+        HttpServletResponse response = newResponse();
+
+        when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
+
+        UploadParser.newBlockingParser(request)
+                .onPartBegin(new OnPartBegin() {
+                    @Nonnull
+                    @Override
+                    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+                        Path test = fileSystem.getPath("test2");
+                        Files.createFile(test);
+                        return PartOutput.from(test);
+                    }
+                });
+    }
+
     @Override
     @Nonnull
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-        if (new Random().nextInt() % 2 == 0) {
-            return PartOutput.from(Files.newByteChannel(Paths.get("")));
-        } else {
-            return PartOutput.from(Files.newOutputStream(Paths.get("")));
-        }
+        return PartOutput.from(new NullChannel());
     }
 
     @Override

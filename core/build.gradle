@@ -17,6 +17,9 @@ dependencies {
     testCompile "io.undertow:undertow-core:1.1.2.Final"
     testCompile "io.undertow:undertow-servlet:1.1.2.Final"
 
+    /* In-memory filesystem. */
+    testCompile "com.google.jimfs:jimfs:1.0"
+
     /* Object mocking. */
     testCompile "org.mockito:mockito-core:2.0.5-beta"
 

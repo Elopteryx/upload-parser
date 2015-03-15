@@ -16,7 +16,6 @@ public class PartStreamHeadersTest {
         PartStreamHeaders partStreamHeaders = new PartStreamHeaders();
         partStreamHeaders.addHeader("Content-Disposition", "form-data; name=\"FileItem\"; filename=\"file1.txt\"");
         partStreamHeaders.addHeader("Content-Type", "text/plain");
-
         partStreamHeaders.addHeader("TestHeader", "headerValue1");
         partStreamHeaders.addHeader("TestHeader", "headerValue2");
         partStreamHeaders.addHeader("TestHeader", "headerValue3");
@@ -61,4 +60,39 @@ public class PartStreamHeadersTest {
         assertFalse(headerValueEnumeration.hasNext());
     }
 
+    @Test
+    public void charset_parsing() {
+        assertEquals(null, PartStreamHeaders.extractQuotedValueFromHeader("text/html; other-data=\"charset=UTF-8\"", "charset"));
+        assertEquals(null, PartStreamHeaders.extractQuotedValueFromHeader("text/html;", "charset"));
+        assertEquals("UTF-8", PartStreamHeaders.extractQuotedValueFromHeader("text/html; charset=\"UTF-8\"", "charset"));
+        assertEquals("UTF-8", PartStreamHeaders.extractQuotedValueFromHeader("text/html; charset=UTF-8", "charset"));
+        assertEquals("UTF-8", PartStreamHeaders.extractQuotedValueFromHeader("text/html; charset=\"UTF-8\"; foo=bar", "charset"));
+        assertEquals("UTF-8", PartStreamHeaders.extractQuotedValueFromHeader("text/html; charset=UTF-8 foo=bar", "charset"));
+    }
+
+    @Test
+    public void extract_existing_boundary() {
+        assertEquals("--xyz", PartStreamHeaders.extractBoundaryFromHeader("multipart/form-data; boundary=--xyz; param=abc"));
+    }
+
+    @Test
+    public void extract_missing_boundary() {
+        assertNull(PartStreamHeaders.extractBoundaryFromHeader("multipart/form-data; boundary;"));
+    }
+
+    @Test
+    public void extract_param_with_tailing_whitespace() {
+        assertEquals("abc", PartStreamHeaders.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param=abc", "param"));
+        assertEquals("abc", PartStreamHeaders.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param=abc ", "param"));
+        assertEquals("", PartStreamHeaders.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param= abc", "param"));
+        assertEquals("", PartStreamHeaders.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param= abc ", "param"));
+
+        assertEquals("abc", PartStreamHeaders.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param=\"abc\"", "param"));
+        assertEquals("abc ", PartStreamHeaders.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param=\"abc \"", "param"));
+        assertEquals(" abc", PartStreamHeaders.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param=\" abc\"", "param"));
+        assertEquals(" abc ", PartStreamHeaders.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param=\" abc \"", "param"));
+
+        assertNull(PartStreamHeaders.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param\t=abc", "param"));
+        assertEquals("ab", PartStreamHeaders.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param=ab\tc", "param"));
+    }
 }
