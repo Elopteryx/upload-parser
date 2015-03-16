@@ -12,26 +12,6 @@ dependencies {
     /* Annotations for code documentation. */
     provided "com.google.code.findbugs:jsr305:3.0.0"
 
-    /* Test runner. */
-    testCompile "junit:junit:4.12"
-
-    /* Http client library. */
-    testCompile "org.apache.httpcomponents:httpclient:4.4"
-    testCompile "org.apache.httpcomponents:httpmime:4.4"
-
-    /* Http server. */
-    testCompile "io.undertow:undertow-core:1.1.2.Final"
-    testCompile "io.undertow:undertow-servlet:1.1.2.Final"
-
-    /* Restful web services implementation. */
-    testCompile "org.jboss.resteasy:resteasy-cdi:3.0.10.Final"
-    testCompile "org.jboss.resteasy:resteasy-jaxrs:3.0.10.Final"
-    testCompile "org.jboss.resteasy:async-http-servlet-3.0:3.0.10.Final"
-    testCompile "org.jboss.resteasy:resteasy-client:3.0.10.Final"
-
-    /* Object mocking. */
-    testCompile "org.mockito:mockito-core:2.0.5-beta"
-
 }
 
 publishing {

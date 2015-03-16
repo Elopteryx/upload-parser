@@ -2,6 +2,8 @@ rootProject.name = "paint-upload-parent"
 
 include "core"
 include "jaxrs"
+include "tests"
 
 rootProject.children.find { it.name == "core" }.name = "paint-upload"
 rootProject.children.find { it.name == "jaxrs" }.name = "paint-upload-jaxrs"
+rootProject.children.find { it.name == "tests" }.name = "paint-upload-tests"
