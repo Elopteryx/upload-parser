@@ -396,7 +396,7 @@ public class IntegrationTest {
                             response.sendError(500);
                         }
                     })
-                    .withResponse(UploadResponse.from(response))
+                    .userObject(UploadResponse.from(response))
                     .sizeThreshold(4096)
                     .maxPartSize(Long.MAX_VALUE)
                     .maxRequestSize(Long.MAX_VALUE);

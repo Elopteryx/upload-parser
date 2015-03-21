@@ -42,7 +42,7 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
                 .onPartBegin(this)
                 .onPartEnd(this)
                 .onError(this)
-                .withResponse(UploadResponse.from(response))
+                .userObject(UploadResponse.from(response))
                 .doBlockingParse();
     }
 

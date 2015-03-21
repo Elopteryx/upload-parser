@@ -22,7 +22,9 @@ publishing {
 uploadArchives {
     repositories {
         mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            beforeDeployment {
+                MavenDeployment deployment -> signing.signPom(deployment)
+            }
 
             repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
                 authentication(userName: ossrhUsername, password: ossrhPassword)
@@ -39,7 +41,7 @@ uploadArchives {
             pom.project {
                 name "Paint Upload"
                 groupId "com.github.elopteryx"
-                artifactId "paint-upload-core"
+                artifactId "paint-upload"
 
                 description "Paint Upload is an asynchronous file upload library for servlets."
                 url "https://github.com/Elopteryx/paint-upload"

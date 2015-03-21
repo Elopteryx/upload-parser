@@ -37,7 +37,7 @@ public class AsyncUploadController implements OnPartBegin, OnRequestComplete, On
                 .onPartBegin(this)
                 .onRequestComplete(this)
                 .onError(this)
-                .withResponse(UploadResponse.from(asyncResponse))
+                .userObject(UploadResponse.from(asyncResponse))
                 .setupAsyncParse();
     }
 

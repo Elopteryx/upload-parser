@@ -38,13 +38,15 @@ public interface UploadContext {
     HttpServletRequest getRequest();
 
     /**
-     * Returns the given response object for this parser,
+     * Returns the given user object for this parser,
      * allowing customization during the stages of the
      * asynchronous processing.
      *
-     * @return The response object, or null if it was not supplied
+     * @param clazz The class used for casting
+     * @param <T> Type parameter
+     * @return The user object, or null if it was not supplied
      */
-    UploadResponse getResponse();
+    <T> T getUserObject(Class<T> clazz);
 
     /**
      * Returns the currently processed part stream,

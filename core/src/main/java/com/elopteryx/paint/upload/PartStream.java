@@ -74,9 +74,22 @@ public interface PartStream {
      * Consequently, if this returns true then the {@link PartStream#getSubmittedFileName}
      * will return with a non-null value and vice-versa.
      *
-     * @return true if the instance represents an uploaded file; false if it represents a simple form field.
+     * @return True if the instance represents an uploaded file; false if it represents a simple form field.
      */
     boolean isFile();
+
+    /**
+     * Returns whether the part has been completely uploaded. The
+     * part begin callback is called only after the given size threshold
+     * is reached or if the part is completely uploaded. Therefore, the
+     * parts that are smaller than the threshold are passed to the part begin
+     * callback after their upload is finished and their actual size is known.
+     * This method can be used to determine that. In the part end callback
+     * this will always return true.
+     *
+     * @return True if the part is completely uploaded, false otherwise.
+     */
+    boolean isFinished();
 
     /**
      * Returns the value of the specified mime header as a String. If

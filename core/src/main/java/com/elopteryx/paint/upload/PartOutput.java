@@ -16,8 +16,6 @@
 
 package com.elopteryx.paint.upload;
 
-import com.elopteryx.paint.upload.impl.ValueHolder;
-
 import java.io.OutputStream;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
@@ -27,7 +25,12 @@ import javax.annotation.Nonnull;
  * A value holder class, allowing the caller to provide
  * various output objects, like a byte channel or an output stream.
  */
-public class PartOutput extends ValueHolder {
+public class PartOutput {
+
+    /**
+     * The value object.
+     */
+    protected Object value;
 
     /**
      * Protected constructor, no need for public access.
@@ -37,7 +40,29 @@ public class PartOutput extends ValueHolder {
      * @param value The value object.
      */
     protected PartOutput(Object value) {
-        super(value);
+        this.value = value;
+    }
+
+    /**
+     * Returns whether it is safe to retrieve the value object
+     * with the class parameter.
+     * @param clazz The class type to check
+     * @param <T> Type parameter
+     * @return Whether it is safe to cast or not
+     */
+    public <T> boolean safeToCast(Class<T> clazz) {
+        return value != null && clazz.isAssignableFrom(value.getClass());
+    }
+
+    /**
+     * Retrieves the value object, casting it to the
+     * given type.
+     * @param clazz The class to cast
+     * @param <T> Type parameter
+     * @return The stored value object
+     */
+    public <T> T unwrap(Class<T> clazz) {
+        return clazz.cast(value);
     }
 
     /**

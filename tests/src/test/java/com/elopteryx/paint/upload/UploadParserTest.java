@@ -51,7 +51,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
         assertFalse(UploadParser.isMultipart(request));
-        UploadParser.newAsyncParser(request).withResponse(UploadResponse.from(newResponse()));
+        UploadParser.newAsyncParser(request).userObject(UploadResponse.from(newResponse()));
     }
 
     @Test(expected = ServletException.class)
@@ -60,7 +60,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
         assertFalse(UploadParser.isMultipart(request));
-        UploadParser.newBlockingParser(request).withResponse(UploadResponse.from(newResponse()));
+        UploadParser.newBlockingParser(request).userObject(UploadResponse.from(newResponse()));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.isAsyncSupported()).thenReturn(true);
 
-        UploadParser asyncParser = UploadParser.newAsyncParser(request).withResponse(UploadResponse.from(newResponse()));
+        UploadParser asyncParser = UploadParser.newAsyncParser(request).userObject(UploadResponse.from(newResponse()));
         assertThat(asyncParser, instanceOf(AsyncUploadParser.class));
     }
 
@@ -80,7 +80,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
         
         when(request.isAsyncSupported()).thenReturn(false);
 
-        UploadParser blockingParser = UploadParser.newBlockingParser(request).withResponse(UploadResponse.from(response));
+        UploadParser blockingParser = UploadParser.newBlockingParser(request).userObject(UploadResponse.from(response));
         assertThat(blockingParser, instanceOf(BlockingUploadParser.class));
     }
 

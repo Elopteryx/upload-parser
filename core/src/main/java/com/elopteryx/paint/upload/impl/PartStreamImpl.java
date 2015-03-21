@@ -49,6 +49,11 @@ public class PartStreamImpl implements PartStream {
      * The size of the part, updated on each read.
      */
     private long size;
+    /**
+     * Boolean flag storing whether the part is
+     * completely uploaded.
+     */
+    private boolean finished;
 
     /**
      * Creates a new instance.
@@ -64,55 +69,34 @@ public class PartStreamImpl implements PartStream {
         this.headers = headers;
     }
 
-    /**
-     * Returns the content type of the part, or null.
-     *
-     * @return Content type, if known, or null.
-     */
     @Override
     public String getContentType() {
         return contentType;
     }
 
-    /**
-     * Returns the field name of the part.
-     *
-     * @return Field name.
-     */
     @Override
     public String getName() {
         return fieldName;
     }
 
-    /**
-     * Returns the known size of the part.
-     *
-     * @return Part size.
-     */
     @Override
     public long getKnownSize() {
         return size;
     }
 
-    /**
-     * Returns the file name of the part. Returns null
-     * if it's a normal form field.
-     *
-     * @return File name, if known, or null.
-     */
     @Override
     public String getSubmittedFileName() {
         return checkFileName(fileName);
     }
 
-    /**
-     * Returns whether the part is a form field.
-     *
-     * @return True, if the part is a form field, otherwise false.
-     */
     @Override
     public boolean isFile() {
         return fileField;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return finished;
     }
 
     @Override
@@ -132,6 +116,10 @@ public class PartStreamImpl implements PartStream {
 
     void setSize(long size) {
         this.size = size;
+    }
+
+    void markAsFinished() {
+        this.finished = true;
     }
 
     private String checkFileName(String fileName) {

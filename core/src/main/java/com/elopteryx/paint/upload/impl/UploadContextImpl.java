@@ -19,7 +19,6 @@ package com.elopteryx.paint.upload.impl;
 import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.PartStream;
 import com.elopteryx.paint.upload.UploadContext;
-import com.elopteryx.paint.upload.UploadResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,9 +38,9 @@ public class UploadContextImpl implements UploadContext {
      */
     private final HttpServletRequest request;
     /**
-     * The response object. Only used by the callers, not necessary for these classes. 
+     * The user object. Only used by the callers, not necessary for these classes.
      */
-    private final UploadResponse response;
+    private Object userObject;
     /**
      * The currently processed item. 
      */
@@ -65,9 +64,9 @@ public class UploadContextImpl implements UploadContext {
      */
     private int partBytesRead;
 
-    public UploadContextImpl(HttpServletRequest request, UploadResponse response) {
+    public UploadContextImpl(HttpServletRequest request, Object userObject) {
         this.request = request;
-        this.response = response;
+        this.userObject = userObject;
     }
 
     @Override
@@ -77,9 +76,9 @@ public class UploadContextImpl implements UploadContext {
     }
 
     @Override
-    @Nonnull
-    public UploadResponse getResponse() {
-        return response;
+    @SuppressWarnings("unchecked")
+    public <T> T getUserObject(Class<T> clazz) {
+        return userObject != null ? (T) userObject : null;
     }
 
     @Override
@@ -117,7 +116,8 @@ public class UploadContextImpl implements UploadContext {
     }
 
     void finishBuffering() {
-        this.buffering = false;
+        buffering = false;
+        currentPart.markAsFinished();
     }
 
     void updatePartBytesRead() {

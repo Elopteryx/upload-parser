@@ -65,7 +65,7 @@ public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadPar
         }
 
         checkBuffer = ByteBuffer.allocate(sizeThreshold);
-        context = new UploadContextImpl(request, uploadResponse);
+        context = new UploadContextImpl(request, userObject);
 
         String mimeType = request.getHeader(PartStreamHeaders.CONTENT_TYPE);
         String boundary;

@@ -79,7 +79,7 @@ public abstract class UploadReader extends AbstractUploadParser<UploadReader> im
             }
         }
 
-        //Fail fast mode
+        // Fail fast mode
         if (maxRequestSize > -1) {
             long requestSize = Long.valueOf(httpHeaders.getFirst(CONTENT_LENGTH));
             if (requestSize > maxRequestSize) {
@@ -89,7 +89,7 @@ public abstract class UploadReader extends AbstractUploadParser<UploadReader> im
         }
 
         checkBuffer = ByteBuffer.allocate(sizeThreshold);
-        context = new UploadContextImpl(null, uploadResponse);
+        context = new UploadContextImpl(null, userObject);
 
         String mimeType = httpHeaders.getFirst(PartStreamHeaders.CONTENT_TYPE);
         String boundary;

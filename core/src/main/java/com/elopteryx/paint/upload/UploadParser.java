@@ -31,7 +31,7 @@ import javax.servlet.ServletException;
  * customize the parsing process.
  */
 @SuppressWarnings("unchecked")
-public class UploadParser<T extends UploadParser<T>> {
+public abstract class UploadParser<T extends UploadParser<T>> {
 
     /**
      * Part of HTTP content type header.
@@ -39,9 +39,9 @@ public class UploadParser<T extends UploadParser<T>> {
     private static final String MULTIPART = "multipart/";
 
     /**
-     * The response object.
+     * The user object.
      */
-    protected UploadResponse uploadResponse;
+    protected Object userObject;
 
     /**
      * The part begin callback, called at the beginning of each part parsing. Mandatory.
@@ -119,16 +119,22 @@ public class UploadParser<T extends UploadParser<T>> {
     }
 
     /**
-     * Sets the servlet response object. This is only necessary to allow
-     * access to it during the stages of the parsing. Note that if the
-     * declaration of the custom functions are in the method which has
-     * the response object as a parameter then this method can be skipped
-     * and the parameter reference can be used instead.
-     * @param uploadResponse The response wrapper
+     * Sets the user object, which can be anything. This is only
+     * necessary to allow access to it during the stages of the
+     * parsing. The most common use-case for this is passing
+     * the servlet response object and setting the status code
+     * on it depending on what happened. The object passed here can
+     * be retrieved with {@link UploadContext#getUserObject(Class)} getUserObject}.
+     *
+     * <p>Note that if you have access to the object reference
+     * where you declare the callback functions then this
+     * method can be skipped and you can directly use that
+     * reference, instead of retrieving it from the context.
+     * @param userObject A custom user object
      * @return The parser will return itself
      */
-    public T withResponse(@Nonnull UploadResponse uploadResponse) {
-        this.uploadResponse = uploadResponse;
+    public T userObject(Object userObject) {
+        this.userObject = userObject;
         return (T) this;
     }
 

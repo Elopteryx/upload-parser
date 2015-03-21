@@ -136,6 +136,7 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
     }
 
     private void validate() throws IOException {
+        context.finishBuffering();
         PartOutput output = null;
         if (partBeginCallback != null) {
             output = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
@@ -154,7 +155,6 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
             output = PartOutput.from(writableChannel);
         }
         context.setOutput(output);
-        context.finishBuffering();
         checkBuffer.flip();
         while (checkBuffer.hasRemaining()) {
             writableChannel.write(checkBuffer);
