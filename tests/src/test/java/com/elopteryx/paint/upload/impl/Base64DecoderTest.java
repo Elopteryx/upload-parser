@@ -31,7 +31,7 @@ import java.nio.ByteBuffer;
  */
 public class Base64DecoderTest {
 
-    public static final String TOWEL = "A towel, it says, is about the most massively useful thing an interstellar "
+    private static final String TOWEL = "A towel, it says, is about the most massively useful thing an interstellar "
             + "hitchhiker can have. Partly it has great practical value - you can wrap it around you for warmth as you "
             + "bound across the cold moons of Jaglan Beta; you can lie on it on the brilliant marble-sanded beaches of "
             +  "Santraginus V, inhaling the heady sea vapours; you can sleep under it beneath the stars which shine so "
@@ -51,7 +51,7 @@ public class Base64DecoderTest {
             + "galaxy, rough it, slum it, struggle against terrible odds, win through, and still knows where his towel "
             + "is is clearly a man to be reckoned with.\n";
 
-    public static final String TOWEL_BASE64 = "QSB0b3dlbCwgaXQgc2F5cywgaXMgYWJvdXQgdGhlIG1vc3QgbWFzc2l2ZWx5IHVzZWZ1bCB0aGlu\r\n"
+    private static final String TOWEL_BASE64 = "QSB0b3dlbCwgaXQgc2F5cywgaXMgYWJvdXQgdGhlIG1vc3QgbWFzc2l2ZWx5IHVzZWZ1bCB0aGlu\r\n"
             + "ZyBhbiBpbnRlcnN0ZWxsYXIgaGl0Y2hoaWtlciBjYW4gaGF2ZS4gUGFydGx5IGl0IGhhcyBncmVh\r\n"
             + "dCBwcmFjdGljYWwgdmFsdWUgLSB5b3UgY2FuIHdyYXAgaXQgYXJvdW5kIHlvdSBmb3Igd2FybXRo\r\n"
             + "IGFzIHlvdSBib3VuZCBhY3Jvc3MgdGhlIGNvbGQgbW9vbnMgb2YgSmFnbGFuIEJldGE7IHlvdSBj\r\n"

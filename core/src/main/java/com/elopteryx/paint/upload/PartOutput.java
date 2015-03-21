@@ -30,7 +30,7 @@ public class PartOutput {
     /**
      * The value object.
      */
-    protected Object value;
+    private final Object value;
 
     /**
      * Protected constructor, no need for public access.

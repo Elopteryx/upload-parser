@@ -26,13 +26,11 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import javax.servlet.ServletException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
-import javax.ws.rs.ext.Provider;
 
 /**
  * This class is a message body reader for multipart requests. It works like the blocking
@@ -41,7 +39,6 @@ import javax.ws.rs.ext.Provider;
  * into the controller method and no onError, because that should be handled by an
  * exception mapper.
  */
-@Provider
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 public abstract class UploadReader implements MessageBodyReader<UploadContext>, OnPartBegin, OnPartEnd {
 
@@ -49,7 +46,10 @@ public abstract class UploadReader implements MessageBodyReader<UploadContext>, 
 
     private static final String CONTENT_ENCODING = "Content-Encoding";
 
-    private RestUploadParser parser = new RestUploadParser();
+    /**
+     * The parser object. Does not support async parsing.
+     */
+    private final RestUploadParser parser = new RestUploadParser();
 
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -77,11 +77,6 @@ public abstract class UploadReader implements MessageBodyReader<UploadContext>, 
         long requestSize = Long.valueOf(httpHeaders.getFirst(CONTENT_LENGTH));
         String mimeType = httpHeaders.getFirst(PartStreamHeaders.CONTENT_TYPE);
         String encodingHeader = httpHeaders.getFirst(CONTENT_ENCODING);
-
-        try {
-            return parser.doBlockingParse(requestSize, mimeType, encodingHeader, entityStream);
-        } catch (ServletException e) {
-            throw new RuntimeException(e);
-        }
+        return parser.doBlockingParse(requestSize, mimeType, encodingHeader, entityStream);
     }
 }

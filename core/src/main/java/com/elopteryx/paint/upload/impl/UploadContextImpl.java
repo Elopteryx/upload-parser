@@ -40,7 +40,7 @@ public class UploadContextImpl implements UploadContext {
     /**
      * The user object. Only used by the callers, not necessary for these classes.
      */
-    private Object userObject;
+    private final Object userObject;
     /**
      * The currently processed item. 
      */
@@ -76,9 +76,8 @@ public class UploadContextImpl implements UploadContext {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T getUserObject(Class<T> clazz) {
-        return userObject != null ? (T) userObject : null;
+        return userObject != null ? clazz.cast(userObject) : null;
     }
 
     @Override

@@ -30,7 +30,7 @@ class MockServletInputStream extends ServletInputStream {
                     + "value2\r\n"
                     + "-----1234--\r\n";
     
-    private ByteArrayInputStream sourceStream;
+    private final ByteArrayInputStream sourceStream;
 
     private boolean ready;
 

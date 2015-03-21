@@ -47,23 +47,23 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     /**
      * The part begin callback, called at the beginning of each part parsing.
      */
-    protected OnPartBegin partBeginCallback;
+    private OnPartBegin partBeginCallback;
     /**
      * The part end callback, called at the end of each part parsing.
      */
-    protected OnPartEnd partEndCallback;
+    private OnPartEnd partEndCallback;
     /**
      * The request callback, called after every part has been processed.
      */
-    protected OnRequestComplete requestCallback;
+    OnRequestComplete requestCallback;
     /**
      * The error callback, called when an error occurred.
      */
-    protected OnError errorCallback;
+    OnError errorCallback;
     /**
      * The user object.
      */
-    protected Object userObject;
+    Object userObject;
     /**
      * The number of bytes that should be buffered before calling the part begin callback.
      */
@@ -71,7 +71,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     /**
      * The maximum size permitted for the parts. By default it is unlimited.
      */
-    protected long maxPartSize = -1;
+    private long maxPartSize = -1;
     /**
      * The maximum size permitted for the complete request. By default it is unlimited.
      */
@@ -111,7 +111,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      * parsing if a max size has been set and reached.
      * @param additional The amount to add, always non negative
      */
-    protected void checkPartSize(int additional) {
+    void checkPartSize(int additional) {
         long partSize = context.incrementAndGetPartBytesRead(additional);
         if (maxPartSize > -1 && partSize > maxPartSize) {
             throw new PartSizeException("The size of the part (" + partSize

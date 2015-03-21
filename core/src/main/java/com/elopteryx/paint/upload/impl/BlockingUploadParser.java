@@ -39,7 +39,7 @@ public class BlockingUploadParser extends AbstractUploadParser {
     /**
      * The request object.
      */
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
     protected InputStream inputStream;
 

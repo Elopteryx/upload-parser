@@ -1,5 +1,6 @@
 package com.elopteryx.paint.upload;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static com.elopteryx.paint.upload.util.Servlets.newRequest;
 import static com.elopteryx.paint.upload.util.Servlets.newResponse;
@@ -7,7 +8,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.elopteryx.paint.upload.impl.NullChannel;
-import com.elopteryx.paint.upload.util.MockAsyncContext;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -20,7 +20,9 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -64,7 +66,8 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
         HttpServletRequest request = newRequest();
         HttpServletResponse response = newResponse();
 
-        when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
+        when(request.startAsync()).thenReturn(mock(AsyncContext.class));
+        when(request.getInputStream()).thenReturn(mock(ServletInputStream.class));
 
         UploadParser.newParser()
                 .onPartBegin(this)

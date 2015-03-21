@@ -262,7 +262,7 @@ public class IntegrationTest {
     public static class AsyncErrorUploadServlet extends HttpServlet {
 
         private class EvilOutput extends PartOutput {
-            protected EvilOutput(Object value) {
+            EvilOutput(Object value) {
                 super(value);
             }
         }

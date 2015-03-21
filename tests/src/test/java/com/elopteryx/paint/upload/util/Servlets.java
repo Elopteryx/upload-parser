@@ -28,7 +28,6 @@ public class Servlets {
     /**
      * Creates a new mock servlet response.
      * @return The mocked response.
-     * @throws Exception If an error occurred
      */
     public static HttpServletResponse newResponse() {
         HttpServletResponse response = mock(HttpServletResponse.class);

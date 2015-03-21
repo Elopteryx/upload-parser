@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError {
     
-    private List<ByteArrayOutputStream> strings = new ArrayList<>();
+    private final List<ByteArrayOutputStream> strings = new ArrayList<>();
 
     @Test
     public void this_should_end_with_multipart_exception() throws Exception {

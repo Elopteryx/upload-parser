@@ -10,16 +10,16 @@ import com.elopteryx.paint.upload.impl.MultipartParser;
 import com.elopteryx.paint.upload.impl.PartStreamHeaders;
 import com.elopteryx.paint.upload.impl.UploadContextImpl;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 /**
- * A subclass of the blocking parser. This doesn't have a dependency
+ * A subclass of the blocking parser. It doesn't have a dependency
  * on the servlet request and can be initialized from the header values.
- * This makes it ideal for a Jax-Rs environment.
+ * This makes it ideal for a Jax-Rs environment, to be used in a
+ * message body reader.
  */
 public class RestUploadParser extends BlockingUploadParser {
 
@@ -36,10 +36,9 @@ public class RestUploadParser extends BlockingUploadParser {
      * @param stream The request stream
      * @return The upload context
      * @throws IOException If an error occurred with the I/O
-     * @throws ServletException If an error occurred with the servlet
      */
     public UploadContext doBlockingParse(long contentLength, String mimeType, String encoding, InputStream stream)
-    throws IOException, ServletException {
+    throws IOException {
         if (maxRequestSize > -1) {
             if (contentLength > maxRequestSize) {
                 throw new RequestSizeException("The size of the request ("

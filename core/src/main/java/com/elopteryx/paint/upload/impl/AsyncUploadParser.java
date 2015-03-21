@@ -54,7 +54,7 @@ public class AsyncUploadParser extends AbstractUploadParser implements ReadListe
      * the environment the concrete implementations can be very different.
      * @throws IOException If an error occurs with the IO
      */
-    protected void init() throws IOException {
+    private void init() throws IOException {
 
         // Fail fast mode
         if (maxRequestSize > -1) {
