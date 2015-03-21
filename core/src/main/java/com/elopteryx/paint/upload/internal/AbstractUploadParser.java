@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.elopteryx.paint.upload.impl;
+package com.elopteryx.paint.upload.internal;
 
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;

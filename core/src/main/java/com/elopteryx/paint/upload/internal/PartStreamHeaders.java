@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.elopteryx.paint.upload.impl;
+package com.elopteryx.paint.upload.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;

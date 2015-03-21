@@ -6,7 +6,7 @@ import com.elopteryx.paint.upload.OnRequestComplete;
 import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.UploadParser;
-import com.elopteryx.paint.upload.impl.NullChannel;
+import com.elopteryx.paint.upload.internal.NullChannel;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

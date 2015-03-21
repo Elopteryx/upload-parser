@@ -1,4 +1,4 @@
-package com.elopteryx.paint.upload.impl;
+package com.elopteryx.paint.upload.internal;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;

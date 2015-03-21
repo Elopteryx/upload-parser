@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.elopteryx.paint.upload.impl;
+package com.elopteryx.paint.upload.internal;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

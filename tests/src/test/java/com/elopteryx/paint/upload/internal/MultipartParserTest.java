@@ -1,4 +1,4 @@
-package com.elopteryx.paint.upload.impl;
+package com.elopteryx.paint.upload.internal;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

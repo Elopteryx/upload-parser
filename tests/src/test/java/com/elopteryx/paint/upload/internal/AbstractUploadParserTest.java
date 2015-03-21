@@ -1,4 +1,4 @@
-package com.elopteryx.paint.upload.impl;
+package com.elopteryx.paint.upload.internal;
 
 import static org.mockito.Mockito.when;
 import static com.elopteryx.paint.upload.util.Servlets.newRequest;

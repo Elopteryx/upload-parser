@@ -7,7 +7,7 @@ import static com.elopteryx.paint.upload.util.Servlets.newResponse;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.elopteryx.paint.upload.impl.NullChannel;
+import com.elopteryx.paint.upload.internal.NullChannel;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;

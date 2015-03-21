@@ -5,10 +5,10 @@ import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.errors.MultipartException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
-import com.elopteryx.paint.upload.impl.BlockingUploadParser;
-import com.elopteryx.paint.upload.impl.MultipartParser;
-import com.elopteryx.paint.upload.impl.PartStreamHeaders;
-import com.elopteryx.paint.upload.impl.UploadContextImpl;
+import com.elopteryx.paint.upload.internal.BlockingUploadParser;
+import com.elopteryx.paint.upload.internal.MultipartParser;
+import com.elopteryx.paint.upload.internal.PartStreamHeaders;
+import com.elopteryx.paint.upload.internal.UploadContextImpl;
 
 import java.io.IOException;
 import java.io.InputStream;

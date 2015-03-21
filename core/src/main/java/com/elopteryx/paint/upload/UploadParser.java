@@ -16,9 +16,9 @@
 
 package com.elopteryx.paint.upload;
 
-import com.elopteryx.paint.upload.impl.AbstractUploadParser;
-import com.elopteryx.paint.upload.impl.AsyncUploadParser;
-import com.elopteryx.paint.upload.impl.BlockingUploadParser;
+import com.elopteryx.paint.upload.internal.AbstractUploadParser;
+import com.elopteryx.paint.upload.internal.AsyncUploadParser;
+import com.elopteryx.paint.upload.internal.BlockingUploadParser;
 
 import java.io.IOException;
 import java.util.Locale;

@@ -3,7 +3,7 @@ package com.elopteryx.paint.upload.rs;
 import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.PartStream;
 import com.elopteryx.paint.upload.UploadContext;
-import com.elopteryx.paint.upload.impl.NullChannel;
+import com.elopteryx.paint.upload.internal.NullChannel;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.Consumes;

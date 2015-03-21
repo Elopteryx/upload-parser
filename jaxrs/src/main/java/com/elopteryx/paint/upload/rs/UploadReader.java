@@ -19,7 +19,7 @@ package com.elopteryx.paint.upload.rs;
 import com.elopteryx.paint.upload.OnPartBegin;
 import com.elopteryx.paint.upload.OnPartEnd;
 import com.elopteryx.paint.upload.UploadContext;
-import com.elopteryx.paint.upload.impl.PartStreamHeaders;
+import com.elopteryx.paint.upload.internal.PartStreamHeaders;
 import com.elopteryx.paint.upload.rs.internal.RestUploadParser;
 
 import java.io.InputStream;
