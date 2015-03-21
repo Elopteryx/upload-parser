@@ -21,10 +21,13 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Objects.requireNonNull;
 
+import com.elopteryx.paint.upload.OnError;
+import com.elopteryx.paint.upload.OnPartBegin;
+import com.elopteryx.paint.upload.OnPartEnd;
+import com.elopteryx.paint.upload.OnRequestComplete;
+import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.errors.PartSizeException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
-import com.elopteryx.paint.upload.PartOutput;
-import com.elopteryx.paint.upload.UploadParser;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,38 +42,64 @@ import java.util.EnumSet;
  * Base class for the parser implementations. This holds the common methods, like the more specific
  * validation and the calling of the user-supplied functions.
  */
-public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> extends UploadParser<T> implements MultipartParser.PartHandler {
+public abstract class AbstractUploadParser implements MultipartParser.PartHandler {
 
+    /**
+     * The part begin callback, called at the beginning of each part parsing.
+     */
+    protected OnPartBegin partBeginCallback;
+    /**
+     * The part end callback, called at the end of each part parsing.
+     */
+    protected OnPartEnd partEndCallback;
+    /**
+     * The request callback, called after every part has been processed.
+     */
+    protected OnRequestComplete requestCallback;
+    /**
+     * The error callback, called when an error occurred.
+     */
+    protected OnError errorCallback;
+    /**
+     * The user object.
+     */
+    protected Object userObject;
+    /**
+     * The number of bytes that should be buffered before calling the part begin callback.
+     */
+    protected int sizeThreshold;
+    /**
+     * The maximum size permitted for the parts. By default it is unlimited.
+     */
+    protected long maxPartSize = -1;
+    /**
+     * The maximum size permitted for the complete request. By default it is unlimited.
+     */
+    protected long maxRequestSize = -1;
     /**
      * The valid mime type.
      */
     protected static final String MULTIPART_FORM_DATA = "multipart/form-data";
-
     /**
      * The buffer that stores the first bytes of the current part.
      */
     protected ByteBuffer checkBuffer;
-
     /**
      * The channel to where the current part is written.
      */
     private WritableByteChannel writableChannel;
-
     /**
      * The known size of the request.
      */
     private long requestSize;
-
     /**
      * The context instance.
      */
     protected UploadContextImpl context;
-
     /**
      * The reference to the multipart parser.
      */
     protected MultipartParser.ParseState parseState;
-
     /**
      * The buffer that stores the bytes which were read from the
      * servlet input stream or from a different source.
@@ -172,5 +201,37 @@ public abstract class AbstractUploadParser<T extends AbstractUploadParser<T>> ex
         if (partEndCallback != null) {
             partEndCallback.onPartEnd(context);
         }
+    }
+
+    public void setPartBeginCallback(OnPartBegin partBeginCallback) {
+        this.partBeginCallback = partBeginCallback;
+    }
+
+    public void setPartEndCallback(OnPartEnd partEndCallback) {
+        this.partEndCallback = partEndCallback;
+    }
+
+    public void setRequestCallback(OnRequestComplete requestCallback) {
+        this.requestCallback = requestCallback;
+    }
+
+    public void setErrorCallback(OnError errorCallback) {
+        this.errorCallback = errorCallback;
+    }
+
+    public void setUserObject(Object userObject) {
+        this.userObject = userObject;
+    }
+
+    public void setSizeThreshold(int sizeThreshold) {
+        this.sizeThreshold = sizeThreshold;
+    }
+
+    public void setMaxPartSize(long maxPartSize) {
+        this.maxPartSize = maxPartSize;
+    }
+
+    public void setMaxRequestSize(long maxRequestSize) {
+        this.maxRequestSize = maxRequestSize;
     }
 }

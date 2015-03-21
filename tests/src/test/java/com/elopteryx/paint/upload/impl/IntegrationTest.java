@@ -15,7 +15,6 @@ import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.PartStream;
 import com.elopteryx.paint.upload.UploadParser;
 import com.elopteryx.paint.upload.UploadContext;
-import com.elopteryx.paint.upload.UploadResponse;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -187,7 +186,7 @@ public class IntegrationTest {
         protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
                 throws ServletException, IOException {
 
-            UploadParser.newAsyncParser(request)
+            UploadParser.newParser()
                     .onPartBegin(new OnPartBegin() {
                         @Nonnull
                         @Override
@@ -227,7 +226,7 @@ public class IntegrationTest {
                             response.setStatus(200);
                         }
                     })
-                    .setupAsyncParse();
+                    .setupAsyncParse(request);
         }
     }
 
@@ -238,7 +237,7 @@ public class IntegrationTest {
         protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
                 throws ServletException, IOException {
 
-            UploadContext context = UploadParser.newBlockingParser(request)
+            UploadContext context = UploadParser.newParser()
                     .onPartEnd(new OnPartEnd() {
                         @Override
                         public void onPartEnd(UploadContext context) throws IOException {
@@ -254,7 +253,7 @@ public class IntegrationTest {
                             response.setStatus(200);
                         }
                     })
-                    .doBlockingParse();
+                    .doBlockingParse(request);
             assertTrue(context.getPartStreams().size() == 5);
         }
     }
@@ -272,7 +271,7 @@ public class IntegrationTest {
         protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
                 throws ServletException, IOException {
 
-            UploadParser.newAsyncParser(request)
+            UploadParser.newParser()
                     .onPartBegin(new OnPartBegin() {
                         @Nonnull
                         @Override
@@ -286,7 +285,7 @@ public class IntegrationTest {
                             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                         }
                     })
-                    .setupAsyncParse();
+                    .setupAsyncParse(request);
         }
     }
 
@@ -297,7 +296,7 @@ public class IntegrationTest {
         protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
                 throws ServletException, IOException {
 
-            UploadParser.newBlockingParser(request)
+            UploadParser.newParser()
                     .onError(new OnError() {
                         @Override
                         public void onError(UploadContext context, Throwable throwable) throws IOException, ServletException {
@@ -305,7 +304,7 @@ public class IntegrationTest {
                         }
                     })
                     .maxRequestSize(4096)
-                    .doBlockingParse();
+                    .doBlockingParse(request);
         }
     }
 
@@ -322,7 +321,7 @@ public class IntegrationTest {
 
             final List<ByteArrayOutputStream> formFields = new ArrayList<>();
 
-            AsyncUploadParser parser = UploadParser.newAsyncParser(request)
+            UploadParser.newParser()
                     .onPartBegin(new OnPartBegin() {
                         @Nonnull
                         @Override
@@ -375,10 +374,8 @@ public class IntegrationTest {
                             assertTrue(Arrays.equals(formFields.get(3).toByteArray(), textValue1.getBytes(ISO_8859_1)));
                             assertTrue(Arrays.equals(formFields.get(4).toByteArray(), textValue2.getBytes(ISO_8859_1)));
 
-                            UploadResponse uploadResponse = context.getResponse();
-                            if (uploadResponse.safeToCast(HttpServletResponse.class)) {
-                                uploadResponse.unwrap(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
-                            }
+                            context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
+
                             for (ByteArrayOutputStream baos : formFields) {
                                 System.out.println(baos.toString());
                             }
@@ -396,11 +393,11 @@ public class IntegrationTest {
                             response.sendError(500);
                         }
                     })
-                    .userObject(UploadResponse.from(response))
+                    .userObject(response)
                     .sizeThreshold(4096)
                     .maxPartSize(Long.MAX_VALUE)
-                    .maxRequestSize(Long.MAX_VALUE);
-            parser.setupAsyncParse();
+                    .maxRequestSize(Long.MAX_VALUE)
+                    .setupAsyncParse(request);
         }
     }
 }

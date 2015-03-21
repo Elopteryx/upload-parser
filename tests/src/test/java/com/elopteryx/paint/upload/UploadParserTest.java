@@ -3,13 +3,9 @@ package com.elopteryx.paint.upload;
 import static org.mockito.Mockito.when;
 import static com.elopteryx.paint.upload.util.Servlets.newRequest;
 import static com.elopteryx.paint.upload.util.Servlets.newResponse;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import com.elopteryx.paint.upload.impl.AsyncUploadParser;
-import com.elopteryx.paint.upload.impl.BlockingUploadParser;
 import com.elopteryx.paint.upload.impl.NullChannel;
 import com.elopteryx.paint.upload.util.MockAsyncContext;
 
@@ -51,7 +47,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
         assertFalse(UploadParser.isMultipart(request));
-        UploadParser.newAsyncParser(request).userObject(UploadResponse.from(newResponse()));
+        UploadParser.newParser().userObject(newResponse()).setupAsyncParse(request);
     }
 
     @Test(expected = ServletException.class)
@@ -60,70 +56,31 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
         assertFalse(UploadParser.isMultipart(request));
-        UploadParser.newBlockingParser(request).userObject(UploadResponse.from(newResponse()));
+        UploadParser.newParser().userObject(newResponse()).doBlockingParse(request);
     }
 
     @Test
-    public void create_async_parser() throws Exception {
-        HttpServletRequest request = newRequest();
-
-        when(request.isAsyncSupported()).thenReturn(true);
-
-        UploadParser asyncParser = UploadParser.newAsyncParser(request).userObject(UploadResponse.from(newResponse()));
-        assertThat(asyncParser, instanceOf(AsyncUploadParser.class));
-    }
-
-    @Test
-    public void create_blocking_parser() throws Exception {
-        HttpServletRequest request = newRequest();
-        HttpServletResponse response = newResponse();
-        
-        when(request.isAsyncSupported()).thenReturn(false);
-
-        UploadParser blockingParser = UploadParser.newBlockingParser(request).userObject(UploadResponse.from(response));
-        assertThat(blockingParser, instanceOf(BlockingUploadParser.class));
-    }
-
-    @Test
-    public void use_the_full_api_async() throws Exception {
+    public void use_the_full_api() throws Exception {
         HttpServletRequest request = newRequest();
         HttpServletResponse response = newResponse();
 
         when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
 
-        UploadParser.newAsyncParser(request)
+        UploadParser.newParser()
                 .onPartBegin(this)
                 .onPartEnd(this)
                 .onRequestComplete(this)
                 .onError(this)
+                .userObject(response)
                 .sizeThreshold(1024 * 1024 * 10)
                 .maxPartSize(1024 * 1024 * 50)
                 .maxRequestSize(1024 * 1024 * 50)
-                .setupAsyncParse();
-    }
-
-    @Test
-    public void use_the_full_api_blocking() throws Exception {
-        HttpServletRequest request = newRequest();
-        HttpServletResponse response = newResponse();
-
-        when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
-
-        UploadParser.newBlockingParser(request)
-                .onPartBegin(this)
-                .onPartEnd(this)
-                .onRequestComplete(this)
-                .onError(this);
+                .setupAsyncParse(request);
     }
 
     @Test
     public void output_channel() throws Exception {
-        HttpServletRequest request = newRequest();
-        HttpServletResponse response = newResponse();
-
-        when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
-
-        UploadParser.newBlockingParser(request)
+        UploadParser.newParser()
                 .onPartBegin(new OnPartBegin() {
                     @Nonnull
                     @Override
@@ -137,12 +94,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
     @Test
     public void output_stream() throws Exception {
-        HttpServletRequest request = newRequest();
-        HttpServletResponse response = newResponse();
-
-        when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
-
-        UploadParser.newBlockingParser(request)
+        UploadParser.newParser()
                 .onPartBegin(new OnPartBegin() {
                     @Nonnull
                     @Override
@@ -156,12 +108,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
     @Test
     public void output_path() throws Exception {
-        HttpServletRequest request = newRequest();
-        HttpServletResponse response = newResponse();
-
-        when(request.startAsync()).thenReturn(new MockAsyncContext(request, response));
-
-        UploadParser.newBlockingParser(request)
+        UploadParser.newParser()
                 .onPartBegin(new OnPartBegin() {
                     @Nonnull
                     @Override
@@ -169,6 +116,27 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
                         Path test = fileSystem.getPath("test2");
                         Files.createFile(test);
                         return PartOutput.from(test);
+                    }
+                });
+    }
+
+    @Test
+    public void use_with_custom_object() throws Exception {
+        UploadParser.newParser()
+                .userObject(newResponse())
+                .onPartBegin(new OnPartBegin() {
+                    @Nonnull
+                    @Override
+                    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+                        Path test = fileSystem.getPath("test2");
+                        Files.createFile(test);
+                        return PartOutput.from(test);
+                    }
+                })
+                .onRequestComplete(new OnRequestComplete() {
+                    @Override
+                    public void onRequestComplete(UploadContext context) throws IOException, ServletException {
+                        context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
                     }
                 });
     }

@@ -50,7 +50,7 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 @Consumes(MediaType.MULTIPART_FORM_DATA)
-public abstract class UploadReader extends AbstractUploadParser<UploadReader> implements MessageBodyReader<UploadContext>, OnPartBegin, OnPartEnd {
+public abstract class UploadReader extends AbstractUploadParser implements MessageBodyReader<UploadContext>, OnPartBegin, OnPartEnd {
 
     private static final String CONTENT_LENGTH = "Content-Length";
 
@@ -72,9 +72,9 @@ public abstract class UploadReader extends AbstractUploadParser<UploadReader> im
         for (Annotation annotation : annotations) {
             if (annotation instanceof UploadConfig) {
                 UploadConfig config = (UploadConfig)annotation;
-                sizeThreshold(config.sizeThreshold());
-                maxPartSize(config.maxPartSize());
-                maxRequestSize(config.maxRequestSize());
+                setSizeThreshold(config.sizeThreshold());
+                setMaxPartSize(config.maxPartSize());
+                setMaxRequestSize(config.maxRequestSize());
                 break;
             }
         }

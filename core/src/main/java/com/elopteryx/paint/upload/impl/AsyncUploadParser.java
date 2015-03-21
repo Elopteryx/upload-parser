@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletRequest;
  * only if the calling servlet supports async mode.
  * Implements the listener interface. Called by the servlet container whenever data is available.
  */
-public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> implements ReadListener {
+public class AsyncUploadParser extends AbstractUploadParser implements ReadListener {
 
     private ServletInputStream servletInputStream;
 
@@ -86,9 +86,9 @@ public class AsyncUploadParser extends AbstractUploadParser<AsyncUploadParser> i
     }
 
     /**
-     * Performs the necessary operations to setup the async parsing. The parser will
-     * register itself to the request stream and the method will quickly return.
-     * @throws IOException If an error occurred with the request stream
+     * Setups the async parsing by registering the instance to
+     * the servlet stream as a read listener.
+     * @throws IOException If an error occurred with I/O
      */
     public void setupAsyncParse() throws IOException {
         init();

@@ -23,7 +23,7 @@ public class MockAsyncContext implements AsyncContext {
 
     private String dispatchedPath;
 
-    private long timeout = 10 * 1000L; // 10 seconds is Tomcat's default
+    private long timeout = 10 * 1000L;
 
     private final List<Runnable> dispatchHandlers = new ArrayList<>();
 

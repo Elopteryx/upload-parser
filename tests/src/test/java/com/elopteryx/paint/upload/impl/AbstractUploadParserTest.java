@@ -5,7 +5,6 @@ import static com.elopteryx.paint.upload.util.Servlets.newRequest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.elopteryx.paint.upload.UploadParser;
 import com.elopteryx.paint.upload.errors.PartSizeException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
 
@@ -18,15 +17,15 @@ public class AbstractUploadParserTest {
     private static final long size = 1024 * 1024 * 100L;
     private static final long smallSize = 1024;
 
-    private AsyncUploadParser runSetupForSize(long requestSize, long allowedRequestSize, long allowedPartSize) throws Exception {
+    private AbstractUploadParser runSetupForSize(long requestSize, long allowedRequestSize, long allowedPartSize) throws Exception {
         HttpServletRequest request = newRequest();
 
         when(request.getContentLengthLong()).thenReturn(requestSize);
 
-        AsyncUploadParser parser = UploadParser.newAsyncParser(request)
-                .maxPartSize(allowedPartSize)
-                .maxRequestSize(allowedRequestSize);
-        parser.setupAsyncParse();
+        AbstractUploadParser parser = new AsyncUploadParser(request);
+        parser.setMaxPartSize(allowedPartSize);
+        parser.setMaxRequestSize(allowedRequestSize);
+        ((AsyncUploadParser)parser).setupAsyncParse();
         return parser;
     }
 

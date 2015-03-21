@@ -16,9 +16,11 @@
 
 package com.elopteryx.paint.upload;
 
+import com.elopteryx.paint.upload.impl.AbstractUploadParser;
 import com.elopteryx.paint.upload.impl.AsyncUploadParser;
 import com.elopteryx.paint.upload.impl.BlockingUploadParser;
 
+import java.io.IOException;
 import java.util.Locale;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnegative;
@@ -30,8 +32,7 @@ import javax.servlet.ServletException;
  * The public API class for the library. Provides a fluent API for the users to
  * customize the parsing process.
  */
-@SuppressWarnings("unchecked")
-public abstract class UploadParser<T extends UploadParser<T>> {
+public class UploadParser {
 
     /**
      * Part of HTTP content type header.
@@ -39,29 +40,29 @@ public abstract class UploadParser<T extends UploadParser<T>> {
     private static final String MULTIPART = "multipart/";
 
     /**
-     * The user object.
-     */
-    protected Object userObject;
-
-    /**
-     * The part begin callback, called at the beginning of each part parsing. Mandatory.
+     * The part begin callback, called at the beginning of each part parsing.
      */
     protected OnPartBegin partBeginCallback;
 
     /**
-     * The part end callback, called at the end of each part parsing. Mandatory.
+     * The part end callback, called at the end of each part parsing.
      */
     protected OnPartEnd partEndCallback;
 
     /**
-     * The request callback, called after every part has been processed. Optional.
+     * The request callback, called after every part has been processed.
      */
     protected OnRequestComplete requestCallback;
 
     /**
-     * The error callback, called when an error occurred. Optional.
+     * The error callback, called when an error occurred.
      */
     protected OnError errorCallback;
+
+    /**
+     * The user object.
+     */
+    protected Object userObject;
 
     /**
      * The number of bytes that should be buffered before calling the part begin callback.
@@ -78,14 +79,18 @@ public abstract class UploadParser<T extends UploadParser<T>> {
      */
     protected long maxRequestSize = -1;
 
+    protected UploadParser() {
+        // No need to allow public access
+    }
+
     /**
      * Sets a callback for each part, called at the beginning.
      * @param partBeginCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public T onPartBegin(OnPartBegin partBeginCallback) {
+    public UploadParser onPartBegin(OnPartBegin partBeginCallback) {
         this.partBeginCallback = partBeginCallback;
-        return (T) this;
+        return this;
     }
 
     /**
@@ -93,9 +98,9 @@ public abstract class UploadParser<T extends UploadParser<T>> {
      * @param partEndCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public T onPartEnd(OnPartEnd partEndCallback) {
+    public UploadParser onPartEnd(OnPartEnd partEndCallback) {
         this.partEndCallback = partEndCallback;
-        return (T) this;
+        return this;
     }
 
     /**
@@ -103,9 +108,9 @@ public abstract class UploadParser<T extends UploadParser<T>> {
      * @param requestCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public T onRequestComplete(OnRequestComplete requestCallback) {
+    public UploadParser onRequestComplete(OnRequestComplete requestCallback) {
         this.requestCallback = requestCallback;
-        return (T) this;
+        return this;
     }
 
     /**
@@ -113,9 +118,9 @@ public abstract class UploadParser<T extends UploadParser<T>> {
      * @param errorCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public T onError(OnError errorCallback) {
+    public UploadParser onError(OnError errorCallback) {
         this.errorCallback = errorCallback;
-        return (T) this;
+        return this;
     }
 
     /**
@@ -133,9 +138,9 @@ public abstract class UploadParser<T extends UploadParser<T>> {
      * @param userObject A custom user object
      * @return The parser will return itself
      */
-    public T userObject(Object userObject) {
+    public UploadParser userObject(Object userObject) {
         this.userObject = userObject;
-        return (T) this;
+        return this;
     }
 
     /**
@@ -144,9 +149,9 @@ public abstract class UploadParser<T extends UploadParser<T>> {
      * @param sizeThreshold The amount to use
      * @return The parser will return itself
      */
-    public T sizeThreshold(@Nonnegative int sizeThreshold) {
+    public UploadParser sizeThreshold(@Nonnegative int sizeThreshold) {
         this.sizeThreshold = Math.max(sizeThreshold, 0);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -155,9 +160,9 @@ public abstract class UploadParser<T extends UploadParser<T>> {
      * @param maxPartSize The amount to use
      * @return The parser will return itself
      */
-    public T maxPartSize(@Nonnegative long maxPartSize) {
+    public UploadParser maxPartSize(@Nonnegative long maxPartSize) {
         this.maxPartSize = Math.max(maxPartSize, -1);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -166,9 +171,59 @@ public abstract class UploadParser<T extends UploadParser<T>> {
      * @param maxRequestSize The amount to use
      * @return The parser will return itself
      */
-    public T maxRequestSize(@Nonnegative long maxRequestSize) {
+    public UploadParser maxRequestSize(@Nonnegative long maxRequestSize) {
         this.maxRequestSize = Math.max(maxRequestSize, -1);
-        return (T) this;
+        return this;
+    }
+
+    /**
+     * Performs the necessary operations to setup the async parsing. The parser will
+     * register itself to the request stream and the method will quickly return.
+     * @param request The request object
+     * @throws IOException If an error occurred with the request stream
+     * @throws ServletException If an error occurred with the servlet
+     */
+    public void setupAsyncParse(@Nonnull HttpServletRequest request) throws IOException, ServletException {
+        if (!isMultipart(request)) {
+            throw new ServletException("Not a multipart request!");
+        }
+        AsyncUploadParser parser = new AsyncUploadParser(request);
+        build(parser);
+        parser.setupAsyncParse();
+    }
+
+    /**
+     * The parser begins parsing the request stream. This is a blocking method,
+     * the method will not finish until the upload process finished, either
+     * successfully or not.
+     * @param request The request object
+     * @return The upload context
+     * @throws IOException If an error occurred with the IO
+     * @throws ServletException If an error occurred with the servlet stream
+     */
+    public UploadContext doBlockingParse(@Nonnull HttpServletRequest request) throws IOException, ServletException {
+        if (!isMultipart(request)) {
+            throw new ServletException("Not a multipart request!");
+        }
+        BlockingUploadParser parser = new BlockingUploadParser(request);
+        build(parser);
+        return parser.doBlockingParse();
+    }
+
+    /**
+     * Passes the configuration parameters to the actual
+     * parser implementation.
+     * @param parser The parser implementation
+     */
+    protected void build(AbstractUploadParser parser) {
+        parser.setPartBeginCallback(partBeginCallback);
+        parser.setPartEndCallback(partEndCallback);
+        parser.setRequestCallback(requestCallback);
+        parser.setErrorCallback(errorCallback);
+        parser.setUserObject(userObject);
+        parser.setSizeThreshold(sizeThreshold);
+        parser.setMaxPartSize(maxPartSize);
+        parser.setMaxRequestSize(maxRequestSize);
     }
 
     /**
@@ -183,30 +238,11 @@ public abstract class UploadParser<T extends UploadParser<T>> {
     }
 
     /**
-     * Returns an async parser implementation, allowing the caller to set configuration.
-     * @param request The servlet request
+     * Returns a new parser, allowing the caller to set configuration.
      * @return A parser object
-     * @throws ServletException If the parameters are invalid
      */
     @CheckReturnValue
-    public static AsyncUploadParser newAsyncParser(@Nonnull HttpServletRequest request) throws ServletException {
-        if (!isMultipart(request)) {
-            throw new ServletException("Not a multipart request!");
-        }
-        return new AsyncUploadParser(request);
-    }
-
-    /**
-     * Returns a blocking parser implementation, allowing the caller to set configuration.
-     * @param request The servlet request
-     * @return A parser object
-     * @throws ServletException If the parameters are invalid
-     */
-    @CheckReturnValue
-    public static BlockingUploadParser newBlockingParser(@Nonnull HttpServletRequest request) throws ServletException {
-        if (!isMultipart(request)) {
-            throw new ServletException("Not a multipart request!");
-        }
-        return new BlockingUploadParser(request);
+    public static UploadParser newParser() {
+        return new UploadParser();
     }
 }

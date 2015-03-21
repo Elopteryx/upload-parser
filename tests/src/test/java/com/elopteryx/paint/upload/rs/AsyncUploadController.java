@@ -33,12 +33,12 @@ public class AsyncUploadController implements OnPartBegin, OnRequestComplete, On
     @POST
     @Path("uploadWithParser")
     public void multipart(@Context HttpServletRequest request, @Suspended final AsyncResponse asyncResponse) throws IOException, ServletException {
-        UploadParser.newAsyncParser(request)
+        UploadParser.newParser()
                 .onPartBegin(this)
                 .onRequestComplete(this)
                 .onError(this)
-                .userObject(UploadResponse.from(asyncResponse))
-                .setupAsyncParse();
+                .userObject(asyncResponse)
+                .setupAsyncParse(request);
     }
 
     @POST
@@ -70,11 +70,11 @@ public class AsyncUploadController implements OnPartBegin, OnRequestComplete, On
 
     @Override
     public void onRequestComplete(UploadContext context) throws IOException, ServletException {
-        context.getResponse().unwrap(AsyncResponse.class).resume(Response.status(200).build());
+        context.getUserObject(AsyncResponse.class).resume(Response.status(200).build());
     }
 
     @Override
     public void onError(UploadContext context, Throwable throwable) {
-        context.getResponse().unwrap(AsyncResponse.class).resume(Response.status(500).build());
+        context.getUserObject(AsyncResponse.class).resume(Response.status(500).build());
     }
 }

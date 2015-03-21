@@ -17,6 +17,6 @@ public class AsyncUploadParserTest {
 
         when(request.isAsyncSupported()).thenReturn(false);
 
-        UploadParser.newAsyncParser(request).setupAsyncParse();
+        UploadParser.newParser().setupAsyncParse(request);
     }
 }

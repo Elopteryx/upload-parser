@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
  * The blocking implementation of the parser. This parser can be used to perform a
  * blocking parse, whether the servlet supports async mode or not.
  */
-public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadParser> {
+public class BlockingUploadParser extends AbstractUploadParser {
 
     /**
      * The request object.
@@ -85,12 +85,10 @@ public class BlockingUploadParser extends AbstractUploadParser<BlockingUploadPar
     }
 
     /**
-     * The parser begins parsing the request stream. This is a blocking method,
-     * the method will not finish until the upload process finished, either
-     * successfully or not.
+     * Performs a full parsing and returns the used context object.
      * @return The upload context
-     * @throws IOException If an error occurred with the IO
-     * @throws ServletException If an error occurred with the servlet stream
+     * @throws IOException If an error occurred with the I/O
+     * @throws ServletException If an error occurred with the servlet
      */
     public UploadContext doBlockingParse() throws IOException, ServletException {
         init();
