@@ -24,13 +24,13 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
- * An efficient and flexible MIME Base64 implementation.
+ * Copied from Undertow. Stripped out the unnecessary parts, like the
+ * encoder and the methods which accepted a different parameter,
+ * for example a byte array, instead of a ByteBuffer.
+ *
+ * <p>An efficient and flexible MIME Base64 implementation.
  *
  * @author Jason T. Greene
- *
- * Copied from Undertow. Stripped out the unnecessary parts, like the
- * encoding and the methods which accepted a different parameter,
- * like a byte array, instead of a ByteBuffer.
  */
 class Base64Decoder {
 

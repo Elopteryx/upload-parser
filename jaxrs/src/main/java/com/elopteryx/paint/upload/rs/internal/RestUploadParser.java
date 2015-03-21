@@ -1,0 +1,83 @@
+package com.elopteryx.paint.upload.rs.internal;
+
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+
+import com.elopteryx.paint.upload.UploadContext;
+import com.elopteryx.paint.upload.errors.MultipartException;
+import com.elopteryx.paint.upload.errors.RequestSizeException;
+import com.elopteryx.paint.upload.impl.BlockingUploadParser;
+import com.elopteryx.paint.upload.impl.MultipartParser;
+import com.elopteryx.paint.upload.impl.PartStreamHeaders;
+import com.elopteryx.paint.upload.impl.UploadContextImpl;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+
+/**
+ * A subclass of the blocking parser. This doesn't have a dependency
+ * on the servlet request and can be initialized from the header values.
+ * This makes it ideal for a Jax-Rs environment.
+ */
+public class RestUploadParser extends BlockingUploadParser {
+
+    public RestUploadParser() {
+        super(null);
+    }
+
+    /**
+     * Initializes the parser from the given parameters and performs
+     * a blocking parse.
+     * @param contentLength The length of the request
+     * @param mimeType The content type of the request
+     * @param encoding The character encoding of the request
+     * @param stream The request stream
+     * @return The upload context
+     * @throws IOException If an error occurred with the I/O
+     * @throws ServletException If an error occurred with the servlet
+     */
+    public UploadContext doBlockingParse(long contentLength, String mimeType, String encoding, InputStream stream)
+    throws IOException, ServletException {
+        if (maxRequestSize > -1) {
+            if (contentLength > maxRequestSize) {
+                throw new RequestSizeException("The size of the request ("
+                        + contentLength
+                        + ") is greater than the allowed size (" + maxRequestSize + ")!",
+                        contentLength, maxRequestSize);
+            }
+        }
+
+        checkBuffer = ByteBuffer.allocate(sizeThreshold);
+        context = new UploadContextImpl(null, null);
+
+        String boundary;
+        if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
+            boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
+            if (boundary == null) {
+                throw new IllegalArgumentException("Could not find boundary in multipart request with ContentType: "
+                        + mimeType
+                        + ", multipart data will not be available");
+            }
+            Charset charset = encoding != null ? Charset.forName(encoding) : ISO_8859_1;
+            parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
+
+            inputStream = stream;
+        }
+        while (true) {
+            int count = inputStream.read(buf);
+            if (count == -1) {
+                if (!parseState.isComplete()) {
+                    throw new MultipartException();
+                } else {
+                    break;
+                }
+            } else if (count > 0) {
+                checkRequestSize(count);
+                parseState.parse(ByteBuffer.wrap(buf, 0, count));
+            }
+        }
+        return context;
+    }
+}

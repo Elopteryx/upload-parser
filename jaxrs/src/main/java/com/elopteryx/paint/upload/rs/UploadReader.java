@@ -16,24 +16,17 @@
 
 package com.elopteryx.paint.upload.rs;
 
-import static java.nio.charset.StandardCharsets.ISO_8859_1;
-
 import com.elopteryx.paint.upload.OnPartBegin;
 import com.elopteryx.paint.upload.OnPartEnd;
 import com.elopteryx.paint.upload.UploadContext;
-import com.elopteryx.paint.upload.errors.MultipartException;
-import com.elopteryx.paint.upload.errors.RequestSizeException;
-import com.elopteryx.paint.upload.impl.AbstractUploadParser;
-import com.elopteryx.paint.upload.impl.MultipartParser;
 import com.elopteryx.paint.upload.impl.PartStreamHeaders;
-import com.elopteryx.paint.upload.impl.UploadContextImpl;
+import com.elopteryx.paint.upload.rs.internal.RestUploadParser;
 
 import java.io.InputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
+import javax.servlet.ServletException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -50,11 +43,13 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 @Consumes(MediaType.MULTIPART_FORM_DATA)
-public abstract class UploadReader extends AbstractUploadParser implements MessageBodyReader<UploadContext>, OnPartBegin, OnPartEnd {
+public abstract class UploadReader implements MessageBodyReader<UploadContext>, OnPartBegin, OnPartEnd {
 
     private static final String CONTENT_LENGTH = "Content-Length";
 
     private static final String CONTENT_ENCODING = "Content-Encoding";
+
+    private RestUploadParser parser = new RestUploadParser();
 
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -66,58 +61,27 @@ public abstract class UploadReader extends AbstractUploadParser implements Messa
                       MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
             throws IOException, WebApplicationException {
 
-        partBeginCallback = this;
-        partEndCallback = this;
+        parser.setPartBeginCallback(this);
+        parser.setPartEndCallback(this);
 
         for (Annotation annotation : annotations) {
             if (annotation instanceof UploadConfig) {
                 UploadConfig config = (UploadConfig)annotation;
-                setSizeThreshold(config.sizeThreshold());
-                setMaxPartSize(config.maxPartSize());
-                setMaxRequestSize(config.maxRequestSize());
+                parser.setSizeThreshold(config.sizeThreshold());
+                parser.setMaxPartSize(config.maxPartSize());
+                parser.setMaxRequestSize(config.maxRequestSize());
                 break;
             }
         }
 
-        // Fail fast mode
-        if (maxRequestSize > -1) {
-            long requestSize = Long.valueOf(httpHeaders.getFirst(CONTENT_LENGTH));
-            if (requestSize > maxRequestSize) {
-                throw new RequestSizeException("The size of the request (" + requestSize
-                        + ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
-            }
-        }
-
-        checkBuffer = ByteBuffer.allocate(sizeThreshold);
-        context = new UploadContextImpl(null, userObject);
-
+        long requestSize = Long.valueOf(httpHeaders.getFirst(CONTENT_LENGTH));
         String mimeType = httpHeaders.getFirst(PartStreamHeaders.CONTENT_TYPE);
-        String boundary;
-        if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
-            boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
-            if (boundary == null) {
-                throw new IllegalArgumentException("Could not find boundary in multipart request with ContentType: "
-                        + mimeType
-                        + ", multipart data will not be available");
-            }
-            String encodingHeader = httpHeaders.getFirst(CONTENT_ENCODING);
-            Charset charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
-            parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
-        }
+        String encodingHeader = httpHeaders.getFirst(CONTENT_ENCODING);
 
-        while (true) {
-            int count = entityStream.read(buf);
-            if (count == -1) {
-                if (!parseState.isComplete()) {
-                    throw new MultipartException();
-                } else {
-                    break;
-                }
-            } else if (count > 0) {
-                checkRequestSize(count);
-                parseState.parse(ByteBuffer.wrap(buf, 0, count));
-            }
+        try {
+            return parser.doBlockingParse(requestSize, mimeType, encodingHeader, entityStream);
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
         }
-        return context;
     }
 }

@@ -17,7 +17,6 @@
 package com.elopteryx.paint.upload.impl;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
-import static java.util.Objects.requireNonNull;
 
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.errors.MultipartException;
@@ -27,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -40,12 +39,12 @@ public class BlockingUploadParser extends AbstractUploadParser {
     /**
      * The request object.
      */
-    private final HttpServletRequest request;
+    private HttpServletRequest request;
 
-    private InputStream inputStream;
+    protected InputStream inputStream;
 
-    public BlockingUploadParser(@Nonnull HttpServletRequest request) {
-        this.request = requireNonNull(request);
+    public BlockingUploadParser(@Nullable HttpServletRequest request) {
+        this.request = request;
     }
 
     /**

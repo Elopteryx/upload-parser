@@ -26,13 +26,14 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 /**
- * The parser which reads the multipart stream and calls the part
- * handler during certain stages.
- * @author Stuart Douglas
- *
  * Copied from Undertow. Made some refactoring to remove the
  * dependency on XNio. Instead of a pool the methods receive
  * a ByteBuffer instance to use.
+ *
+ * <p>The parser which reads the multipart stream and calls the part
+ * handler during certain stages.
+ *
+ * @author Stuart Douglas
  */
 public class MultipartParser {
 
