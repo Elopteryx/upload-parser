@@ -22,16 +22,16 @@ Features
 --------
 * Async and blocking multipart request parsing
 * Unopinionated, fully customizable, just pass your custom logic
-  * ```.onPartBegin(…)```
-  * ```.onPartEnd(…)```
-  * ```.onRequestComplete(…)```
-  * ```.onError(…)```
-* Lightweight, lesser than 40Kb size, no dependencies other than the servlet API
+  * ```.onPartBegin(…)``` when the client starts sending a part, with optional buffering
+  * ```.onPartEnd(…)``` when the client finishes sending a part
+  * ```.onRequestComplete(…)``` after everything has been uploaded
+  * ```.onError(…)``` if an error occurs
+* Lightweight, less than 40Kb size, no dependencies other than the servlet API
 * Available from the Maven Central repository
 
 Requirements
 --------
-* Java 7 or 8
+* Java 7+
 * Servlet 3.1 environment
 
 Motivation

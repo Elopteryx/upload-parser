@@ -105,7 +105,7 @@ subprojects {
     }
 
     tasks.withType(Test) {
-        if (!it.name.startsWith('slow')) {
+        if (!it.name.startsWith("slow")) {
             rootProject.testReport.reportOn it
         }
         jacoco {
@@ -120,8 +120,8 @@ repositories {
     jcenter()
 }
 
-task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
-    description = 'Generates an aggregate report from all subprojects'
+task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
+    description = "Generates an aggregate report from all subprojects"
     dependsOn(subprojects.test)
 
     additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
@@ -145,9 +145,9 @@ coveralls {
 }
 
 tasks.coveralls {
-    group = 'Coverage reports'
-    description = 'Uploads the aggregated coverage report to Coveralls'
+    group = "Coverage reports"
+    description = "Uploads the aggregated coverage report to Coveralls"
 
     dependsOn jacocoRootReport
-    onlyIf { System.env.'CI' }
+    onlyIf { System.env."CI" }
 }

@@ -36,7 +36,7 @@ dependencies {
     testCompile "com.google.jimfs:jimfs:1.0"
 
     /* Object mocking. */
-    testCompile "org.mockito:mockito-core:2.0.5-beta"
+    testCompile "org.mockito:mockito-core:1.10.19"
 
 }
 
