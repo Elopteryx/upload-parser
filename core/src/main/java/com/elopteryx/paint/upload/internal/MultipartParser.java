@@ -115,7 +115,7 @@ public class MultipartParser {
 
         /**
          * Parses the given data. This method can be called by the blocking and async upload parser as well.
-         * @param buffer THe buffer containing new data to process
+         * @param buffer The buffer containing new data to process
          * @throws IOException If an error occurred with the I/O
          */
         public void parse(ByteBuffer buffer) throws IOException {

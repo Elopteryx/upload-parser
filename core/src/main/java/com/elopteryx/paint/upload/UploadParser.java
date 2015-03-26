@@ -88,7 +88,7 @@ public class UploadParser {
      * @param partBeginCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public UploadParser onPartBegin(OnPartBegin partBeginCallback) {
+    public UploadParser onPartBegin(@Nonnull OnPartBegin partBeginCallback) {
         this.partBeginCallback = partBeginCallback;
         return this;
     }
@@ -98,7 +98,7 @@ public class UploadParser {
      * @param partEndCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public UploadParser onPartEnd(OnPartEnd partEndCallback) {
+    public UploadParser onPartEnd(@Nonnull OnPartEnd partEndCallback) {
         this.partEndCallback = partEndCallback;
         return this;
     }
@@ -108,7 +108,7 @@ public class UploadParser {
      * @param requestCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public UploadParser onRequestComplete(OnRequestComplete requestCallback) {
+    public UploadParser onRequestComplete(@Nonnull OnRequestComplete requestCallback) {
         this.requestCallback = requestCallback;
         return this;
     }
@@ -118,7 +118,7 @@ public class UploadParser {
      * @param errorCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public UploadParser onError(OnError errorCallback) {
+    public UploadParser onError(@Nonnull OnError errorCallback) {
         this.errorCallback = errorCallback;
         return this;
     }
@@ -138,7 +138,7 @@ public class UploadParser {
      * @param userObject A custom user object
      * @return The parser will return itself
      */
-    public UploadParser userObject(Object userObject) {
+    public UploadParser userObject(@Nonnull Object userObject) {
         this.userObject = userObject;
         return this;
     }

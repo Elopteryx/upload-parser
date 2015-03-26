@@ -18,6 +18,7 @@ package com.elopteryx.paint.upload;
 
 import java.util.List;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -65,6 +66,7 @@ public interface UploadContext {
      *
      * @return The latest output provided by the caller
      */
+    @Nullable
     PartOutput getCurrentOutput();
 
     /**

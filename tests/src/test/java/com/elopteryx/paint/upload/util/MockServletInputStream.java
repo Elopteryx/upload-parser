@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 
-class MockServletInputStream extends ServletInputStream {
+public class MockServletInputStream extends ServletInputStream {
 
     private static final String fileName = "foo.txt";
     private static final String requestData =
@@ -32,12 +32,9 @@ class MockServletInputStream extends ServletInputStream {
     
     private final ByteArrayInputStream sourceStream;
 
-    private boolean ready;
-
     private boolean finished;
     
     private ReadListener readListener;
-
 
     public MockServletInputStream() {
         this.sourceStream = new ByteArrayInputStream(requestData.getBytes(StandardCharsets.US_ASCII));
@@ -47,6 +44,9 @@ class MockServletInputStream extends ServletInputStream {
         this.sourceStream = new ByteArrayInputStream(data.getBytes(StandardCharsets.US_ASCII));
     }
 
+    public void onDataAvailable() throws IOException {
+        readListener.onDataAvailable();
+    }
 
     @Override
     public int read() throws IOException {
@@ -61,12 +61,12 @@ class MockServletInputStream extends ServletInputStream {
 
     @Override
     public boolean isFinished() {
-        return finished;
+        return false;
     }
 
     @Override
     public boolean isReady() {
-        return ready;
+        return true;
     }
 
     @Override

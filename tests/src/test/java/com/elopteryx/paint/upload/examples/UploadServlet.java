@@ -24,7 +24,7 @@ public class UploadServlet extends HttpServlet {
      */
     private static final String UPLOAD_DIR = "uploads";
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, final HttpServletResponse response)
     throws IOException, ServletException {
 
         String applicationPath = request.getServletContext().getRealPath("");
@@ -48,7 +48,7 @@ public class UploadServlet extends HttpServlet {
 //                .onRequestComplete(context -> context.getUserObject(HttpServletResponse.class).setStatus(200))
 //                .onError((context, throwable) -> {
 //                    throwable.printStackTrace();
-//                    context.getUserObject(HttpServletResponse.class).sendError(500);
+//                    response.sendError(500);
 //                })
                 .sizeThreshold(4096)
                 .maxPartSize(1024 * 1024 * 25)

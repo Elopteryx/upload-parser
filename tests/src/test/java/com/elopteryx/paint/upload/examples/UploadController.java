@@ -7,7 +7,9 @@ import com.elopteryx.paint.upload.OnRequestComplete;
 import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.UploadParser;
+import com.elopteryx.paint.upload.internal.NullChannel;
 
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
@@ -15,6 +17,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -44,10 +47,11 @@ public class UploadController implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Override
+    @Nonnull
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
         //Your business logic here, check the part, you can use the bytes in the buffer to check
         //the real mime type, then return with a channel, stream or path to write the part
-        return null;
+        return PartOutput.from(new NullChannel());
     }
 
     @Override
@@ -58,10 +62,12 @@ public class UploadController implements OnPartBegin, OnPartEnd, OnRequestComple
     @Override
     public void onRequestComplete(UploadContext context) throws IOException, ServletException {
         //Your business logic here, send a response to the client
+        context.getUserObject(AsyncResponse.class).resume(Response.ok().build());
     }
 
     @Override
     public void onError(UploadContext context, Throwable throwable) {
         //Your business logic here, handle the error
+        context.getUserObject(AsyncResponse.class).resume(Response.serverError().build());
     }
 }

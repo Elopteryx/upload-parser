@@ -6,11 +6,11 @@ Paint-Upload
 [![Coverage Status](https://coveralls.io/repos/Elopteryx/paint-upload/badge.svg)](https://coveralls.io/r/Elopteryx/paint-upload)
 
 Paint-Upload is a file upload library for servlets and web applications. Although you can already use the standard
-servlet Api to retrieve part items from a multipart request this library provides extra functionality not found
-elsewhere. First, it has a fluent Api which allows you to completely control the uploading process. No more waiting for
+servlet API to retrieve part items from a multipart request this library provides extra functionality not found
+elsewhere. First, it has a fluent API which allows you to completely control the uploading process. No more waiting for
 the user to upload everything, you can run your business logic, like file type validation and writing to a permanent
 location as soon as the bytes arrive. Another great feature is that if you choose it and your servlet supports it the
-upload request can run in asynchronous mode, using the async IO Api introduced in the 3.1 version of the servlet Api.
+upload request can run in asynchronous mode, using the async IO API introduced in the 3.1 version of the servlet API.
 This will allow a much better use of system resources, no more waiting threads.
 
 The library has two components. The core module is written for plain servlets, although it can work with any web
@@ -26,7 +26,7 @@ Features
   * ```.onPartEnd(…)```
   * ```.onRequestComplete(…)```
   * ```.onError(…)```
-* Lightweight, lesser than 40Kb size, no dependencies other than the servlet Api
+* Lightweight, lesser than 40Kb size, no dependencies other than the servlet API
 * Available from the Maven Central repository
 
 Requirements
@@ -37,20 +37,20 @@ Requirements
 Motivation
 --------
 
-Although the Servlet Api already has support for handling multipart requests since version 3.0, I found it lacking in several situations.
+Although the Servlet API already has support for handling multipart requests since version 3.0, I found it lacking in several situations.
 First, it uses blocking IO which can cause performance problems, especially because an upload can take a very long time. To fix this problem in general,
 the ReadListener and WriteListener interfaces have been introduced in version 3.1, to prevent blocking, but to use them, you have to use your own parsing
 code, you can't rely on the servlet container to do the job for you in the async mode.
 
 Also, the classic blocking method parses the whole request
 and only lets you run your code after it is finished. Why no support to check for the correct file extension, or request size right when they become available?
-And so I decided to write this small library which handles those situation. If you don't have these requirements then the Servlet Api will do the job
+And so I decided to write this small library which handles those situation. If you don't have these requirements then the Servlet API will do the job
 just fine. Otherwise, I think you will find my library useful.
 
 Issues
 ------
 
-Does the library have bugs? Needs extra functionality? Do you like the Api? Feel free to create an issue!
+Does the library have bugs? Needs extra functionality? Do you like the API? Feel free to create an issue!
 
 Examples
 --------
@@ -68,12 +68,14 @@ you'll have to use anonymous classes and implement the functional interfaces of 
     public class UploadServlet extends HttpServlet {
 
         /**
-        * Directory where uploaded files will be saved, its relative to
-        * the web application directory.
-        */
+         * Directory where uploaded files will be saved, relative to
+         * the web application directory.
+         */
         private static final String UPLOAD_DIR = "uploads";
 
-        protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws IOException, ServletException {
+
             String applicationPath = request.getServletContext().getRealPath("");
             final Path uploadFilePath = Paths.get(applicationPath, UPLOAD_DIR);
 
@@ -82,30 +84,30 @@ you'll have to use anonymous classes and implement the functional interfaces of 
             }
 
             // Check that we have a file upload request
-            if (!UploadParser.isMultipart(request))
+            if (!UploadParser.isMultipart(request)) {
                 return;
+            }
 
-            UploadParser.newAsyncParser(request)
-                .onPartBegin((context, buffer) -> {
-                    PartStream part = context.getCurrentPart();
-                    Path path = uploadFilePath.resolve(part.getSubmittedFileName());
-                    return PartOutput.from(path);
-                })
-                .onPartEnd(context -> context.getCurrentChannel().close())
-                .onRequestComplete(context -> context.getResponse().setStatus(200))
-                .onError((context, throwable) -> {
-                    throwable.printStackTrace();
-                    context.getResponse().sendError(500);
-                })
-                .sizeThreshold(4096)
-                .maxPartSize(1024 * 1024 * 25)
-                .maxRequestSize(1024 * 1024 * 500)
-                .setupAsyncParsing();
+            UploadParser.newParser()
+                    .onPartBegin((context, buffer) -> {
+                        PartStream part = context.getCurrentPart();
+                        Path path = uploadFilePath.resolve(part.getSubmittedFileName());
+                        return PartOutput.from(path);
+                    })
+                    .onRequestComplete(context -> context.getUserObject(HttpServletResponse.class).setStatus(200))
+                    .onError((context, throwable) -> {
+                        throwable.printStackTrace();
+                        response.sendError(500);
+                    })
+                    .sizeThreshold(4096)
+                    .maxPartSize(1024 * 1024 * 25)
+                    .maxRequestSize(1024 * 1024 * 500)
+                    .setupAsyncParse(request);
         }
-    }
+}
 ```
 
-You can also integrate the parser with web frameworks. The following example shows how to use it with a Jax-RS endpoint:
+You can also use the parser with web frameworks. The following example shows how to use it with a Jax-RS endpoint:
 
 ```java
 
@@ -115,20 +117,21 @@ You can also integrate the parser with web frameworks. The following example sho
         @POST
         @Path("upload")
         public void multipart(@Context HttpServletRequest request, @Suspended final AsyncResponse asyncResponse) throws IOException, ServletException {
-            UploadParser.newAsyncParser(request)
-                .onPartBegin(this)
-                .onPartEnd(this)
-                .onRequestComplete(this)
-                .onError(this)
-                .withResponse(UploadResponse.from(asyncResponse))
-                .setupAsyncParsing();
+            UploadParser.newParser()
+                    .onPartBegin(this)
+                    .onPartEnd(this)
+                    .onRequestComplete(this)
+                    .onError(this)
+                    .userObject(asyncResponse)
+                    .setupAsyncParse(request);
         }
 
         @Override
+        @Nonnull
         public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
             //Your business logic here, check the part, you can use the bytes in the buffer to check
             //the real mime type, then return with a channel, stream or path to write the part
-            return null;
+            return PartOutput.from(new NullChannel());
         }
 
         @Override
@@ -139,11 +142,13 @@ You can also integrate the parser with web frameworks. The following example sho
         @Override
         public void onRequestComplete(UploadContext context) throws IOException, ServletException {
             //Your business logic here, send a response to the client
+            context.getUserObject(AsyncResponse.class).resume(Response.ok().build());
         }
 
         @Override
         public void onError(UploadContext context, Throwable throwable) {
             //Your business logic here, handle the error
+            context.getUserObject(AsyncResponse.class).resume(Response.serverError().build());
         }
     }
 ```

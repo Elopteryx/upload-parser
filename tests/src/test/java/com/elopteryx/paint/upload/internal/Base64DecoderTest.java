@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Jason T. Greene
@@ -105,6 +106,18 @@ public class Base64DecoderTest {
             + "dWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRo\r\n"
             + "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4==\r\n";
 
+    private static final String INVALID_CHARACTER = "TW!!?FuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlz\r\n"
+            + "IHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlciBhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2Yg\r\n"
+            + "dGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGlu\r\n"
+            + "dWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRo\r\n"
+            + "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4=\r\n";
+
+    private static final String SEVERAL_ILLEGAL_PADDINGS = "====TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlz\r\n"
+            + "IHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlciBhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2Yg\r\n"
+            + "dGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcm====FuY2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGlu\r\n"
+            + "dWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRo\r\n"
+            + "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4======\r\n";
+
     @Test
     public void decode_buffer() throws IOException {
         byte[] numbers = new byte[32768];
@@ -167,6 +180,217 @@ public class Base64DecoderTest {
         ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
         new Base64Decoder().decode(ByteBuffer.wrap(ILLEGAL_CHARACTER.getBytes(US_ASCII)), buffer);
+    }
+
+    @Test(expected = IOException.class)
+    public void decode_string_several_illegal_padding() throws Exception {
+        ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
+        buffer.clear();
+        new Base64Decoder().decode(ByteBuffer.wrap(SEVERAL_ILLEGAL_PADDINGS.getBytes(US_ASCII)), buffer);
+    }
+
+    @Test(expected = IOException.class)
+    public void decode_string_invalid_character() throws Exception {
+        ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
+        buffer.clear();
+        new Base64Decoder().decode(ByteBuffer.wrap(INVALID_CHARACTER.getBytes(US_ASCII)), buffer);
+    }
+
+    private static class FlexBase64 {
+
+        private static final byte[] ENCODING_TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".getBytes(StandardCharsets.US_ASCII);
+
+        /**
+         * Creates a state driven base64 encoder.
+         *
+         * <p>The Encoder instance is not thread-safe, and must not be shared between threads without establishing a
+         * happens-before relationship.</p>
+         *
+         * @param wrap whether or not to wrap at 76 characters with CRLF
+         * @return an createEncoder instance
+         */
+        public static Encoder createEncoder(boolean wrap) {
+            return new Encoder(wrap);
+        }
+
+        /**
+         * Controls the encoding process.
+         */
+        public static final class Encoder {
+            private int state;
+            private int last;
+            private int count;
+            private final boolean wrap;
+            private int lastPos;
+
+            private Encoder(boolean wrap) {
+                this.wrap = wrap;
+            }
+
+            /**
+             * Encodes bytes read from source and writes them in base64 format to target. If the source limit is hit, this
+             * method will return and save the current state, such that future calls can resume the encoding process.
+             * In addition, if the target does not have the capacity to fit an entire quad of bytes, this method will also
+             * return and save state for subsequent calls to this method. Once all bytes have been encoded to the target,
+             * {@link #complete(java.nio.ByteBuffer)} should be called to add the necessary padding characters.
+             *
+             * @param source the byte buffer to read from
+             * @param target the byte buffer to write to
+             */
+            public void encode(ByteBuffer source, ByteBuffer target) {
+                if (target == null) {
+                    throw new IllegalStateException();
+                }
+
+                int last = this.last;
+                int state = this.state;
+                boolean wrap = this.wrap;
+                int count = this.count;
+                final byte[] encodingTable = FlexBase64.ENCODING_TABLE;
+
+                int remaining = source.remaining();
+                while (remaining > 0) {
+                    // Unrolled state machine for performance (resumes and executes all states in one iteration)
+                    int require = 4 - state;
+                    require = wrap && (count >= 72) ? require + 2 : require;
+                    if (target.remaining() < require) {
+                        break;
+                    }
+                    //  ( 6 | 2) (4 | 4) (2 | 6)
+                    int sourceByte = source.get() & 0xFF;
+                    if (state == 0) {
+                        target.put(encodingTable[sourceByte >>> 2]);
+                        last = (sourceByte & 0x3) << 4;
+                        state++;
+                        if (--remaining <= 0) {
+                            break;
+                        }
+                        sourceByte = source.get() & 0xFF;
+                    }
+                    if (state == 1) {
+                        target.put(encodingTable[last | (sourceByte >>> 4)]);
+                        last = (sourceByte & 0x0F) << 2;
+                        state++;
+                        if (--remaining <= 0) {
+                            break;
+                        }
+                        sourceByte = source.get() & 0xFF;
+                    }
+                    if (state == 2) {
+                        target.put(encodingTable[last | (sourceByte >>> 6)]);
+                        target.put(encodingTable[sourceByte & 0x3F]);
+                        last = state = 0;
+                        remaining--;
+                    }
+
+                    if (wrap) {
+                        count += 4;
+                        if (count >= 76) {
+                            count = 0;
+                            target.putShort((short)0x0D0A);
+                        }
+                    }
+                }
+                this.count = count;
+                this.last = last;
+                this.state = state;
+                this.lastPos = source.position();
+            }
+
+            /**
+             * Completes an encoding session by writing out the necessary padding. This is essential to complying
+             * with the Base64 format. This method will write at most 4 or 2 bytes, depending on whether or not wrapping
+             * is enabled.
+             *
+             * @param target the byte buffer to write to
+             */
+            public void complete(ByteBuffer target) {
+                if (state > 0) {
+                    target.put(ENCODING_TABLE[last]);
+                    for (int i = state; i < 3; i++) {
+                        target.put((byte)'=');
+                    }
+
+                    last = state = 0;
+                }
+                if (wrap) {
+                    target.putShort((short)0x0D0A);
+                }
+
+                count = 0;
+            }
+        }
+
+    }
+
+    @Test
+    public void testEncoderDecoderBuffer() throws IOException {
+        byte[] nums = new byte[32768];
+        for (int i = 0; i < 32768; i++) {
+            nums[i] = (byte)(i % 255);
+        }
+
+        ByteBuffer source = ByteBuffer.wrap(nums);
+        ByteBuffer target = ByteBuffer.allocate(65535);
+
+        FlexBase64.Encoder encoder = FlexBase64.createEncoder(true);
+        encoder.encode(source, target);
+        encoder.complete(target);
+
+        ByteBuffer decoded = ByteBuffer.allocate(nums.length);
+        Base64Decoder decoder = new Base64Decoder();
+        target.flip();
+        decoder.decode(target, decoded);
+
+        decoded.flip();
+
+        Assert.assertEquals(nums.length, decoded.remaining());
+
+        for (byte num : nums) {
+            Assert.assertEquals(num, decoded.get());
+        }
+    }
+
+    @Test
+    public void testEncoderDecoderBufferLoops() throws IOException {
+        byte[] nums = new byte[32768];
+        for (int i = 0; i < 32768; i++) {
+            nums[i] = (byte)(i % 255);
+        }
+        ByteBuffer source = ByteBuffer.wrap(nums);
+        ByteBuffer target = ByteBuffer.allocate(65535);
+
+        FlexBase64.Encoder encoder = FlexBase64.createEncoder(true);
+        int limit = target.limit();
+        target.limit(100);
+        while (source.remaining() > 0) {
+            encoder.encode(source, target);
+            int add = limit - target.position();
+            add = add < 100 ? add : 100;
+            target.limit(target.limit() + add);
+        }
+        encoder.complete(target);
+
+        ByteBuffer decoded = ByteBuffer.allocate(nums.length);
+        Base64Decoder decoder = new Base64Decoder();
+        target.flip();
+
+        limit = decoded.limit();
+        decoded.limit(100);
+        while (target.remaining() > 0) {
+            decoder.decode(target, decoded);
+            int add = limit - decoded.position();
+            add = add < 100 ? add : 100;
+            decoded.limit(decoded.position() + add);
+        }
+
+        decoded.flip();
+
+        Assert.assertEquals(nums.length, decoded.remaining());
+
+        for (byte num : nums) {
+            Assert.assertEquals(num, decoded.get());
+        }
     }
 
 }

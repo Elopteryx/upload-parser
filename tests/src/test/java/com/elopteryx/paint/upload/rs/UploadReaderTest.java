@@ -63,7 +63,7 @@ public class UploadReaderTest {
         largeFile = builder.toString().getBytes(UTF_8);
 
         ResteasyDeployment deployment = new ResteasyDeployment();
-        deployment.getActualResourceClasses().add(AsyncUploadController.class);
+        deployment.getActualResourceClasses().addAll(Arrays.asList(AsyncUploadController.class, ReaderUploadController.class));
         deployment.getActualProviderClasses().addAll(Arrays.asList(CustomUploadReader.class, PartSizeMapper.class, RequestSizeMapper.class));
 
         ServletInfo restEasyServlet = Servlets.servlet("RestEasyServlet", HttpServlet30Dispatcher.class)

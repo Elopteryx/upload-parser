@@ -18,6 +18,7 @@ package com.elopteryx.paint.upload;
 
 import java.util.Collection;
 import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -110,6 +111,7 @@ public interface PartStream {
      * @param name the header name whose values to return
      * @return a (possibly empty) Collection of the values of the header with the given name
      */
+    @Nonnull
     Collection<String> getHeaders(String name);
 
     /**
@@ -117,6 +119,7 @@ public interface PartStream {
      *
      * @return a (possibly empty) Collection of the header names of this Part
      */
+    @Nonnull
     Collection<String> getHeaderNames();
 
 }

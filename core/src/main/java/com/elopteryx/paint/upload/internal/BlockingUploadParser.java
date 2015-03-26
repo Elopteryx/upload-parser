@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,7 +42,7 @@ public class BlockingUploadParser extends AbstractUploadParser {
 
     protected InputStream inputStream;
 
-    public BlockingUploadParser(@Nullable HttpServletRequest request) {
+    public BlockingUploadParser(HttpServletRequest request) {
         this.request = request;
     }
 

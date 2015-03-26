@@ -19,6 +19,7 @@ package com.elopteryx.paint.upload;
 import java.io.OutputStream;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 /**
@@ -50,6 +51,7 @@ public class PartOutput {
      * @param <T> Type parameter
      * @return Whether it is safe to cast or not
      */
+    @CheckReturnValue
     public <T> boolean safeToCast(Class<T> clazz) {
         return value != null && clazz.isAssignableFrom(value.getClass());
     }
@@ -61,6 +63,7 @@ public class PartOutput {
      * @param <T> Type parameter
      * @return The stored value object
      */
+    @CheckReturnValue
     public <T> T unwrap(Class<T> clazz) {
         return clazz.cast(value);
     }

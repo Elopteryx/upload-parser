@@ -27,10 +27,10 @@ dependencies {
     testCompile "io.undertow:undertow-servlet:1.1.2.Final"
 
     /* Restful web services implementation. */
-    testCompile "org.jboss.resteasy:resteasy-cdi:3.0.10.Final"
-    testCompile "org.jboss.resteasy:resteasy-jaxrs:3.0.10.Final"
-    testCompile "org.jboss.resteasy:async-http-servlet-3.0:3.0.10.Final"
-    testCompile "org.jboss.resteasy:resteasy-client:3.0.10.Final"
+    testCompile "org.jboss.resteasy:resteasy-cdi:3.0.11.Final"
+    testCompile "org.jboss.resteasy:resteasy-jaxrs:3.0.11.Final"
+    testCompile "org.jboss.resteasy:async-http-servlet-3.0:3.0.11.Final"
+    testCompile "org.jboss.resteasy:resteasy-client:3.0.11.Final"
 
     /* In-memory filesystem. */
     testCompile "com.google.jimfs:jimfs:1.0"

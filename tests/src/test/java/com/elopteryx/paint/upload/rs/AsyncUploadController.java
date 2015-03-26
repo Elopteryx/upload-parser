@@ -41,26 +41,6 @@ public class AsyncUploadController implements OnPartBegin, OnRequestComplete, On
                 .setupAsyncParse(request);
     }
 
-    @POST
-    @Path("uploadWithReader")
-    public Response multipart(UploadContext context) throws IOException, ServletException {
-        return Response.status(200).build();
-    }
-
-    @POST
-    @Path("uploadWithReaderAndPartLimit")
-    public Response multipartSizeLimited(@UploadConfig(maxPartSize = 4096) UploadContext context) throws IOException, ServletException {
-        // This should be called only when each part size is smaller than the limit
-        return Response.status(200).build();
-    }
-
-    @POST
-    @Path("uploadWithReaderAndRequestLimit")
-    public Response multipartRequestSizeLimited(@UploadConfig(maxRequestSize = 4096) UploadContext context) throws IOException, ServletException {
-        // This should be called only when the request size is smaller than the limit
-        return Response.status(200).build();
-    }
-
     @Nonnull
     @Override
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {

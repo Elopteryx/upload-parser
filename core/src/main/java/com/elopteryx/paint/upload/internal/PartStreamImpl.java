@@ -18,6 +18,7 @@ package com.elopteryx.paint.upload.internal;
 
 import com.elopteryx.paint.upload.PartStream;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 
 /**
@@ -105,11 +106,13 @@ public class PartStreamImpl implements PartStream {
     }
 
     @Override
+    @Nonnull
     public Collection<String> getHeaderNames() {
         return headers.getHeaderNames();
     }
 
     @Override
+    @Nonnull
     public Collection<String> getHeaders(String name) {
         return headers.getHeaders(name);
     }
