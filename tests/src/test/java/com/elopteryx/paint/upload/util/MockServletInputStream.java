@@ -31,17 +31,11 @@ public class MockServletInputStream extends ServletInputStream {
                     + "-----1234--\r\n";
     
     private final ByteArrayInputStream sourceStream;
-
-    private boolean finished;
     
     private ReadListener readListener;
 
     public MockServletInputStream() {
         this.sourceStream = new ByteArrayInputStream(requestData.getBytes(StandardCharsets.US_ASCII));
-    }
-
-    public MockServletInputStream(String data) {
-        this.sourceStream = new ByteArrayInputStream(data.getBytes(StandardCharsets.US_ASCII));
     }
 
     public void onDataAvailable() throws IOException {
