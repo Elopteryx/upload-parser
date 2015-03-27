@@ -156,7 +156,7 @@ You can also use the parser with web frameworks. The following example shows how
 Gradle
 -----
 ```xml
-compile "com.github.elopteryx:paint-upload:1.1.0"
+compile "com.github.elopteryx:paint-upload:1.2.0"
 ```
 Maven
 -----
@@ -164,7 +164,7 @@ Maven
 <dependency>
     <groupId>com.github.elopteryx</groupId>
     <artifactId>paint-upload</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 

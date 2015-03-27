@@ -45,11 +45,11 @@ uploadArchives {
             }
 
             pom.project {
-                name "Paint Upload"
+                name "Paint Upload Jax-Rs"
                 groupId "com.github.elopteryx"
                 artifactId "paint-upload-jaxrs"
 
-                description "Paint Upload Jaxrs is a small library which provides integration with Jax-Rs applications."
+                description "Paint Upload Jax-Rs is a file upload library for Jax-Rs applications."
                 url "http://elopteryx.github.io/paint-upload-site"
 
                 scm {
