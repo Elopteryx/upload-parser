@@ -50,7 +50,7 @@ uploadArchives {
                 artifactId "paint-upload-jaxrs"
 
                 description "Paint Upload Jax-Rs is a file upload library for Jax-Rs applications."
-                url "http://elopteryx.github.io/paint-upload-site"
+                url "https://github.com/Elopteryx/paint-upload"
 
                 scm {
                     connection "scm:git:git@github.com/Elopteryx/paint-upload.git"
