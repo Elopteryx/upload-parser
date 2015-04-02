@@ -94,7 +94,7 @@ you'll have to use anonymous classes and implement the functional interfaces of 
                         Path path = uploadFilePath.resolve(part.getSubmittedFileName());
                         return PartOutput.from(path);
                     })
-                    .onRequestComplete(context -> context.getUserObject(HttpServletResponse.class).setStatus(200))
+                    .onRequestComplete(context -> response.setStatus(200))
                     .onError((context, throwable) -> {
                         throwable.printStackTrace();
                         response.sendError(500);
