@@ -28,7 +28,7 @@ import java.nio.channels.WritableByteChannel;
  */
 public class NullChannel implements WritableByteChannel {
 
-    /*
+    /**
      * Flag to determine whether the channel is closed or not.
      */
     private boolean open = true;

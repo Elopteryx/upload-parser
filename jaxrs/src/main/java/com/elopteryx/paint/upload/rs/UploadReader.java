@@ -18,8 +18,8 @@ package com.elopteryx.paint.upload.rs;
 
 import com.elopteryx.paint.upload.OnPartBegin;
 import com.elopteryx.paint.upload.OnPartEnd;
-import com.elopteryx.paint.upload.UploadContext;
 import com.elopteryx.paint.upload.internal.PartStreamHeaders;
+import com.elopteryx.paint.upload.rs.internal.MultiPartImpl;
 import com.elopteryx.paint.upload.rs.internal.RestUploadParser;
 
 import java.io.InputStream;
@@ -40,7 +40,7 @@ import javax.ws.rs.ext.MessageBodyReader;
  * exception mapper.
  */
 @Consumes(MediaType.MULTIPART_FORM_DATA)
-public abstract class UploadReader implements MessageBodyReader<UploadContext>, OnPartBegin, OnPartEnd {
+public abstract class UploadReader implements MessageBodyReader<MultiPart>, OnPartBegin, OnPartEnd {
 
     private static final String CONTENT_LENGTH = "Content-Length";
 
@@ -57,7 +57,7 @@ public abstract class UploadReader implements MessageBodyReader<UploadContext>, 
     }
 
     @Override
-    public UploadContext readFrom(Class<UploadContext> type, Type genericType, Annotation[] annotations, MediaType mediaType,
+    public MultiPart readFrom(Class<MultiPart> type, Type genericType, Annotation[] annotations, MediaType mediaType,
                       MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
             throws IOException, WebApplicationException {
 
@@ -77,6 +77,8 @@ public abstract class UploadReader implements MessageBodyReader<UploadContext>, 
         long requestSize = Long.valueOf(httpHeaders.getFirst(CONTENT_LENGTH));
         String mimeType = httpHeaders.getFirst(PartStreamHeaders.CONTENT_TYPE);
         String encodingHeader = httpHeaders.getFirst(CONTENT_ENCODING);
-        return parser.doBlockingParse(requestSize, mimeType, encodingHeader, entityStream);
+        MultiPartImpl multiPart = parser.doBlockingParse(requestSize, mimeType, encodingHeader, entityStream);
+        multiPart.setHeaders(httpHeaders);
+        return multiPart;
     }
 }

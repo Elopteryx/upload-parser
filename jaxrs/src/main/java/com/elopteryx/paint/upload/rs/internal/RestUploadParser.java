@@ -2,18 +2,22 @@ package com.elopteryx.paint.upload.rs.internal;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
-import com.elopteryx.paint.upload.UploadContext;
+import com.elopteryx.paint.upload.PartStream;
 import com.elopteryx.paint.upload.errors.MultipartException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
 import com.elopteryx.paint.upload.internal.BlockingUploadParser;
 import com.elopteryx.paint.upload.internal.MultipartParser;
 import com.elopteryx.paint.upload.internal.PartStreamHeaders;
+import com.elopteryx.paint.upload.internal.PartStreamImpl;
 import com.elopteryx.paint.upload.internal.UploadContextImpl;
+import com.elopteryx.paint.upload.rs.Part;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A subclass of the blocking parser. It doesn't have a dependency
@@ -34,10 +38,10 @@ public class RestUploadParser extends BlockingUploadParser {
      * @param mimeType The content type of the request
      * @param encoding The character encoding of the request
      * @param stream The request stream
-     * @return The upload context
+     * @return The multipart object, representing the request
      * @throws IOException If an error occurred with the I/O
      */
-    public UploadContext doBlockingParse(long contentLength, String mimeType, String encoding, InputStream stream)
+    public MultiPartImpl doBlockingParse(long contentLength, String mimeType, String encoding, InputStream stream)
     throws IOException {
         if (maxRequestSize > -1) {
             if (contentLength > maxRequestSize) {
@@ -77,6 +81,10 @@ public class RestUploadParser extends BlockingUploadParser {
                 parseState.parse(ByteBuffer.wrap(buf, 0, count));
             }
         }
-        return context;
+        List<Part> parts = new ArrayList<>();
+        for (PartStream partStream : context.getPartStreams()) {
+            parts.add(new PartImpl((PartStreamImpl)partStream));
+        }
+        return new MultiPartImpl(parts, requestSize);
     }
 }

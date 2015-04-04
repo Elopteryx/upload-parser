@@ -108,6 +108,7 @@ public class UploadContextImpl implements UploadContext {
 
     void setOutput(PartOutput output) {
         this.output = output;
+        this.currentPart.setOutput(output);
     }
 
     boolean isBuffering() {

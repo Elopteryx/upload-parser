@@ -91,7 +91,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     /**
      * The known size of the request.
      */
-    private long requestSize;
+    protected long requestSize;
     /**
      * The context instance.
      */

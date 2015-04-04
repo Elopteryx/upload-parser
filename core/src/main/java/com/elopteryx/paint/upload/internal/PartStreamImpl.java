@@ -16,6 +16,7 @@
 
 package com.elopteryx.paint.upload.internal;
 
+import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.PartStream;
 
 import javax.annotation.Nonnull;
@@ -55,6 +56,11 @@ public class PartStreamImpl implements PartStream {
      * completely uploaded.
      */
     private boolean finished;
+    /**
+     * The output object supplied by the caller. Not used here, but for
+     * the Jax-Rs module it has to be made available.
+     */
+    protected PartOutput output;
 
     /**
      * Creates a new instance.
@@ -62,7 +68,7 @@ public class PartStreamImpl implements PartStream {
      * @param fieldName The form field name.
      * @param headers The object containing the headers
      */
-    PartStreamImpl(String fileName, String fieldName, PartStreamHeaders headers) {
+    public PartStreamImpl(String fileName, String fieldName, PartStreamHeaders headers) {
         this.fileName = fileName;
         this.fieldName = fieldName;
         this.contentType = headers.getHeader(PartStreamHeaders.CONTENT_TYPE);
@@ -117,12 +123,20 @@ public class PartStreamImpl implements PartStream {
         return headers.getHeaders(name);
     }
 
+    public PartStreamHeaders getHeadersObject() {
+        return headers;
+    }
+
     void setSize(long size) {
         this.size = size;
     }
 
     void markAsFinished() {
         this.finished = true;
+    }
+
+    void setOutput(PartOutput output) {
+        this.output = output;
     }
 
     private String checkFileName(String fileName) {

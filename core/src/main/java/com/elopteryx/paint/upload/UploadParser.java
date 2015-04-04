@@ -29,8 +29,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletException;
 
 /**
- * The public API class for the library. Provides a fluent API for the users to
+ * The main class for the library. Provides a fluent API for the users to
  * customize the parsing process.
+ *
+ * <p>The class is actually a builder class, it does not do the actual parsing. Instead,
+ * when the user calls the {@link UploadParser#doBlockingParse(HttpServletRequest)} doBlockingParse}
+ * or the {@link UploadParser#setupAsyncParse(HttpServletRequest)} setupAsyncParse} it creates
+ * the actual parser object, determined by the configuration. This means that common
+ * configuration can be kept in one place and the parser can be passed around and modified
+ * freely. The servlet request object is not necessary before the actual parsing starts. In fact
+ * the configured parser can be reused for each http request.
  */
 public class UploadParser {
 
