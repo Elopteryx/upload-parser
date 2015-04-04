@@ -133,11 +133,11 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     }
 
     @Override
-    public void beginPart(final PartStreamHeaders headers) {
-        final String disposition = headers.getHeader(PartStreamHeaders.CONTENT_DISPOSITION);
+    public void beginPart(final Headers headers) {
+        final String disposition = headers.getHeader(Headers.CONTENT_DISPOSITION);
         if (disposition != null && disposition.startsWith("form-data")) {
-            String fieldName = PartStreamHeaders.extractQuotedValueFromHeader(disposition, "name");
-            String fileName = PartStreamHeaders.extractQuotedValueFromHeader(disposition, "filename");
+            String fieldName = Headers.extractQuotedValueFromHeader(disposition, "name");
+            String fileName = Headers.extractQuotedValueFromHeader(disposition, "filename");
             context.reset(new PartStreamImpl(fileName, fieldName, headers));
         }
     }

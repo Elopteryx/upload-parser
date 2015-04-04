@@ -25,14 +25,19 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * This class provides support for accessing the headers for a file or form
- * item that was received within a multipart/form-data POST request.
+ * This class is used to extract, store and retrieve header keys
+ * and values. Supports the HTTP request headers and also the headers
+ * for the part items received in the multipart request.
  */
-public class PartStreamHeaders {
+public class Headers {
 
     private static final String BOUNDARY = "boundary";
 
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
+
+    public static final String CONTENT_ENCODING = "Content-Encoding";
+
+    public static final String CONTENT_LENGTH = "Content-Length";
 
     public static final String CONTENT_TYPE = "Content-Type";
 

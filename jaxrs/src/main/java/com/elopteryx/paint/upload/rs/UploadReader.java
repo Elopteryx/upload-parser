@@ -18,7 +18,7 @@ package com.elopteryx.paint.upload.rs;
 
 import com.elopteryx.paint.upload.OnPartBegin;
 import com.elopteryx.paint.upload.OnPartEnd;
-import com.elopteryx.paint.upload.internal.PartStreamHeaders;
+import com.elopteryx.paint.upload.internal.Headers;
 import com.elopteryx.paint.upload.rs.internal.MultiPartImpl;
 import com.elopteryx.paint.upload.rs.internal.RestUploadParser;
 
@@ -55,10 +55,6 @@ import javax.ws.rs.ext.MessageBodyReader;
  */
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 public abstract class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnPartEnd {
-
-    private static final String CONTENT_LENGTH = "Content-Length";
-
-    private static final String CONTENT_ENCODING = "Content-Encoding";
 
     /**
      * The parser object. Does not support async parsing.
@@ -123,9 +119,9 @@ public abstract class UploadReader implements MessageBodyReader<Object>, OnPartB
             }
         }
 
-        long requestSize = Long.valueOf(httpHeaders.getFirst(CONTENT_LENGTH));
-        String mimeType = httpHeaders.getFirst(PartStreamHeaders.CONTENT_TYPE);
-        String encodingHeader = httpHeaders.getFirst(CONTENT_ENCODING);
+        long requestSize = Long.valueOf(httpHeaders.getFirst(Headers.CONTENT_LENGTH));
+        String mimeType = httpHeaders.getFirst(Headers.CONTENT_TYPE);
+        String encodingHeader = httpHeaders.getFirst(Headers.CONTENT_ENCODING);
         MultiPartImpl multiPart = parser.doBlockingParse(requestSize, mimeType, encodingHeader, entityStream);
         multiPart.setHeaders(httpHeaders);
         this.multiPart = multiPart;

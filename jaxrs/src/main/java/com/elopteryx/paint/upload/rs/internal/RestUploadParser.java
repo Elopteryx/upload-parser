@@ -7,7 +7,7 @@ import com.elopteryx.paint.upload.errors.MultipartException;
 import com.elopteryx.paint.upload.errors.RequestSizeException;
 import com.elopteryx.paint.upload.internal.BlockingUploadParser;
 import com.elopteryx.paint.upload.internal.MultipartParser;
-import com.elopteryx.paint.upload.internal.PartStreamHeaders;
+import com.elopteryx.paint.upload.internal.Headers;
 import com.elopteryx.paint.upload.internal.PartStreamImpl;
 import com.elopteryx.paint.upload.internal.UploadContextImpl;
 import com.elopteryx.paint.upload.rs.Part;
@@ -57,7 +57,7 @@ public class RestUploadParser extends BlockingUploadParser {
 
         String boundary;
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
-            boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
+            boundary = Headers.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
                 throw new IllegalArgumentException("Could not find boundary in multipart request with ContentType: "
                         + mimeType

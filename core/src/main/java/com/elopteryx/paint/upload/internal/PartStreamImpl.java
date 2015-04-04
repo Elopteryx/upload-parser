@@ -46,7 +46,7 @@ public class PartStreamImpl implements PartStream {
     /**
      * The headers, if any.
      */
-    private final PartStreamHeaders headers;
+    private final Headers headers;
     /**
      * The size of the part, updated on each read.
      */
@@ -68,10 +68,10 @@ public class PartStreamImpl implements PartStream {
      * @param fieldName The form field name.
      * @param headers The object containing the headers
      */
-    public PartStreamImpl(String fileName, String fieldName, PartStreamHeaders headers) {
+    public PartStreamImpl(String fileName, String fieldName, Headers headers) {
         this.fileName = fileName;
         this.fieldName = fieldName;
-        this.contentType = headers.getHeader(PartStreamHeaders.CONTENT_TYPE);
+        this.contentType = headers.getHeader(Headers.CONTENT_TYPE);
         this.fileField = fileName != null;
         this.headers = headers;
     }
@@ -123,7 +123,7 @@ public class PartStreamImpl implements PartStream {
         return headers.getHeaders(name);
     }
 
-    public PartStreamHeaders getHeadersObject() {
+    public Headers getHeadersObject() {
         return headers;
     }
 

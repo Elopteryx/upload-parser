@@ -15,8 +15,8 @@ public class PartStreamImplTest {
         String fileName = "r-" + System.currentTimeMillis();
         String fieldName = "r-" + System.currentTimeMillis();
         String contentType = "r-" + System.currentTimeMillis();
-        PartStreamHeaders headers = new PartStreamHeaders();
-        headers.addHeader(PartStreamHeaders.CONTENT_TYPE, contentType);
+        Headers headers = new Headers();
+        headers.addHeader(Headers.CONTENT_TYPE, contentType);
         PartStream partStream = new PartStreamImpl(fileName, fieldName, headers);
         assertEquals(fileName, partStream.getSubmittedFileName());
         assertEquals(fieldName, partStream.getName());
@@ -28,7 +28,7 @@ public class PartStreamImplTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalid_file_names_are_not_allowed() {
         String fileName = "r-" + System.currentTimeMillis() + '\u0000';
-        PartStream partStream = new PartStreamImpl(fileName, null, new PartStreamHeaders());
+        PartStream partStream = new PartStreamImpl(fileName, null, new Headers());
         partStream.getSubmittedFileName();
     }
 }

@@ -40,6 +40,9 @@ public class BlockingUploadParser extends AbstractUploadParser {
      */
     private final HttpServletRequest request;
 
+    /**
+     * The stream to read.
+     */
     protected InputStream inputStream;
 
     public BlockingUploadParser(HttpServletRequest request) {
@@ -65,10 +68,10 @@ public class BlockingUploadParser extends AbstractUploadParser {
         checkBuffer = ByteBuffer.allocate(sizeThreshold);
         context = new UploadContextImpl(request, userObject);
 
-        String mimeType = request.getHeader(PartStreamHeaders.CONTENT_TYPE);
+        String mimeType = request.getHeader(Headers.CONTENT_TYPE);
         String boundary;
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
-            boundary = PartStreamHeaders.extractBoundaryFromHeader(mimeType);
+            boundary = Headers.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
                 throw new IllegalArgumentException("Could not find boundary in multipart request with ContentType: "
                         + mimeType

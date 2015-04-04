@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * parameter in the endpoint. It only works on simple {@link Part}
  * parameters, it is ignored on the others.
  */
-@Target(value = ElementType.PARAMETER)
+@Target(value = { ElementType.PARAMETER, ElementType.FIELD })
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface UploadParam {
 

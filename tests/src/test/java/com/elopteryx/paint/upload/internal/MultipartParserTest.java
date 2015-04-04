@@ -34,7 +34,7 @@ public class MultipartParserTest {
         assertEquals("Here is some text.", handler.parts.get(0).data.toString());
         assertEquals("Here is some more text.", handler.parts.get(1).data.toString());
 
-        assertEquals("text/plain", handler.parts.get(0).map.getHeader(PartStreamHeaders.CONTENT_TYPE));
+        assertEquals("text/plain", handler.parts.get(0).map.getHeader(Headers.CONTENT_TYPE));
     }
 
 
@@ -50,7 +50,7 @@ public class MultipartParserTest {
         assertEquals(1, handler.parts.size());
         assertEquals("Just some chinese characters I copied from the internet, no idea what it says.", handler.parts.get(0).data.toString());
 
-        assertEquals("text/plain", handler.parts.get(0).map.getHeader(PartStreamHeaders.CONTENT_TYPE));
+        assertEquals("text/plain", handler.parts.get(0).map.getHeader(Headers.CONTENT_TYPE));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class MultipartParserTest {
         assertEquals("Here is some text.", handler.parts.get(0).data.toString());
         assertEquals("Here is some more text.", handler.parts.get(1).data.toString());
 
-        assertEquals("text/plain", handler.parts.get(0).map.getHeader(PartStreamHeaders.CONTENT_TYPE));
+        assertEquals("text/plain", handler.parts.get(0).map.getHeader(Headers.CONTENT_TYPE));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class MultipartParserTest {
         assertEquals("This is some base64 text.", handler.parts.get(0).data.toString());
         assertEquals("This is some more base64 text.", handler.parts.get(1).data.toString());
 
-        assertEquals("text/plain", handler.parts.get(0).map.getHeader(PartStreamHeaders.CONTENT_TYPE));
+        assertEquals("text/plain", handler.parts.get(0).map.getHeader(Headers.CONTENT_TYPE));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class MultipartParserTest {
         assertEquals("This is some base64 text.", handler.parts.get(0).data.toString());
         assertEquals("This is some more base64 text.", handler.parts.get(1).data.toString());
 
-        assertEquals("text/plain", handler.parts.get(0).map.getHeader(PartStreamHeaders.CONTENT_TYPE));
+        assertEquals("text/plain", handler.parts.get(0).map.getHeader(Headers.CONTENT_TYPE));
     }
 
     @Test
@@ -113,7 +113,7 @@ public class MultipartParserTest {
         assertEquals(1, handler.parts.size());
         assertEquals("time=money.", handler.parts.get(0).data.toString());
 
-        assertEquals("text/plain", handler.parts.get(0).map.getHeader(PartStreamHeaders.CONTENT_TYPE));
+        assertEquals("text/plain", handler.parts.get(0).map.getHeader(Headers.CONTENT_TYPE));
     }
 
     private static class TestPartHandler implements MultipartParser.PartHandler {
@@ -122,7 +122,7 @@ public class MultipartParserTest {
         private Part current;
         
         @Override
-        public void beginPart(final PartStreamHeaders headers) {
+        public void beginPart(final Headers headers) {
             current = new Part(headers);
             parts.add(current);
         }
@@ -141,10 +141,10 @@ public class MultipartParserTest {
     }
 
     private static class Part {
-        private final PartStreamHeaders map;
+        private final Headers map;
         private final StringBuilder data = new StringBuilder();
 
-        private Part(final PartStreamHeaders map) {
+        private Part(final Headers map) {
             this.map = map;
         }
     }

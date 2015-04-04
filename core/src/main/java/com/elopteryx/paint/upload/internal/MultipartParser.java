@@ -61,7 +61,7 @@ public class MultipartParser {
     private static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
 
     public interface PartHandler {
-        void beginPart(final PartStreamHeaders headers);
+        void beginPart(final Headers headers);
 
         void data(final ByteBuffer buffer) throws IOException;
 
@@ -98,7 +98,7 @@ public class MultipartParser {
         private volatile int subState = Integer.MAX_VALUE; // used for preamble parsing
         private volatile ByteArrayOutputStream currentString = null;
         private volatile String currentHeaderName = null;
-        private volatile PartStreamHeaders headers;
+        private volatile Headers headers;
         private volatile Encoding encodingHandler;
 
         /**
@@ -167,7 +167,7 @@ public class MultipartParser {
                     if (b == LF) {
                         subState = 0;
                         state = 1;//preamble is done
-                        headers = new PartStreamHeaders();
+                        headers = new Headers();
                         return;
                     } else {
                         subState = -1;
@@ -298,7 +298,7 @@ public class MultipartParser {
                         //ok, we have our data
                         subState = 0;
                         state = 1;
-                        headers = new PartStreamHeaders();
+                        headers = new Headers();
                         return;
                     } else if (b == DASH) {
                         subState = -3;

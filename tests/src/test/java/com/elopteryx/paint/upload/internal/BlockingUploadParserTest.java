@@ -35,7 +35,7 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
         HttpServletResponse response = newResponse();
 
         when(request.isAsyncSupported()).thenReturn(false);
-        when(request.getHeader(PartStreamHeaders.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary=----1234");
+        when(request.getHeader(Headers.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary=----1234");
 
         UploadParser.newParser()
                 .onPartBegin(this)
@@ -50,7 +50,7 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
         HttpServletRequest request = newRequest();
 
         when(request.isAsyncSupported()).thenReturn(false);
-        when(request.getHeader(PartStreamHeaders.CONTENT_TYPE)).thenReturn("multipart/form-data;");
+        when(request.getHeader(Headers.CONTENT_TYPE)).thenReturn("multipart/form-data;");
 
         UploadParser.newParser().doBlockingParse(request);
     }

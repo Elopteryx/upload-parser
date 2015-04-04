@@ -18,7 +18,7 @@ public class AsyncUploadParserTest {
         HttpServletRequest request = newRequest();
 
         when(request.isAsyncSupported()).thenReturn(true);
-        when(request.getHeader(PartStreamHeaders.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary=----1234");
+        when(request.getHeader(Headers.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary=----1234");
 
         UploadParser.newParser().setupAsyncParse(request);
         MockServletInputStream servletInputStream = (MockServletInputStream)request.getInputStream();
@@ -39,7 +39,7 @@ public class AsyncUploadParserTest {
         HttpServletRequest request = newRequest();
 
         when(request.isAsyncSupported()).thenReturn(true);
-        when(request.getHeader(PartStreamHeaders.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary;");
+        when(request.getHeader(Headers.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary;");
 
         UploadParser.newParser().setupAsyncParse(request);
     }

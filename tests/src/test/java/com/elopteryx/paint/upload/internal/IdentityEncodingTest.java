@@ -23,7 +23,7 @@ public class IdentityEncodingTest {
         encoding.handle(new MultipartParser.PartHandler() {
 
             @Override
-            public void beginPart(PartStreamHeaders headers) {}
+            public void beginPart(Headers headers) {}
 
             @Override
             public void data(ByteBuffer buffer) throws IOException {
