@@ -1,6 +1,8 @@
 package com.elopteryx.paint.upload.rs;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.elopteryx.paint.upload.PartOutput;
@@ -11,17 +13,22 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.List;
 
 @Path("upload")
 public class ReaderUploadController {
 
     @POST
     @Path("uploadWithReader")
-    public Response multipart(MultiPart multiPart) throws IOException, ServletException {
+    public Response multipart(MultiPart multiPart, List<Part> parts, @UploadParam("filefield1") Part firstFile) throws IOException, ServletException {
+        assertNotNull(multiPart);
+        assertNotNull(parts);
+        assertNotNull(firstFile);
         assertTrue(multiPart.getParts().size() == 5);
         assertTrue(multiPart.getSize() > 0);
         assertFalse(multiPart.getHeaders().isEmpty());
-        for (Part part : multiPart.getParts()) {
+        for (Part part : parts) {
             assertTrue(part.getSize() >= 0);
             if (part.isFile()) {
                 String name = part.getName();
@@ -56,9 +63,21 @@ public class ReaderUploadController {
     }
 
     @POST
+    @Path("uploadWithInvalidParameters")
+    public Response invalidParamInjection(@UploadParam("nonExistent") Part part1, Part part2, ByteBuffer buffer, List<String> names) throws IOException, ServletException {
+        // These parameters are not valid injection targets, the reader does not support them
+        assertNull(part1);
+        assertNull(part2);
+        assertNull(buffer);
+        assertNull(names);
+        return Response.status(200).build();
+    }
+
+    @POST
     @Path("uploadWithReaderAndPartLimit")
     public Response multipartSizeLimited(@UploadConfig(maxPartSize = 4096) MultiPart multiPart) throws IOException, ServletException {
         // This should be called only when each part size is smaller than the limit
+        assertNotNull(multiPart);
         return Response.status(200).build();
     }
 
@@ -66,6 +85,7 @@ public class ReaderUploadController {
     @Path("uploadWithReaderAndRequestLimit")
     public Response multipartRequestSizeLimited(@UploadConfig(maxRequestSize = 4096) MultiPart multiPart) throws IOException, ServletException {
         // This should be called only when the request size is smaller than the limit
+        assertNotNull(multiPart);
         return Response.status(200).build();
     }
 

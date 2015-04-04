@@ -4,10 +4,16 @@
  * Jax-Rs environment.
  *
  * <p>This library includes a lightweight integration of the
- * core package with the Jax-Rs environment. It only has
- * a message body reader to create an upload context object,
- * which needs to extended to be used. There is also only
- * one annotation, which allows you to define size constraints
- * for each endpoint method.
+ * core package with the Jax-Rs environment. It has
+ * a message body reader to inject upload related
+ * parameters into the controller methods. The library uses
+ * different interfaces than those found in the core library,
+ * because the Jax-Rs specification does not support async
+ * processing for the message body worker classes, therefore
+ * several methods and classes would not work here.
+ *
+ * <p>The library also includes annotations to help injecting
+ * part items into the controller methods and also to allow
+ * defining size constraints.
  */
 package com.elopteryx.paint.upload.rs;

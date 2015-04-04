@@ -16,6 +16,7 @@
 
 package com.elopteryx.paint.upload.rs;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.List;
@@ -37,6 +38,7 @@ public interface MultiPart {
      * Returns the size of the whole multipart request.
      * @return The full size of the request
      */
+    @Nonnegative
     long getSize();
 
     /**

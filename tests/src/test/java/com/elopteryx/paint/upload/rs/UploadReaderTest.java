@@ -100,6 +100,11 @@ public class UploadReaderTest {
     }
 
     @Test
+    public void test_the_upload_reader_with_jax_rs_invalid_injection() throws IOException {
+        performRequest("http://localhost:8080" + "/upload" + "/uploadWithInvalidParameters", HttpServletResponse.SC_OK);
+    }
+
+    @Test
     public void test_the_upload_reader_with_jax_rs_part_size_limited() throws IOException {
         performRequest("http://localhost:8080" + "/upload" + "/uploadWithReaderAndPartLimit", HttpServletResponse.SC_NOT_ACCEPTABLE);
     }

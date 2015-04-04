@@ -22,11 +22,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation which can be put on the UploadContext parameter, to control the size constraints.
+ * Annotation which can be put on the {@link MultiPart} parameter, to control the size constraints.
  * Adding them into an annotation will work like if they were passed into the parser using
  * the fluent API.
  */
-@Target(value = ElementType.PARAMETER)
+@Target(value = { ElementType.PARAMETER, ElementType.METHOD })
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface UploadConfig {
 
