@@ -102,7 +102,7 @@ public abstract class UploadReader implements MessageBodyReader<Object>, OnPartB
             }
             return null;
         } else if (Collection.class.equals(type) || List.class.equals(type)) {
-            if (((ParameterizedType) genericType).getActualTypeArguments()[0].getTypeName().equals(Part.class.getName())) {
+            if (((ParameterizedType) genericType).getActualTypeArguments()[0].equals(Part.class)) {
                 return multiPart.getParts();
             } else {
                 return null;
