@@ -28,6 +28,7 @@ subprojects {
         provided.extendsFrom(compile)
     }
 
+    group = "com.github.elopteryx"
     version = "1.3.0-SNAPSHOT"
 
     repositories {
