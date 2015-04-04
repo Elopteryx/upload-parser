@@ -95,7 +95,7 @@ public class BlockingUploadParser extends AbstractUploadParser {
                 int count = inputStream.read(buf);
                 if (count == -1) {
                     if (!parseState.isComplete()) {
-                        throw new MultipartException();
+                        throw new MultipartException("Stream ended unexpectedly!");
                     } else {
                         break;
                     }

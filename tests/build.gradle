@@ -32,6 +32,9 @@ dependencies {
     testCompile "org.jboss.resteasy:async-http-servlet-3.0:3.0.11.Final"
     testCompile "org.jboss.resteasy:resteasy-client:3.0.11.Final"
 
+    /* Document and file parser. */
+    testCompile "org.apache.tika:tika-core:1.7"
+
     /* In-memory filesystem. */
     testCompile "com.google.jimfs:jimfs:1.0"
 

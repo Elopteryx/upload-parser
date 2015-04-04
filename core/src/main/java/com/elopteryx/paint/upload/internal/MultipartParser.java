@@ -181,7 +181,7 @@ public class MultipartParser {
                 final byte b = buffer.get();
                 if (b == ':') {
                     if (currentString == null || subState != 0) {
-                        throw new MultipartException();
+                        throw new MultipartException("Invalid multipart request!");
                     } else {
                         currentHeaderName = new String(currentString.toByteArray(), requestCharset);
                         currentString.reset();
@@ -191,13 +191,13 @@ public class MultipartParser {
                     }
                 } else if (b == CR) {
                     if (currentString != null) {
-                        throw new MultipartException();
+                        throw new MultipartException("Invalid multipart request!");
                     } else {
                         subState = 1;
                     }
                 } else if (b == LF) {
                     if (currentString != null || subState != 1) {
-                        throw new MultipartException();
+                        throw new MultipartException("Invalid multipart request!");
                     }
                     state = 3;
                     subState = 0;
@@ -218,7 +218,7 @@ public class MultipartParser {
 
                 } else {
                     if (subState != 0) {
-                        throw new MultipartException();
+                        throw new MultipartException("Invalid multipart request!");
                     } else if (currentString == null) {
                         currentString = new ByteArrayOutputStream();
                     }
@@ -234,7 +234,7 @@ public class MultipartParser {
                     subState = 1;
                 } else if (b == LF) {
                     if (subState != 1) {
-                        throw new MultipartException();
+                        throw new MultipartException("Invalid multipart request!");
                     }
                     headers.addHeader(currentHeaderName.trim(), new String(currentString.toByteArray(), requestCharset).trim());
                     state = 1;
@@ -243,7 +243,7 @@ public class MultipartParser {
                     return;
                 } else {
                     if (subState != 0) {
-                        throw new MultipartException();
+                        throw new MultipartException("Invalid multipart request!");
                     }
                     currentString.write(b);
                 }

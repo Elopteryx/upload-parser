@@ -1,5 +1,6 @@
 package com.elopteryx.paint.upload.rs;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.elopteryx.paint.upload.PartOutput;
@@ -18,7 +19,10 @@ public class ReaderUploadController {
     @Path("uploadWithReader")
     public Response multipart(MultiPart multiPart) throws IOException, ServletException {
         assertTrue(multiPart.getParts().size() == 5);
+        assertTrue(multiPart.getSize() > 0);
+        assertFalse(multiPart.getHeaders().isEmpty());
         for (Part part : multiPart.getParts()) {
+            assertTrue(part.getSize() >= 0);
             if (part.isFile()) {
                 String name = part.getName();
                 if ("".equals(part.getSubmittedFileName())) {

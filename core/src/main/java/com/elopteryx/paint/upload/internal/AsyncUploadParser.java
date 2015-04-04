@@ -125,7 +125,7 @@ public class AsyncUploadParser extends AbstractUploadParser implements ReadListe
         int count = servletInputStream.read(buf);
         if (count == -1) {
             if (!parseState.isComplete()) {
-                throw new MultipartException();
+                throw new MultipartException("Stream ended unexpectedly!");
             }
         } else {
             checkRequestSize(count);

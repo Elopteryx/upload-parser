@@ -22,4 +22,13 @@ import java.io.IOException;
  * Exception thrown by the multipart parser. Usually it's
  * impossible to recover from this error.
  */
-public class MultipartException extends IOException {}
+public class MultipartException extends IOException {
+
+    /**
+     * Public constructor.
+     * @param message The exception message.
+     */
+    public MultipartException(String message) {
+        super(message);
+    }
+}

@@ -5,7 +5,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.elopteryx.paint.upload.OnError;
 import com.elopteryx.paint.upload.OnPartBegin;
@@ -33,6 +35,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.tika.Tika;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -75,6 +78,8 @@ public class IntegrationTest {
 
     private static FileSystem fileSystem;
 
+    private static Tika tika;
+
     /**
      * Sets up the test environment, generates data to upload, starts an
      * Undertow instance which will receive the client requests.
@@ -115,6 +120,8 @@ public class IntegrationTest {
         server.start();
 
         fileSystem = Jimfs.newFileSystem(Configuration.unix());
+
+        tika = new Tika();
     }
 
     @Test
@@ -239,10 +246,11 @@ public class IntegrationTest {
                     .onPartEnd(new OnPartEnd() {
                         @Override
                         public void onPartEnd(UploadContext context) throws IOException {
-                            if (context.getCurrentOutput().safeToCast(Channel.class)) {
+                            if (context.getCurrentOutput() != null && context.getCurrentOutput().safeToCast(Channel.class)) {
                                 Channel channel = context.getCurrentOutput().unwrap(Channel.class);
                                 if (channel.isOpen()) {
-                                    channel.close();
+                                    // The parser should close it
+                                    fail();
                                 }
                             }
                         }
@@ -328,6 +336,9 @@ public class IntegrationTest {
                         public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
                             System.out.println("Start!");
                             //use the buffer to detect file type
+                            String contentType = tika.detect(buffer.array());
+                            assertNotNull(contentType);
+                            System.out.println(contentType);
                             PartStream part = context.getCurrentPart();
                             String name = part.getName();
                             if (part.isFile()) {
@@ -425,9 +436,12 @@ public class IntegrationTest {
                     .onPartEnd(new OnPartEnd() {
                         @Override
                         public void onPartEnd(UploadContext context) throws IOException {
-                            Channel channel = context.getCurrentOutput().unwrap(Channel.class);
-                            if (channel.isOpen()) {
-                                channel.close();
+                            if (context.getCurrentOutput() != null && context.getCurrentOutput().safeToCast(Channel.class)) {
+                                Channel channel = context.getCurrentOutput().unwrap(Channel.class);
+                                if (channel.isOpen()) {
+                                    // The parser should close it
+                                    fail();
+                                }
                             }
                         }
                     })
