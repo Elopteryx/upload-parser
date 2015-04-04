@@ -135,6 +135,10 @@ public class PartStreamImpl implements PartStream {
         this.finished = true;
     }
 
+    public PartOutput getOutput() {
+        return output;
+    }
+
     void setOutput(PartOutput output) {
         this.output = output;
     }
