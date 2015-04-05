@@ -69,7 +69,8 @@ public class PartOutput {
     }
 
     /**
-     * Creates a new instance from the given channel object.
+     * Creates a new instance from the given channel object. The parser will
+     * use the channel to write out the bytes and will attempt to close it.
      * @param byteChannel A channel which can be used for writing
      * @return A new PartOutput instance
      */
@@ -78,7 +79,9 @@ public class PartOutput {
     }
 
     /**
-     * Creates a new instance from the given stream object.
+     * Creates a new instance from the given stream object. The parser will
+     * create a channel from the stream to write out the bytes and
+     * will attempt to close it.
      * @param outputStream A stream which can be used for writing
      * @return A new PartOutput instance
      */
@@ -87,7 +90,11 @@ public class PartOutput {
     }
 
     /**
-     * Creates a new instance from the given path object.
+     * Creates a new instance from the given path object. The parser will
+     * create a channel from the path to write out the bytes and
+     * will attempt to close it. If the file represented by the path
+     * does not exist, it will be created. If the file exists and is not
+     * empty then the uploaded bytes will be appended to the end of it.
      * @param path A file path which can be used for writing
      * @return A new PartOutput instance
      */

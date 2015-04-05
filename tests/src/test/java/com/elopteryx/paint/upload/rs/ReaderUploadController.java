@@ -19,6 +19,9 @@ import java.util.List;
 @Path("upload")
 public class ReaderUploadController {
 
+    /**
+     * Endpoint to test valid uploads.
+     */
     @POST
     @Path("uploadWithReader")
     public Response multipart(MultiPart multiPart, List<Part> parts, @UploadParam("filefield1") Part firstFile) throws IOException, ServletException {
@@ -62,6 +65,9 @@ public class ReaderUploadController {
         return Response.status(200).build();
     }
 
+    /**
+     * Endpoint to test invalid injection targets.
+     */
     @POST
     @Path("uploadWithInvalidParameters")
     public Response invalidParamInjection(@UploadParam("nonExistent") Part part1, Part part2, ByteBuffer buffer, List<String> names) throws IOException, ServletException {
@@ -73,6 +79,9 @@ public class ReaderUploadController {
         return Response.status(200).build();
     }
 
+    /**
+     * Endpoint to test part size limit checking.
+     */
     @POST
     @Path("uploadWithReaderAndPartLimit")
     public Response multipartSizeLimited(@UploadConfig(maxPartSize = 4096) MultiPart multiPart) throws IOException, ServletException {
@@ -81,6 +90,9 @@ public class ReaderUploadController {
         return Response.status(200).build();
     }
 
+    /**
+     * Endpoint to test request size limit checking.
+     */
     @POST
     @Path("uploadWithReaderAndRequestLimit")
     public Response multipartRequestSizeLimited(@UploadConfig(maxRequestSize = 4096) MultiPart multiPart) throws IOException, ServletException {

@@ -16,8 +16,8 @@
 
 package com.elopteryx.paint.upload.internal;
 
+import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Objects.requireNonNull;
 
@@ -180,7 +180,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
             } else if (output.safeToCast(OutputStream.class)) {
                 writableChannel = Channels.newChannel(output.unwrap(OutputStream.class));
             } else if (output.safeToCast(Path.class)) {
-                writableChannel = Files.newByteChannel(output.unwrap(Path.class), EnumSet.of(CREATE, TRUNCATE_EXISTING, WRITE));
+                writableChannel = Files.newByteChannel(output.unwrap(Path.class), EnumSet.of(APPEND, CREATE, WRITE));
             } else {
                 throw new IllegalArgumentException("Invalid output object!");
             }

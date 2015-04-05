@@ -31,7 +31,8 @@ public interface OnPartBegin {
      * have been read or if the part is fully uploaded then this method is called
      * with a buffer containing the read bytes. Note that the buffer is only passed
      * for validation, it should not be written out. The buffered and the upcoming
-     * bytes will be written out to the output object returned by this method.
+     * bytes will be written out to the output object returned by this method. If the callback
+     * is not set then the uploaded bytes are discarded.
      * @param context The upload context
      * @param buffer The byte buffer containing the first bytes of the part
      * @return A non-null output object (a channel or stream) to write out the part

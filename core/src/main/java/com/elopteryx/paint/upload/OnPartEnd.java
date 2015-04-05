@@ -23,7 +23,8 @@ import java.io.IOException;
  * {@link UploadParser#onPartEnd(OnPartEnd)} onPartEnd} method to call it at the end of parsing for each part.
  *
  * <p>This function is called after every byte has been read for the given part. There will be
- * an attempt to close the current output object just before calling this.</p>
+ * an attempt to close the current output object just before calling this. That means setting
+ * this can be skipped if all you want to do is to close the provided channel or stream.</p>
  */
 public interface OnPartEnd {
 
