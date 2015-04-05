@@ -7,7 +7,7 @@ apply plugin: "com.github.kt3k.coveralls"
 apply plugin: "jacoco"
 
 task testReport(type: TestReport, group: "Build") {
-    description = "Generates an aggregate test report"
+    description = "Generates an aggregate test report."
     destinationDir = file("${buildDir}/reports/allTests")
 }
 
@@ -15,6 +15,7 @@ subprojects {
 
     apply plugin: "java"
     apply plugin: "idea"
+    apply plugin: "eclipse"
     apply plugin: "maven-publish"
     apply plugin: "maven"
     apply plugin: "signing"
@@ -104,10 +105,14 @@ subprojects {
         }
     }
 
-    tasks.withType(Test) {
-        if (!it.name.startsWith("slow")) {
-            rootProject.testReport.reportOn it
+    eclipse {
+        classpath {
+            plusConfigurations += [configurations.provided]
         }
+    }
+
+    tasks.withType(Test) {
+        rootProject.testReport.reportOn it
         jacoco {
             append = true
             destinationFile = file("${rootDir}/build/jacoco/jacocoTest.exec")
@@ -146,7 +151,7 @@ coveralls {
 
 tasks.coveralls {
     group = "Coverage reports"
-    description = "Uploads the aggregated coverage report to Coveralls"
+    description = "Uploads the aggregated coverage report to Coveralls."
 
     dependsOn jacocoRootReport
     onlyIf { System.env."CI" }

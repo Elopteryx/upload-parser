@@ -66,7 +66,7 @@ public interface Part {
     String getSubmittedFileName();
 
     /**
-     * Determines whether or not this PartStream instance represents
+     * Determines whether or not this Part instance represents
      * a file item. If it's a normal form field then it will return false.
      * Consequently, if this returns true then the {@link Part#getSubmittedFileName}
      * will return with a non-null value and vice-versa.
