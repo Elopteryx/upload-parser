@@ -27,6 +27,9 @@ import java.util.List;
  */
 public class RestUploadParser extends BlockingUploadParser {
 
+    /**
+     * Public constructor.
+     */
     public RestUploadParser() {
         super(null);
     }

@@ -47,7 +47,6 @@ subprojects {
     }
 
     javadoc {
-        exclude "**/internal/**"
         afterEvaluate {
             classpath += configurations.provided
             configure(options) {

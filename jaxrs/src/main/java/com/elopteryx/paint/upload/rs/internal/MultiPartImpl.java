@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Implementation of the MultiPart interface.
+ * Default implementation of {@link com.elopteryx.paint.upload.rs.MultiPart}.
  */
 public class MultiPartImpl implements MultiPart {
 

@@ -28,7 +28,7 @@ import java.nio.ByteBuffer;
  * encoder and the methods which accepted a different parameter,
  * for example a byte array, instead of a ByteBuffer.
  *
- * <p>An efficient and flexible MIME Base64 implementation.
+ * <p>An efficient and flexible MIME Base64 implementation.</p>
  *
  * @author Jason T. Greene
  */

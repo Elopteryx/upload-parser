@@ -10,10 +10,10 @@
  * different interfaces than those found in the core library,
  * because the Jax-Rs specification does not support async
  * processing for the message body worker classes, therefore
- * several methods and classes would not work here.
+ * several methods and classes would not work here.</p>
  *
  * <p>The library also includes annotations to help injecting
  * part items into the controller methods and also to allow
- * defining size constraints.
+ * defining size constraints.</p>
  */
 package com.elopteryx.paint.upload.rs;

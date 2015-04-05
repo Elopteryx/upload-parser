@@ -16,11 +16,14 @@
 
 package com.elopteryx.paint.upload.errors;
 
+/**
+ * Exception thrown when there is a maximum size limit set for the whole
+ * request and it is exceeded for the first time.
+ */
 public class RequestSizeException extends UploadSizeException {
 
     /**
-     * Exception thrown when there is a maximum size limit set for the whole
-     * request and it is exceeded for the first time.
+     * Public constructor.
      * @param message The message of the exception
      * @param actual The known size at the time of the exception in bytes
      * @param permitted The maximum permitted size in bytes

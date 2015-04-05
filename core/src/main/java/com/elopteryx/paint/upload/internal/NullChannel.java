@@ -23,7 +23,7 @@ import java.nio.channels.WritableByteChannel;
 /**
  * A channel implementation which discards the data supplied.
  * Used by the parser if it doesn't have a channel to write to.
- * The purpose of this is to make the OnPartBegin callback
+ * The purpose of this is to make the {@link com.elopteryx.paint.upload.OnPartBegin} callback
  * optional, which is useful for testing.
  */
 public class NullChannel implements WritableByteChannel {

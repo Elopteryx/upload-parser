@@ -6,13 +6,13 @@
  * <p>The library has been designed to hide the implementation details
  * from the users. When using it the users should not
  * need to import from the internal package, using the public
- * classes and the exception classes should be more than enough.
+ * classes and the exception classes should be more than enough.</p>
  *
  * <p>The parser object provides full control over the uploading
  * process. The functional interfaces can be used to perform
  * operations on the part objects. Information about the process
  * is provided in the upload context object, which is available
- * in every stage of the process.
+ * in every stage of the process.</p>
  *
  * <p>The classes here have been designed to work with servlets. There
  * are two kinds of parsing, you can do it asynchronously or in
@@ -20,6 +20,6 @@
  * async mode. Both of them are incompatible with the multipart
  * API of the servlet specification. Using that makes the
  * servlet input stream unavailable for this library or any code
- * that is written by the users.
+ * that is written by the users.</p>
  */
 package com.elopteryx.paint.upload;

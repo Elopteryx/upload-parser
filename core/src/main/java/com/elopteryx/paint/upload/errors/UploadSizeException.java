@@ -32,7 +32,7 @@ public abstract class UploadSizeException extends RuntimeException {
     private final long permitted;
 
     /**
-     * Exception thrown when there is a maximum size limit and it is exceeded for the first time.
+     * Package private constructor.
      * @param message The message of the exception
      * @param actual The known size at the time of the exception in bytes
      * @param permitted The maximum permitted size in bytes

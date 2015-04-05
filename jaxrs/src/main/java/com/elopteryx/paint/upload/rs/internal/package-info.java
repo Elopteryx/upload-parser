@@ -5,4 +5,4 @@
  * does not meet the needs then these classes can be used
  * instead.
  */
-package com.elopteryx.paint.upload.internal;
+package com.elopteryx.paint.upload.rs.internal;

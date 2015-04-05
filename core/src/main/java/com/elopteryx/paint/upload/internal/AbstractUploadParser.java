@@ -114,8 +114,11 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     void checkPartSize(int additional) {
         long partSize = context.incrementAndGetPartBytesRead(additional);
         if (maxPartSize > -1 && partSize > maxPartSize) {
-            throw new PartSizeException("The size of the part (" + partSize
-                    + ") is greater than the allowed size (" + maxPartSize + ")!", partSize, maxPartSize);
+            throw new PartSizeException("The size of the part ("
+                    + partSize
+                    + ") is greater than the allowed size ("
+                    + maxPartSize
+                    + ")!", partSize, maxPartSize);
         }
     }
 
@@ -127,8 +130,11 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     protected void checkRequestSize(int additional) {
         requestSize += additional;
         if (maxRequestSize > -1 && requestSize > maxRequestSize) {
-            throw new RequestSizeException("The size of the request (" + requestSize
-                    + ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
+            throw new RequestSizeException("The size of the request ("
+                    + requestSize
+                    + ") is greater than the allowed size ("
+                    + maxRequestSize
+                    + ")!", requestSize, maxRequestSize);
         }
     }
 

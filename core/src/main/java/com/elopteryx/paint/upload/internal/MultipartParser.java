@@ -31,7 +31,7 @@ import java.nio.charset.Charset;
  * a ByteBuffer instance to use.
  *
  * <p>The parser which reads the multipart stream and calls the part
- * handler during certain stages.
+ * handler during certain stages.</p>
  *
  * @author Stuart Douglas
  */

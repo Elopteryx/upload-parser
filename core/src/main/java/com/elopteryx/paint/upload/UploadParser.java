@@ -38,7 +38,7 @@ import javax.servlet.ServletException;
  * the actual parser object, determined by the configuration. This means that common
  * configuration can be kept in one place and the parser can be passed around and modified
  * freely. The servlet request object is not necessary before the actual parsing starts. In fact
- * the configured parser can be reused for each http request.
+ * the configured parser can be reused for each http request.</p>
  */
 public class UploadParser {
 

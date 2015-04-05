@@ -23,7 +23,7 @@ import com.elopteryx.paint.upload.rs.Part;
 import javax.annotation.Nonnull;
 
 /**
- * Implementation of the Part interface.
+ * Default implementation of {@link com.elopteryx.paint.upload.rs.Part}.
  */
 public class PartImpl extends PartStreamImpl implements Part {
 

@@ -43,15 +43,19 @@ import javax.ws.rs.ext.MessageBodyReader;
  * which are the part begin and end callbacks.
  *
  * <p>The reader does not support the request callback, because that code can go
- * into the controller method instead and also no error callback, because there are
- * exception mappers for that.
+ * into the controller method instead and the error callback, because there are
+ * exception mappers for that.</p>
  *
- * <p>The reader can inject the following parameters:
- *      {@link MultiPart}
- *      {@link Part} with a valid {@link UploadParam} annotation
- *      {@link Collection} of {@link Part} instances
- *      {@link List} of {@link Part} instances
- * Other parameters are not supported by the reader.
+ * <p>The reader can inject the following parameters:</p>
+ *
+ * <ul>
+ * <li>{@link MultiPart}</li>
+ * <li>{@link Part} with a valid {@link UploadParam} annotation</li>
+ * <li>{@link Collection} of {@link Part} instances</li>
+ * <li>{@link List} of {@link Part} instances</li>
+ * </ul>
+ *
+ * <p>Other parameters are not supported by the reader.</p>
  */
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 public abstract class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnPartEnd {
