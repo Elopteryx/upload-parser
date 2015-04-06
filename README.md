@@ -198,9 +198,9 @@ The following code shows how they work:
 
 ```
 
-Note that the JAX-RS API does not support async IO, therefore the parsing can only work in a blocking mode, if you
-use it like in the last example. If you are not planning to use parameter injection, then importing the JAX-RS module
-is unnecessary, the core library will also work, as shown in the second example.
+Note that the JAX-RS API does not support async IO for message body readers, therefore the parsing can only work in a
+blocking mode, if you use it like in the last example. If you are not planning to use parameter injection, then 
+importing the JAX-RS module is unnecessary, the core library will also work, as shown in the second example.
 
 For more information, please check the javadocs:
 
@@ -212,8 +212,11 @@ Gradle
 -----
 ```xml
 compile "com.github.elopteryx:paint-upload:1.3.0"
+```
 
-// only if you want parameter injection
+If you want parameter injection for you JAX-RS endpoints:
+
+```xml
 compile "com.github.elopteryx:paint-upload-jaxrs:1.3.0"
 ```
 Maven
@@ -234,5 +237,5 @@ Maven
 
 Find available versions on [Maven Central Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.elopteryx%22%20AND%20a%3A%22paint-upload%22).
 
-[1]: http://www.javadoc.io/
-[2]: http://www.javadoc.io/
+[1]: http://www.javadoc.io/doc/com.github.elopteryx/paint-upload/1.3.0
+[2]: http://www.javadoc.io/doc/com.github.elopteryx/paint-upload-jaxrs/1.3.0
