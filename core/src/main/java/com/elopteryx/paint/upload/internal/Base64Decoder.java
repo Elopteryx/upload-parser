@@ -32,7 +32,7 @@ import java.nio.ByteBuffer;
  *
  * @author Jason T. Greene
  */
-class Base64Decoder {
+public class Base64Decoder {
 
     private static final byte[] ENCODING_TABLE;
     private static final byte[] DECODING_TABLE = new byte[80];

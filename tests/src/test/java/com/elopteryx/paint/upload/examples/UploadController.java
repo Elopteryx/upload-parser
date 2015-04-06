@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
- * Example controller class for the Jax-Rs library.
+ * Example controller class for the Jax-Rs library. Uses the parser directly.
  */
 @Path("upload")
 public class UploadController implements OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
@@ -49,25 +49,25 @@ public class UploadController implements OnPartBegin, OnPartEnd, OnRequestComple
     @Override
     @Nonnull
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-        //Your business logic here, check the part, you can use the bytes in the buffer to check
-        //the real mime type, then return with a channel, stream or path to write the part
+        // Your business logic here, check the part, you can use the bytes in the buffer to check
+        // the real mime type, then return with a channel, stream or path to write the part
         return PartOutput.from(new NullChannel());
     }
 
     @Override
     public void onPartEnd(UploadContext context) throws IOException {
-        //Your business logic here
+        // Your business logic here
     }
 
     @Override
     public void onRequestComplete(UploadContext context) throws IOException, ServletException {
-        //Your business logic here, send a response to the client
+        // Your business logic here, send a response to the client
         context.getUserObject(AsyncResponse.class).resume(Response.ok().build());
     }
 
     @Override
     public void onError(UploadContext context, Throwable throwable) {
-        //Your business logic here, handle the error
+        // Your business logic here, handle the error
         context.getUserObject(AsyncResponse.class).resume(Response.serverError().build());
     }
 }

@@ -14,9 +14,8 @@ upload request can run in asynchronous mode, using the async IO API introduced i
 This will allow a much better use of system resources, no more waiting threads.
 
 The library has two components. The core module is written for plain servlets, although it can work with any web
-framework that allows access to the HttpServletRequest instance, for example Spring WebMVC. The jaxrs module is still
-work in progress, I'm still experimenting with it. In the future it should allow you to write compact and reusable code
-for your endpoints.
+framework that allows access to the HttpServletRequest instance, for example Spring WebMVC. The JAX-RS module allows
+you to handle the uploaded parts as automatically injected method parameters when using the JAX-RS runtime.
 
 Features
 --------
@@ -107,7 +106,7 @@ you'll have to use anonymous classes and implement the functional interfaces of 
 }
 ```
 
-You can also use the parser with web frameworks. The following example shows how to use it with a Jax-RS endpoint:
+You can also use the parser with web frameworks. The following example shows how to use it with a JAX-RS endpoint:
 
 ```java
 
@@ -129,34 +128,93 @@ You can also use the parser with web frameworks. The following example shows how
         @Override
         @Nonnull
         public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-            //Your business logic here, check the part, you can use the bytes in the buffer to check
-            //the real mime type, then return with a channel, stream or path to write the part
+            // Your business logic here, check the part, you can use the bytes in the buffer to check
+            // the real mime type, then return with a channel, stream or path to write the part
             return PartOutput.from(new NullChannel());
         }
 
         @Override
         public void onPartEnd(UploadContext context) throws IOException {
-            //Your business logic here
+            // Your business logic here
         }
 
         @Override
         public void onRequestComplete(UploadContext context) throws IOException, ServletException {
-            //Your business logic here, send a response to the client
+            // Your business logic here, send a response to the client
             context.getUserObject(AsyncResponse.class).resume(Response.ok().build());
         }
 
         @Override
         public void onError(UploadContext context, Throwable throwable) {
-            //Your business logic here, handle the error
+            // Your business logic here, handle the error
             context.getUserObject(AsyncResponse.class).resume(Response.serverError().build());
         }
     }
 ```
 
+These two examples show how to use the core library. If you want to handle multipart requests in a more elegant way, you
+can use the JAX-RS module. It comes with a message body reader implementation (although it has to be extended and
+registered manually) and configuration annotations which allows you to receive the request parts as method parameters.
+The following code shows how they work:
+
+```java
+
+    @Path("upload")
+    public class ReaderUploadController {
+    
+        /**
+         * Example endpoint for the reader, the reader injects the object representing the whole
+         * multipart request.
+         * @param multiPart The multipart request
+         * @throws IOException If an error occurred with the I/O
+         * @throws ServletException If an error occurred with the servlet
+         */
+        @POST
+        @Path("upload1")
+        public void multiPart(@UploadConfig(sizeThreshold = 4096)MultiPart multiPart) throws IOException, ServletException {
+            multiPart.getParts();
+            multiPart.getHeaders();
+            multiPart.getSize();
+            // ...
+        }
+    
+        /**
+         * Example endpoint for the reader, the reader injects the part objects as method parameters.
+         * @param part1 The first part, with the given form name
+         * @param part2 The second part, with the given form name
+         * @param part3 The third part, with the given form name
+         * @throws IOException If an error occurred with the I/O
+         * @throws ServletException If an error occurred with the servlet
+         */
+        @POST
+        @Path("upload2")
+        public void separateParts(@UploadParam("text1")Part part1,
+                                  @UploadParam("text2")Part part2,
+                                  @UploadParam("file")Part part3
+        ) throws IOException, ServletException {
+            // ...
+        }
+    }
+
+```
+
+Note that the JAX-RS API does not support async IO, therefore the parsing can only work in a blocking mode, if you
+use it like in the last example. If you are not planning to use parameter injection, then importing the JAX-RS module
+is unnecessary, the core library will also work, as shown in the second example.
+
+For more information, please check the javadocs:
+
+Core([javadoc][1])
+
+JAX-RS([javadoc][2])
+
 Gradle
 -----
 ```xml
-compile "com.github.elopteryx:paint-upload:1.2.0"
+compile "com.github.elopteryx:paint-upload:1.3.0"
+
+// only if you want parameter injection
+compile "com.github.elopteryx:paint-upload-jaxrs:1.3.0"
 ```
 Maven
 -----
@@ -164,8 +222,17 @@ Maven
 <dependency>
     <groupId>com.github.elopteryx</groupId>
     <artifactId>paint-upload</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
+</dependency>
+
+<dependency>
+    <groupId>com.github.elopteryx</groupId>
+    <artifactId>paint-upload-jaxrs</artifactId>
+    <version>1.3.0</version>
 </dependency>
 ```
 
 Find available versions on [Maven Central Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.elopteryx%22%20AND%20a%3A%22paint-upload%22).
+
+[1]: http://www.javadoc.io/
+[2]: http://www.javadoc.io/
