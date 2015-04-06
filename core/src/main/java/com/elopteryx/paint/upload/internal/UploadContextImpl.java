@@ -28,8 +28,7 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Meta data holder of an upload operation. Its fields are
- * managed by the handler objects.
+ * Default implementation of {@link com.elopteryx.paint.upload.UploadContext}.
  */
 public class UploadContextImpl implements UploadContext {
 
