@@ -17,6 +17,11 @@ The library has two components. The core module is written for plain servlets, a
 framework that allows access to the HttpServletRequest instance, for example Spring WebMVC. The JAX-RS module allows
 you to handle the uploaded parts as automatically injected method parameters when using the JAX-RS runtime.
 
+I consider the modules complete, when it comes to features. I don't think I can add more without bloating the
+library, but if you have suggestions for new stuff, or if you have found a bug I would be more than happy to fix that.
+Anyway, I'm not planning to add that much to the library. If a new version of Java SE or EE comes out I will try to
+experiment with it, maybe make a new major version.
+
 Features
 --------
 * Async and blocking multipart request parsing
@@ -214,7 +219,7 @@ Gradle
 compile "com.github.elopteryx:paint-upload:1.3.0"
 ```
 
-If you want parameter injection for you JAX-RS endpoints:
+If you want parameter injection for your JAX-RS endpoints:
 
 ```xml
 compile "com.github.elopteryx:paint-upload-jaxrs:1.3.0"
