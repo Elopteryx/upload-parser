@@ -9,16 +9,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.elopteryx.paint.upload.OnError;
-import com.elopteryx.paint.upload.OnPartBegin;
-import com.elopteryx.paint.upload.OnPartEnd;
-import com.elopteryx.paint.upload.OnRequestComplete;
 import com.elopteryx.paint.upload.PartOutput;
 import com.elopteryx.paint.upload.PartStream;
 import com.elopteryx.paint.upload.UploadParser;
 import com.elopteryx.paint.upload.UploadContext;
 
-import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -42,7 +37,6 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.channels.Channel;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -52,7 +46,6 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
-import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -101,7 +94,7 @@ public class IntegrationTest {
                 .setContextPath("/")
                 .setDeploymentName("ROOT.war")
                 .addServlets(
-                        Servlets.servlet("AsyncSUploadServlet", AsyncUploadServlet.class)
+                        Servlets.servlet("AsyncUploadServlet", AsyncUploadServlet.class)
                                 .addMapping("/async")
                                 .setAsyncSupported(true),
                         Servlets.servlet("BlockingUploadServlet", BlockingUploadServlet.class)
@@ -119,7 +112,7 @@ public class IntegrationTest {
                 .build();
         server.start();
 
-        fileSystem = Jimfs.newFileSystem(Configuration.unix());
+        fileSystem = Jimfs.newFileSystem();
 
         tika = new Tika();
     }
@@ -195,7 +188,7 @@ public class IntegrationTest {
     @WebServlet(value = "/async", asyncSupported = true)
     public static class AsyncUploadServlet extends HttpServlet {
         @Override
-        protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
             String query = request.getQueryString();
             switch (query) {
@@ -220,47 +213,37 @@ public class IntegrationTest {
 
         }
 
-        private void simple(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        private void simple(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
             UploadParser.newParser()
-                    .onPartBegin(new OnPartBegin() {
-                        @Nonnull
-                        @Override
-                        public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-                            if (context.getPartStreams().size() == 1) {
-                                Path dir = IntegrationTest.fileSystem.getPath("");
-                                Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
-                                return PartOutput.from(Files.newByteChannel(temp, EnumSet.of(CREATE, TRUNCATE_EXISTING, WRITE)));
-                            } else if (context.getPartStreams().size() == 2) {
-                                Path dir = IntegrationTest.fileSystem.getPath("");
-                                Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
-                                return PartOutput.from(Files.newOutputStream(temp));
-                            } else if (context.getPartStreams().size() == 3) {
-                                Path dir = IntegrationTest.fileSystem.getPath("");
-                                Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
-                                return PartOutput.from(temp);
-                            } else {
-                                return PartOutput.from(new NullChannel());
+                    .onPartBegin((context, buffer) -> {
+                        if (context.getPartStreams().size() == 1) {
+                            Path dir = IntegrationTest.fileSystem.getPath("");
+                            Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
+                            return PartOutput.from(Files.newByteChannel(temp, EnumSet.of(CREATE, TRUNCATE_EXISTING, WRITE)));
+                        } else if (context.getPartStreams().size() == 2) {
+                            Path dir = IntegrationTest.fileSystem.getPath("");
+                            Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
+                            return PartOutput.from(Files.newOutputStream(temp));
+                        } else if (context.getPartStreams().size() == 3) {
+                            Path dir = IntegrationTest.fileSystem.getPath("");
+                            Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
+                            return PartOutput.from(temp);
+                        } else {
+                            return PartOutput.from(new NullChannel());
+                        }
+                    })
+                    .onPartEnd(context -> {
+                        if (context.getCurrentOutput() != null && context.getCurrentOutput().safeToCast(Channel.class)) {
+                            Channel channel = context.getCurrentOutput().unwrap(Channel.class);
+                            if (channel.isOpen()) {
+                                // The parser should close it
+                                fail();
                             }
                         }
                     })
-                    .onPartEnd(new OnPartEnd() {
-                        @Override
-                        public void onPartEnd(UploadContext context) throws IOException {
-                            if (context.getCurrentOutput() != null && context.getCurrentOutput().safeToCast(Channel.class)) {
-                                Channel channel = context.getCurrentOutput().unwrap(Channel.class);
-                                if (channel.isOpen()) {
-                                    // The parser should close it
-                                    fail();
-                                }
-                            }
-                        }
-                    })
-                    .onRequestComplete(new OnRequestComplete() {
-                        @Override
-                        public void onRequestComplete(UploadContext context) throws IOException, ServletException {
-                            request.getAsyncContext().complete();
-                            response.setStatus(200);
-                        }
+                    .onRequestComplete(context -> {
+                        request.getAsyncContext().complete();
+                        response.setStatus(200);
                     })
                     .setupAsyncParse(request);
         }
@@ -271,138 +254,105 @@ public class IntegrationTest {
             }
         }
 
-        private void error(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        private void error(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
             UploadParser.newParser()
-                    .onPartBegin(new OnPartBegin() {
-                        @Nonnull
-                        @Override
-                        public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-                            return new EvilOutput("This will cause an error!");
-                        }
+                    .onPartBegin((context, buffer) -> new EvilOutput("This will cause an error!"))
+                    .onError((context, throwable) -> response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR))
+                    .setupAsyncParse(request);
+        }
+
+        private void ioErrorUponError(HttpServletRequest request) throws ServletException, IOException {
+
+            UploadParser.newParser()
+                    .onRequestComplete(context -> {
+                        throw new IOException();
                     })
-                    .onError(new OnError() {
-                        @Override
-                        public void onError(UploadContext context, Throwable throwable) throws IOException, ServletException {
-                            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                        }
+                    .onError((context, throwable) -> {
+                        throw new ServletException();
                     })
                     .setupAsyncParse(request);
         }
 
-        private void ioErrorUponError(final HttpServletRequest request) throws ServletException, IOException {
-
-            UploadParser.newParser()
-                    .onRequestComplete(new OnRequestComplete() {
-                        @Override
-                        public void onRequestComplete(UploadContext context) throws IOException, ServletException {
-                            throw new IOException();
-                        }
-                    })
-                    .onError(new OnError() {
-                        @Override
-                        public void onError(UploadContext context, Throwable throwable) throws IOException, ServletException {
-                            throw new ServletException();
-                        }
-                    })
-                    .setupAsyncParse(request);
-        }
-
-        private void servletErrorUponError(final HttpServletRequest request) throws ServletException, IOException {
+        private void servletErrorUponError(HttpServletRequest request) throws ServletException, IOException {
 
             // onError will not be called for ServletException!
             UploadParser.newParser()
-                    .onRequestComplete(new OnRequestComplete() {
-                        @Override
-                        public void onRequestComplete(UploadContext context) throws IOException, ServletException {
-                            throw new ServletException();
-                        }
+                    .onRequestComplete(context -> {
+                        throw new ServletException();
                     })
                     .setupAsyncParse(request);
         }
 
-        private void complex(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        private void complex(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
             if (!UploadParser.isMultipart(request)) {
                 throw new ServletException("Not multipart!");
             }
 
-            final List<ByteArrayOutputStream> formFields = new ArrayList<>();
+            List<ByteArrayOutputStream> formFields = new ArrayList<>();
 
             UploadParser.newParser()
-                    .onPartBegin(new OnPartBegin() {
-                        @Nonnull
-                        @Override
-                        public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-                            System.out.println("Start!");
-                            //use the buffer to detect file type
-                            String contentType = tika.detect(buffer.array());
-                            assertNotNull(contentType);
-                            System.out.println(contentType);
-                            PartStream part = context.getCurrentPart();
-                            String name = part.getName();
-                            if (part.isFile()) {
-                                if ("".equals(part.getSubmittedFileName())) {
-                                    throw new IOException("No file was chosen for the form field!");
-                                }
-                                System.out.println("File field " + name + " with file name "
-                                        + part.getSubmittedFileName() + " detected!");
-                                for (String header : part.getHeaderNames()) {
-                                    System.out.println(header + " " + part.getHeader(header));
-                                }
-                                part.getHeaders("content-type");
-                                System.out.println(part.getContentType());
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                formFields.add(baos);
-                                return PartOutput.from(baos);
-                            } else {
-                                for (String header : part.getHeaderNames()) {
-                                    System.out.println(header + " " + part.getHeader(header));
-                                }
-                                System.out.println(part.getContentType());
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                formFields.add(baos);
-                                return PartOutput.from(baos);
+                    .onPartBegin((context, buffer) -> {
+                        System.out.println("Start!");
+                        //use the buffer to detect file type
+                        String contentType = tika.detect(buffer.array());
+                        assertNotNull(contentType);
+                        System.out.println(contentType);
+                        PartStream part = context.getCurrentPart();
+                        String name = part.getName();
+                        if (part.isFile()) {
+                            if ("".equals(part.getSubmittedFileName())) {
+                                throw new IOException("No file was chosen for the form field!");
                             }
+                            System.out.println("File field " + name + " with file name "
+                                    + part.getSubmittedFileName() + " detected!");
+                            for (String header : part.getHeaderNames()) {
+                                System.out.println(header + " " + part.getHeader(header));
+                            }
+                            part.getHeaders("content-type");
+                            System.out.println(part.getContentType());
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            formFields.add(baos);
+                            return PartOutput.from(baos);
+                        } else {
+                            for (String header : part.getHeaderNames()) {
+                                System.out.println(header + " " + part.getHeader(header));
+                            }
+                            System.out.println(part.getContentType());
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            formFields.add(baos);
+                            return PartOutput.from(baos);
                         }
                     })
-                    .onPartEnd(new OnPartEnd() {
-                        @Override
-                        public void onPartEnd(UploadContext context) throws IOException {
-                            System.out.println(context.getCurrentPart().getKnownSize());
-                            System.out.println("Part success!");
-                        }
+                    .onPartEnd(context -> {
+                        System.out.println(context.getCurrentPart().getKnownSize());
+                        System.out.println("Part success!");
                     })
-                    .onRequestComplete(new OnRequestComplete() {
-                        @Override
-                        public void onRequestComplete(UploadContext context) throws IOException, ServletException {
-                            System.out.println("Request complete!");
-                            System.out.println("Total parts: " + context.getPartStreams().size());
+                    .onRequestComplete(context -> {
+                        System.out.println("Request complete!");
+                        System.out.println("Total parts: " + context.getPartStreams().size());
 
-                            assertTrue(Arrays.equals(formFields.get(0).toByteArray(), largeFile));
-                            assertTrue(Arrays.equals(formFields.get(1).toByteArray(), emptyFile));
-                            assertTrue(Arrays.equals(formFields.get(2).toByteArray(), smallFile));
-                            assertTrue(Arrays.equals(formFields.get(3).toByteArray(), textValue1.getBytes(ISO_8859_1)));
-                            assertTrue(Arrays.equals(formFields.get(4).toByteArray(), textValue2.getBytes(ISO_8859_1)));
+                        assertTrue(Arrays.equals(formFields.get(0).toByteArray(), largeFile));
+                        assertTrue(Arrays.equals(formFields.get(1).toByteArray(), emptyFile));
+                        assertTrue(Arrays.equals(formFields.get(2).toByteArray(), smallFile));
+                        assertTrue(Arrays.equals(formFields.get(3).toByteArray(), textValue1.getBytes(ISO_8859_1)));
+                        assertTrue(Arrays.equals(formFields.get(4).toByteArray(), textValue2.getBytes(ISO_8859_1)));
 
-                            context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
+                        context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
 
-                            for (ByteArrayOutputStream baos : formFields) {
-                                System.out.println(baos.toString());
-                            }
-                            context.getRequest().getAsyncContext().complete();
+                        for (ByteArrayOutputStream baos : formFields) {
+                            System.out.println(baos.toString());
                         }
+                        context.getRequest().getAsyncContext().complete();
                     })
-                    .onError(new OnError() {
-                        @Override
-                        public void onError(UploadContext context, Throwable throwable) throws IOException, ServletException {
-                            System.out.println("Error!");
-                            throwable.printStackTrace();
-                            for (ByteArrayOutputStream baos : formFields) {
-                                System.out.println(baos.toString());
-                            }
-                            response.sendError(500);
+                    .onError((context, throwable) -> {
+                        System.out.println("Error!");
+                        throwable.printStackTrace();
+                        for (ByteArrayOutputStream baos : formFields) {
+                            System.out.println(baos.toString());
                         }
+                        response.sendError(500);
                     })
                     .userObject(response)
                     .sizeThreshold(4096)
@@ -415,7 +365,7 @@ public class IntegrationTest {
     @WebServlet(value = "/blocking", asyncSupported = false)
     public static class BlockingUploadServlet extends HttpServlet {
         @Override
-        protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
             String query = request.getQueryString();
             switch (query) {
@@ -431,39 +381,26 @@ public class IntegrationTest {
 
         }
 
-        private void simple(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        private void simple(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
             UploadContext context = UploadParser.newParser()
-                    .onPartEnd(new OnPartEnd() {
-                        @Override
-                        public void onPartEnd(UploadContext context) throws IOException {
-                            if (context.getCurrentOutput() != null && context.getCurrentOutput().safeToCast(Channel.class)) {
-                                Channel channel = context.getCurrentOutput().unwrap(Channel.class);
-                                if (channel.isOpen()) {
-                                    // The parser should close it
-                                    fail();
-                                }
+                    .onPartEnd(context1 -> {
+                        if (context1.getCurrentOutput() != null && context1.getCurrentOutput().safeToCast(Channel.class)) {
+                            Channel channel = context1.getCurrentOutput().unwrap(Channel.class);
+                            if (channel.isOpen()) {
+                                // The parser should close it
+                                fail();
                             }
                         }
                     })
-                    .onRequestComplete(new OnRequestComplete() {
-                        @Override
-                        public void onRequestComplete(UploadContext context) throws IOException, ServletException {
-                            response.setStatus(200);
-                        }
-                    })
+                    .onRequestComplete(context1 -> response.setStatus(200))
                     .doBlockingParse(request);
             assertTrue(context.getPartStreams().size() == 5);
         }
 
-        private void error(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        private void error(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
             UploadParser.newParser()
-                    .onError(new OnError() {
-                        @Override
-                        public void onError(UploadContext context, Throwable throwable) throws IOException, ServletException {
-                            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                        }
-                    })
+                    .onError((context, throwable) -> response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR))
                     .maxRequestSize(4096)
                     .doBlockingParse(request);
         }

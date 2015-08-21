@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.elopteryx.paint.upload.internal.NullChannel;
 
-import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +31,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
     @Before
     public void setUp() {
-        fileSystem = Jimfs.newFileSystem(Configuration.unix());
+        fileSystem = Jimfs.newFileSystem();
     }
 
     @Test
@@ -84,42 +83,30 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     @Test
     public void output_channel() throws Exception {
         UploadParser.newParser()
-                .onPartBegin(new OnPartBegin() {
-                    @Nonnull
-                    @Override
-                    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-                        Path test = fileSystem.getPath("test1");
-                        Files.createFile(test);
-                        return PartOutput.from(Files.newByteChannel(test));
-                    }
+                .onPartBegin((context, buffer) -> {
+                    Path test = fileSystem.getPath("test1");
+                    Files.createFile(test);
+                    return PartOutput.from(Files.newByteChannel(test));
                 });
     }
 
     @Test
     public void output_stream() throws Exception {
         UploadParser.newParser()
-                .onPartBegin(new OnPartBegin() {
-                    @Nonnull
-                    @Override
-                    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-                        Path test = fileSystem.getPath("test2");
-                        Files.createFile(test);
-                        return PartOutput.from(Files.newOutputStream(test));
-                    }
+                .onPartBegin((context, buffer) -> {
+                    Path test = fileSystem.getPath("test2");
+                    Files.createFile(test);
+                    return PartOutput.from(Files.newOutputStream(test));
                 });
     }
 
     @Test
     public void output_path() throws Exception {
         UploadParser.newParser()
-                .onPartBegin(new OnPartBegin() {
-                    @Nonnull
-                    @Override
-                    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-                        Path test = fileSystem.getPath("test2");
-                        Files.createFile(test);
-                        return PartOutput.from(test);
-                    }
+                .onPartBegin((context, buffer) -> {
+                    Path test = fileSystem.getPath("test2");
+                    Files.createFile(test);
+                    return PartOutput.from(test);
                 });
     }
 
@@ -127,21 +114,12 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     public void use_with_custom_object() throws Exception {
         UploadParser.newParser()
                 .userObject(newResponse())
-                .onPartBegin(new OnPartBegin() {
-                    @Nonnull
-                    @Override
-                    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-                        Path test = fileSystem.getPath("test2");
-                        Files.createFile(test);
-                        return PartOutput.from(test);
-                    }
+                .onPartBegin((context, buffer) -> {
+                    Path test = fileSystem.getPath("test2");
+                    Files.createFile(test);
+                    return PartOutput.from(test);
                 })
-                .onRequestComplete(new OnRequestComplete() {
-                    @Override
-                    public void onRequestComplete(UploadContext context) throws IOException, ServletException {
-                        context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
-                    }
-                });
+                .onRequestComplete(context -> context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK));
     }
 
     @Override

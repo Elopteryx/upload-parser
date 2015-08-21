@@ -25,6 +25,7 @@ import java.util.Locale;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletException;
 
@@ -93,40 +94,48 @@ public class UploadParser {
 
     /**
      * Sets a callback for each part, called at the beginning.
+     * If you wish to skip the method invoke, pass a null
+     * parameter or do not call this method.
      * @param partBeginCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public UploadParser onPartBegin(@Nonnull OnPartBegin partBeginCallback) {
+    public UploadParser onPartBegin(@Nullable OnPartBegin partBeginCallback) {
         this.partBeginCallback = partBeginCallback;
         return this;
     }
 
     /**
      * Sets a callback for each part, called at the end.
+     * If you wish to skip the method invoke, pass a null
+     * parameter or do not call this method.
      * @param partEndCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public UploadParser onPartEnd(@Nonnull OnPartEnd partEndCallback) {
+    public UploadParser onPartEnd(@Nullable OnPartEnd partEndCallback) {
         this.partEndCallback = partEndCallback;
         return this;
     }
 
     /**
      * Sets a callback for the request, called after each part is processed.
+     * If you wish to skip the method invoke, pass a null
+     * parameter or do not call this method.
      * @param requestCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public UploadParser onRequestComplete(@Nonnull OnRequestComplete requestCallback) {
+    public UploadParser onRequestComplete(@Nullable OnRequestComplete requestCallback) {
         this.requestCallback = requestCallback;
         return this;
     }
 
     /**
      * Sets a callback for the errors, called if any error occurs.
+     * If you wish to skip the method invoke, pass a null
+     * parameter or do not call this method.
      * @param errorCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public UploadParser onError(@Nonnull OnError errorCallback) {
+    public UploadParser onError(@Nullable OnError errorCallback) {
         this.errorCallback = errorCallback;
         return this;
     }
@@ -146,7 +155,7 @@ public class UploadParser {
      * @param userObject A custom user object
      * @return The parser will return itself
      */
-    public UploadParser userObject(@Nonnull Object userObject) {
+    public UploadParser userObject(@Nullable Object userObject) {
         this.userObject = userObject;
         return this;
     }

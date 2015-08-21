@@ -29,8 +29,7 @@ subprojects {
         provided.extendsFrom(compile)
     }
 
-    group = "com.github.elopteryx"
-    version = "1.4.0-SNAPSHOT"
+    version = "2.0.0-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -38,8 +37,8 @@ subprojects {
     }
 
     tasks.withType(JavaCompile) {
-        sourceCompatibility = 1.7
-        targetCompatibility = 1.7
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
     task javadocJar(type: Jar) {
@@ -56,12 +55,12 @@ subprojects {
                 bottom = 'Copyright &#169; 2015 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
                 breakIterator = true
                 author = false
-                source = "1.7"
+                source = "1.8"
                 encoding = "UTF-8"
                 docEncoding = "UTF-8"
                 failOnError = true
                 links = [ "http://jsr-305.googlecode.com/svn/trunk/javadoc",
-                          "http://download.oracle.com/javase/7/docs/api/",
+                          "http://download.oracle.com/javase/8/docs/api/",
                           "http://download.oracle.com/javaee/7/api/",
                 ]
             }

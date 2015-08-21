@@ -51,8 +51,7 @@ public class Headers {
 
     Collection<String> getHeaders(String name) {
         String nameLower = name.toLowerCase(Locale.ENGLISH);
-        Collection<String> headers = headerNameToValueListMap.get(nameLower);
-        return headers != null ? headers : Collections.<String>emptyList();
+        return headerNameToValueListMap.getOrDefault(nameLower, Collections.emptyList());
     }
 
     Collection<String> getHeaderNames() {
@@ -67,12 +66,7 @@ public class Headers {
      */
     void addHeader(String name, String value) {
         String nameLower = name.toLowerCase(Locale.ENGLISH);
-        List<String> headers = headerNameToValueListMap.get(nameLower);
-        if (headers == null) {
-            headers = new ArrayList<>();
-            headerNameToValueListMap.put(nameLower, headers);
-        }
-        headers.add(value);
+        headerNameToValueListMap.computeIfAbsent(nameLower, key -> new ArrayList<>()).add(value);
     }
 
     /**

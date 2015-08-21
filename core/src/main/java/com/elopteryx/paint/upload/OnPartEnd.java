@@ -26,6 +26,7 @@ import java.io.IOException;
  * an attempt to close the current output object just before calling this. That means setting
  * this can be skipped if all you want to do is to close the provided channel or stream.</p>
  */
+@FunctionalInterface
 public interface OnPartEnd {
 
     /**
