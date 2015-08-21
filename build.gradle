@@ -7,8 +7,8 @@ apply plugin: "com.github.kt3k.coveralls"
 apply plugin: "jacoco"
 
 task testReport(type: TestReport, group: "Build") {
-    description = "Generates an aggregate test report."
-    destinationDir = file("${buildDir}/reports/allTests")
+    description "Generates an aggregate test report."
+    destinationDir file("${buildDir}/reports/allTests")
 }
 
 subprojects {
@@ -42,7 +42,7 @@ subprojects {
     }
 
     task javadocJar(type: Jar) {
-        classifier = "javadoc"
+        classifier "javadoc"
         from javadoc
     }
 
@@ -52,13 +52,13 @@ subprojects {
             configure(options) {
                 windowTitle "Upload Parser API Documentation"
                 docTitle "Upload Parser API Documentation"
-                bottom = 'Copyright &#169; 2015 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
-                breakIterator = true
-                author = false
-                source = "1.8"
-                encoding = "UTF-8"
-                docEncoding = "UTF-8"
-                failOnError = true
+                bottom 'Copyright &#169; 2015 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
+                breakIterator true
+                author false
+                source "1.8"
+                encoding "UTF-8"
+                docEncoding "UTF-8"
+                failOnError true
                 links = [ "http://jsr-305.googlecode.com/svn/trunk/javadoc",
                           "http://download.oracle.com/javase/8/docs/api/",
                           "http://download.oracle.com/javaee/7/api/",
@@ -68,7 +68,7 @@ subprojects {
     }
 
     task sourcesJar(type: Jar) {
-        classifier = "sources"
+        classifier "sources"
         from sourceSets.main.allSource
     }
 
@@ -113,9 +113,9 @@ subprojects {
     tasks.withType(Test) {
         rootProject.testReport.reportOn it
         jacoco {
-            append = true
-            destinationFile = file("${rootDir}/build/jacoco/jacocoTest.exec")
-            classDumpFile = file("${rootDir}/build/jacoco/classpathdumps")
+            append true
+            destinationFile file("${rootDir}/build/jacoco/jacocoTest.exec")
+            classDumpFile file("${rootDir}/build/jacoco/classpathdumps")
         }
     }
 }
@@ -134,8 +134,8 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
     executionData = files(subprojects.jacocoTestReport.executionData)
 
     reports {
-        html.enabled = true
-        xml.enabled = true
+        html.enabled true
+        xml.enabled true
     }
 
     doFirst {
@@ -144,13 +144,13 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
 }
 
 coveralls {
-    sourceDirs = subprojects.sourceSets.main.allSource.srcDirs.flatten()
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+    sourceDirs subprojects.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 }
 
 tasks.coveralls {
-    group = "Coverage reports"
-    description = "Uploads the aggregated coverage report to Coveralls."
+    group "Coverage reports"
+    description "Uploads the aggregated coverage report to Coveralls."
 
     dependsOn jacocoRootReport
     onlyIf { System.env."CI" }
