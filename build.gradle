@@ -125,7 +125,7 @@ repositories {
 }
 
 task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
-    description = "Generates an aggregate report from all subprojects"
+    description "Generates an aggregate report from all subprojects"
     dependsOn(subprojects.test)
 
     additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
@@ -144,8 +144,8 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
 }
 
 coveralls {
-    sourceDirs subprojects.sourceSets.main.allSource.srcDirs.flatten()
-    jacocoReportPath "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+    sourceDirs = subprojects.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 }
 
 tasks.coveralls {
