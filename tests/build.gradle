@@ -19,21 +19,21 @@ dependencies {
     testCompile "junit:junit:4.12"
 
     /* Http client library. */
-    testCompile "org.apache.httpcomponents:httpclient:4.4.1"
-    testCompile "org.apache.httpcomponents:httpmime:4.4.1"
+    testCompile "org.apache.httpcomponents:httpclient:4.5"
+    testCompile "org.apache.httpcomponents:httpmime:4.5"
 
     /* Http server. */
-    testCompile "io.undertow:undertow-core:1.2.6.Final"
-    testCompile "io.undertow:undertow-servlet:1.2.6.Final"
+    testCompile "io.undertow:undertow-core:1.2.10.Final"
+    testCompile "io.undertow:undertow-servlet:1.2.10.Final"
 
     /* Restful web services implementation. */
-    testCompile "org.jboss.resteasy:resteasy-cdi:3.0.11.Final"
-    testCompile "org.jboss.resteasy:resteasy-jaxrs:3.0.11.Final"
-    testCompile "org.jboss.resteasy:async-http-servlet-3.0:3.0.11.Final"
-    testCompile "org.jboss.resteasy:resteasy-client:3.0.11.Final"
+    testCompile "org.jboss.resteasy:resteasy-cdi:3.0.12.Final"
+    testCompile "org.jboss.resteasy:resteasy-jaxrs:3.0.12.Final"
+    testCompile "org.jboss.resteasy:async-http-servlet-3.0:3.0.12.Final"
+    testCompile "org.jboss.resteasy:resteasy-client:3.0.12.Final"
 
     /* Document and file parser. */
-    testCompile "org.apache.tika:tika-core:1.8"
+    testCompile "org.apache.tika:tika-core:1.10"
 
     /* In-memory filesystem. */
     testCompile "com.google.jimfs:jimfs:1.0"
