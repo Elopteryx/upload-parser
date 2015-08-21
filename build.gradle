@@ -50,8 +50,8 @@ subprojects {
         afterEvaluate {
             classpath += configurations.provided
             configure(options) {
-                windowTitle "Paint Upload API Documentation"
-                docTitle "Paint Upload API Documentation"
+                windowTitle "Upload Parser API Documentation"
+                docTitle "Upload Parser API Documentation"
                 bottom = 'Copyright &#169; 2015 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
                 breakIterator = true
                 author = false

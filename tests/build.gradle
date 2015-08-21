@@ -1,10 +1,10 @@
 dependencies {
 
     /* Upload parser. */
-    compile project(":paint-upload")
+    compile project(":upload-parser")
 
     /* Upload parser Jax-Rs integration. */
-    compile project(":paint-upload-jaxrs")
+    compile project(":upload-parser-jaxrs")
 
     /* Servlet API. */
     provided "javax.servlet:javax.servlet-api:3.1.0"
@@ -47,7 +47,7 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId "com.github.elopteryx"
-            artifactId "paint-upload-tests"
+            artifactId "upload-parser-tests"
 
             from components.java
         }

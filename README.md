@@ -1,11 +1,11 @@
-Paint-Upload
+Upload Parser
 =========
 
 [![Apache 2 License](https://img.shields.io/badge/license-Apache%202-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Build Status](https://travis-ci.org/Elopteryx/paint-upload.svg?branch=master)](https://travis-ci.org/Elopteryx/paint-upload)
-[![Coverage Status](https://coveralls.io/repos/Elopteryx/paint-upload/badge.svg)](https://coveralls.io/r/Elopteryx/paint-upload)
+[![Build Status](https://travis-ci.org/Elopteryx/upload-parser.svg?branch=master)](https://travis-ci.org/Elopteryx/upload-parser)
+[![Coverage Status](https://coveralls.io/repos/Elopteryx/upload-parser/badge.svg)](https://coveralls.io/r/Elopteryx/upload-parser)
 
-Paint-Upload is a file upload library for servlets and web applications. Although you can already use the standard
+Upload Parser is a file upload library for servlets and web applications. Although you can already use the standard
 servlet API to retrieve part items from a multipart request this library provides extra functionality not found
 elsewhere. First, it has a fluent API which allows you to completely control the uploading process. No more waiting for
 the user to upload everything, you can run your business logic, like file type validation and writing to a permanent
@@ -35,7 +35,7 @@ Features
 
 Requirements
 --------
-* Java 7+
+* Java 8+
 * Servlet 3.1 environment
 
 Motivation
@@ -54,7 +54,7 @@ just fine. Otherwise, I think you will find my library useful.
 Issues
 ------
 
-Does the library have bugs? Needs extra functionality? Do you like the API? Feel free to create an issue!
+Does the library have bugs? Needs extra functionality? Do you like the API? Feel free to open an issue!
 
 Examples
 --------
@@ -209,38 +209,38 @@ importing the JAX-RS module is unnecessary, the core library will also work, as 
 
 For more information, please check the javadocs:
 
-Core([javadoc][1])
+Core ([javadoc][1])
 
-JAX-RS([javadoc][2])
+JAX-RS ([javadoc][2])
 
 Gradle
 -----
 ```xml
-compile "com.github.elopteryx:paint-upload:1.3.0"
+compile "com.github.elopteryx:upload-parser:2.0.0"
 ```
 
 If you want parameter injection for your JAX-RS endpoints:
 
 ```xml
-compile "com.github.elopteryx:paint-upload-jaxrs:1.3.0"
+compile "com.github.elopteryx:upload-parser-jaxrs:2.0.0"
 ```
 Maven
 -----
 ```xml
 <dependency>
     <groupId>com.github.elopteryx</groupId>
-    <artifactId>paint-upload</artifactId>
-    <version>1.3.0</version>
+    <artifactId>upload-parser</artifactId>
+    <version>2.0.0</version>
 </dependency>
 
 <dependency>
     <groupId>com.github.elopteryx</groupId>
-    <artifactId>paint-upload-jaxrs</artifactId>
-    <version>1.3.0</version>
+    <artifactId>upload-parser-jaxrs</artifactId>
+    <version>2.0.0</version>
 </dependency>
 ```
 
-Find available versions on [Maven Central Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.elopteryx%22%20AND%20a%3A%22paint-upload%22).
+Find available versions on [Maven Central Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.elopteryx%22%20AND%20a%3A%22upload-parser%22).
 
-[1]: http://www.javadoc.io/doc/com.github.elopteryx/paint-upload/1.3.0
-[2]: http://www.javadoc.io/doc/com.github.elopteryx/paint-upload-jaxrs/1.3.0
+[1]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser/2.0.0
+[2]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser-jaxrs/2.0.0

@@ -1,7 +1,7 @@
 dependencies {
 
     /* Upload parser. */
-    compile project(":paint-upload")
+    compile project(":upload-parser")
 
     /* Servlet API. */
     provided "javax.servlet:javax.servlet-api:3.1.0"
@@ -18,7 +18,7 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId "com.github.elopteryx"
-            artifactId "paint-upload-jaxrs"
+            artifactId "upload-parser-jaxrs"
 
             from components.java
         }
@@ -45,17 +45,17 @@ uploadArchives {
             }
 
             pom.project {
-                name "Paint Upload Jax-Rs"
+                name "Upload Parser Jax-Rs"
                 groupId "com.github.elopteryx"
-                artifactId "paint-upload-jaxrs"
+                artifactId "upload-parser-jaxrs"
 
-                description "Paint Upload Jax-Rs is a file upload library for Jax-Rs applications."
-                url "https://github.com/Elopteryx/paint-upload"
+                description "Upload Parser Jax-Rs is a file upload library for Jax-Rs applications."
+                url "https://github.com/Elopteryx/upload-parser"
 
                 scm {
-                    connection "scm:git:git@github.com/Elopteryx/paint-upload.git"
-                    developerConnection "scm:git:git@github.com/Elopteryx/paint-upload.git"
-                    url "scm:git:git@github.com/Elopteryx/paint-upload.git"
+                    connection "scm:git:git@github.com/Elopteryx/upload-parser.git"
+                    developerConnection "scm:git:git@github.com/Elopteryx/upload-parser.git"
+                    url "scm:git:git@github.com/Elopteryx/upload-parser.git"
                 }
 
                 licenses {

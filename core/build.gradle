@@ -12,7 +12,7 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId "com.github.elopteryx"
-            artifactId "paint-upload"
+            artifactId "upload-parser"
 
             from components.java
         }
@@ -39,17 +39,17 @@ uploadArchives {
             }
 
             pom.project {
-                name "Paint Upload"
+                name "Upload Parser"
                 groupId "com.github.elopteryx"
-                artifactId "paint-upload"
+                artifactId "upload-parser"
 
-                description "Paint Upload is an asynchronous file upload library for servlets."
-                url "https://github.com/Elopteryx/paint-upload"
+                description "Upload Parser is an asynchronous file upload library for servlets."
+                url "https://github.com/Elopteryx/upload-parser"
 
                 scm {
-                    connection "scm:git:git@github.com/Elopteryx/paint-upload.git"
-                    developerConnection "scm:git:git@github.com/Elopteryx/paint-upload.git"
-                    url "scm:git:git@github.com/Elopteryx/paint-upload.git"
+                    connection "scm:git:git@github.com/Elopteryx/upload-parser.git"
+                    developerConnection "scm:git:git@github.com/Elopteryx/upload-parser.git"
+                    url "scm:git:git@github.com/Elopteryx/upload-parser.git"
                 }
 
                 licenses {

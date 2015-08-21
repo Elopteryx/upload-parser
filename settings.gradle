@@ -1,9 +1,9 @@
-rootProject.name = "paint-upload-parent"
+rootProject.name = "upload-parser-parent"
 
 include "core"
 include "jaxrs"
 include "tests"
 
-rootProject.children.find { it.name == "core" }.name = "paint-upload"
-rootProject.children.find { it.name == "jaxrs" }.name = "paint-upload-jaxrs"
-rootProject.children.find { it.name == "tests" }.name = "paint-upload-tests"
+rootProject.children.find { it.name == "core" }.name = "upload-parser"
+rootProject.children.find { it.name == "jaxrs" }.name = "upload-parser-jaxrs"
+rootProject.children.find { it.name == "tests" }.name = "upload-parser-tests"
