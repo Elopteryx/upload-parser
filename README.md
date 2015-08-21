@@ -3,7 +3,7 @@ Upload Parser
 
 [![Apache 2 License](https://img.shields.io/badge/license-Apache%202-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Build Status](https://travis-ci.org/Elopteryx/upload-parser.svg?branch=master)](https://travis-ci.org/Elopteryx/upload-parser)
-[![Coverage Status](https://coveralls.io/repos/Elopteryx/upload-parser/badge.svg)](https://coveralls.io/r/Elopteryx/upload-parser)
+[![Coverage Status](https://coveralls.io/repos/Elopteryx/upload-parser/badge.svg?branch=master&service=github)](https://coveralls.io/github/Elopteryx/upload-parser?branch=master)
 
 Upload Parser is a file upload library for servlets and web applications. Although you can already use the standard
 servlet API to retrieve part items from a multipart request this library provides extra functionality not found
