@@ -56,6 +56,7 @@ public class RestUploadParser extends BlockingUploadParser {
 
         checkBuffer = ByteBuffer.allocate(sizeThreshold);
         context = new UploadContextImpl(null, null);
+        buf = new byte[maxBytesUsed / 2];
 
         String boundary;
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {

@@ -45,6 +45,10 @@ import java.util.EnumSet;
 public abstract class AbstractUploadParser implements MultipartParser.PartHandler {
 
     /**
+     * The default size allocated for the buffers.
+     */
+    private static final int DEFAULT_USED_MEMORY = 4096;
+    /**
      * The part begin callback, called at the beginning of each part parsing.
      */
     private OnPartBegin partBeginCallback;
@@ -67,7 +71,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     /**
      * The number of bytes to be allocated for the buffers.
      */
-    protected int maxBytesUsed;
+    protected int maxBytesUsed = DEFAULT_USED_MEMORY;
     /**
      * The number of bytes that should be buffered before calling the part begin callback.
      */
