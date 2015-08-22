@@ -6,6 +6,7 @@ import static com.github.elopteryx.upload.util.Servlets.newRequest;
 import static com.github.elopteryx.upload.util.Servlets.newResponse;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.github.elopteryx.upload.internal.NullChannel;
 
@@ -40,6 +41,34 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.getContentType()).thenReturn("multipart/");
         assertTrue(UploadParser.isMultipart(request));
+    }
+
+    @Test
+    public void invalid_numeric_arguments() throws Exception {
+        try {
+            UploadParser.newParser().sizeThreshold(-1);
+            fail();
+        } catch (IllegalArgumentException e) {
+            // As expected
+        }
+        try {
+            UploadParser.newParser().maxPartSize(-1);
+            fail();
+        } catch (IllegalArgumentException e) {
+            // As expected
+        }
+        try {
+            UploadParser.newParser().maxRequestSize(-1);
+            fail();
+        } catch (IllegalArgumentException e) {
+            // As expected
+        }
+        try {
+            UploadParser.newParser().maxBytesUsed(-1);
+            fail();
+        } catch (IllegalArgumentException e) {
+            // As expected
+        }
     }
 
     @Test(expected = ServletException.class)

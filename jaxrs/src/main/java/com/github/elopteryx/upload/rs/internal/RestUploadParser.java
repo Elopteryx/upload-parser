@@ -86,7 +86,8 @@ public class RestUploadParser extends BlockingUploadParser {
         }
         List<Part> parts = context.getPartStreams()
                 .stream()
-                .map(partStream -> new PartImpl((PartStreamImpl) partStream))
+                .map(PartStreamImpl.class::cast)
+                .map(PartImpl::new)
                 .collect(Collectors.toList());
         return new MultiPartImpl(parts, requestSize);
     }

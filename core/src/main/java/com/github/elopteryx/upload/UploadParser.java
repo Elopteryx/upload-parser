@@ -181,7 +181,10 @@ public class UploadParser {
      * @return The parser will return itself
      */
     public UploadParser maxBytesUsed(@Nonnegative int maxBytesUsed) {
-        this.maxBytesUsed = Math.max(maxBytesUsed, 2);
+        if (maxBytesUsed < 2) {
+            throw new IllegalArgumentException("The parameter value is too low, the parsing cannot work!");
+        }
+        this.maxBytesUsed = maxBytesUsed;
         return this;
     }
 
@@ -192,6 +195,9 @@ public class UploadParser {
      * @return The parser will return itself
      */
     public UploadParser sizeThreshold(@Nonnegative int sizeThreshold) {
+        if (sizeThreshold < 0) {
+            throw new IllegalArgumentException("Invalid parameter value: " + sizeThreshold);
+        }
         this.sizeThreshold = Math.max(sizeThreshold, 0);
         return this;
     }
@@ -203,7 +209,10 @@ public class UploadParser {
      * @return The parser will return itself
      */
     public UploadParser maxPartSize(@Nonnegative long maxPartSize) {
-        this.maxPartSize = Math.max(maxPartSize, -1);
+        if (maxPartSize < 0) {
+            throw new IllegalArgumentException("Invalid parameter value: " + maxPartSize);
+        }
+        this.maxPartSize = maxPartSize;
         return this;
     }
 
@@ -214,7 +223,10 @@ public class UploadParser {
      * @return The parser will return itself
      */
     public UploadParser maxRequestSize(@Nonnegative long maxRequestSize) {
-        this.maxRequestSize = Math.max(maxRequestSize, -1);
+        if (maxRequestSize < 0) {
+            throw new IllegalArgumentException("Invalid parameter value: " + maxRequestSize);
+        }
+        this.maxRequestSize = maxRequestSize;
         return this;
     }
 
