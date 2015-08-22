@@ -35,7 +35,7 @@ Features
 
 Requirements
 --------
-* Java 8+
+* Java 7 for 1.x versions, Java 8 for 2.x versions
 * Servlet 3.1 environment
 
 Motivation
@@ -239,6 +239,8 @@ Maven
     <version>2.0.0</version>
 </dependency>
 ```
+
+For the Java 7 compatible versions, change the "upload-parser" in the artifactId to "paint-upload". The latest version is 1.3.0.
 
 Find available versions on [Maven Central Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.elopteryx%22%20AND%20a%3A%22upload-parser%22).
 
