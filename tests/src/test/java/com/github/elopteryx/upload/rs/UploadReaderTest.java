@@ -64,7 +64,7 @@ public class UploadReaderTest {
 
         ResteasyDeployment deployment = new ResteasyDeployment();
         deployment.getActualResourceClasses().addAll(Arrays.asList(AsyncUploadController.class, ReaderUploadController.class));
-        deployment.getActualProviderClasses().addAll(Arrays.asList(CustomUploadReader.class, PartSizeMapper.class, RequestSizeMapper.class));
+        deployment.getActualProviderClasses().addAll(Arrays.asList(UploadReader.class, PartSizeMapper.class, RequestSizeMapper.class));
 
         ServletInfo restEasyServlet = Servlets.servlet("RestEasyServlet", HttpServlet30Dispatcher.class)
                 .setAsyncSupported(true)

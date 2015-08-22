@@ -47,7 +47,8 @@ import javax.ws.rs.ext.MessageBodyReader;
  * files to store uploaded file data and stores each normal form field in a
  * {@link ByteArrayOutputStream} instance.
  * Other readers can extend this and implement the callback interfaces,
- * which are the part begin and end callbacks.
+ * which are the part begin and end callbacks. You must manually register this
+ * or its subclass to be used by the Jax-Rs runtime.
  *
  * <p>The reader does not support the request callback, because that code can go
  * into the controller method instead and the error callback, because there are
