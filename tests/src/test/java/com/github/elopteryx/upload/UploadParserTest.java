@@ -74,6 +74,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
                 .onRequestComplete(this)
                 .onError(this)
                 .userObject(response)
+                .maxBytesUsed(4096)
                 .sizeThreshold(1024 * 1024 * 10)
                 .maxPartSize(1024 * 1024 * 50)
                 .maxRequestSize(1024 * 1024 * 50)

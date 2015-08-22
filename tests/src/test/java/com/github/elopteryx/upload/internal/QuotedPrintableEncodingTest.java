@@ -36,7 +36,7 @@ public class QuotedPrintableEncodingTest {
     }
 
     private static void checkEncoding(final String original, String encoded) throws IOException {
-        MultipartParser.QuotedPrintableEncoding encoding = new MultipartParser.QuotedPrintableEncoding();
+        MultipartParser.QuotedPrintableEncoding encoding = new MultipartParser.QuotedPrintableEncoding(1024);
         encoding.handle(new MultipartParser.PartHandler() {
 
             @Override

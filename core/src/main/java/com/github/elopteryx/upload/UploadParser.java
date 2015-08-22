@@ -46,6 +46,11 @@ import javax.servlet.ServletException;
 public class UploadParser {
 
     /**
+     * The default size allocated for the buffers.
+     */
+    private static final int DEFAULT_USED_MEMORY = 4096;
+
+    /**
      * Part of HTTP content type header.
      */
     private static final String MULTIPART = "multipart/";
@@ -74,6 +79,11 @@ public class UploadParser {
      * The user object.
      */
     private Object userObject;
+
+    /**
+     * The number of bytes to be allocated for the buffers.
+     */
+    private int maxBytesUsed = DEFAULT_USED_MEMORY;
 
     /**
      * The number of bytes that should be buffered before calling the part begin callback.
@@ -163,6 +173,19 @@ public class UploadParser {
     }
 
     /**
+     * Sets the amount of bytes to allocate for the parsing. A minimum
+     * of 1024 is recommended. This amount does not include the size
+     * specified in the {@link UploadParser#sizeThreshold(int)} sizeThreshold}
+     * method.
+     * @param maxBytesUsed The amount to use
+     * @return The parser will return itself
+     */
+    public UploadParser maxBytesUsed(@Nonnegative int maxBytesUsed) {
+        this.maxBytesUsed = Math.max(maxBytesUsed, 2);
+        return this;
+    }
+
+    /**
      * Sets the amount of bytes to buffer in the memory, before
      * calling the part end callback.
      * @param sizeThreshold The amount to use
@@ -240,6 +263,7 @@ public class UploadParser {
         parser.setRequestCallback(requestCallback);
         parser.setErrorCallback(errorCallback);
         parser.setUserObject(userObject);
+        parser.setMaxBytesUsed(maxBytesUsed);
         parser.setSizeThreshold(sizeThreshold);
         parser.setMaxPartSize(maxPartSize);
         parser.setMaxRequestSize(maxRequestSize);

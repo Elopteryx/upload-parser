@@ -2,7 +2,6 @@ package com.github.elopteryx.upload.rs.internal;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
-import com.github.elopteryx.upload.PartStream;
 import com.github.elopteryx.upload.errors.MultipartException;
 import com.github.elopteryx.upload.errors.RequestSizeException;
 import com.github.elopteryx.upload.internal.BlockingUploadParser;
@@ -16,8 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A subclass of the blocking parser. It doesn't have a dependency
@@ -67,7 +66,7 @@ public class RestUploadParser extends BlockingUploadParser {
                         + ", multipart data will not be available");
             }
             Charset charset = encoding != null ? Charset.forName(encoding) : ISO_8859_1;
-            parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
+            parseState = MultipartParser.beginParse(this, boundary.getBytes(), maxBytesUsed, charset);
 
             inputStream = stream;
         }
@@ -84,10 +83,10 @@ public class RestUploadParser extends BlockingUploadParser {
                 parseState.parse(ByteBuffer.wrap(buf, 0, count));
             }
         }
-        List<Part> parts = new ArrayList<>();
-        for (PartStream partStream : context.getPartStreams()) {
-            parts.add(new PartImpl((PartStreamImpl)partStream));
-        }
+        List<Part> parts = context.getPartStreams()
+                .stream()
+                .map(partStream -> new PartImpl((PartStreamImpl) partStream))
+                .collect(Collectors.toList());
         return new MultiPartImpl(parts, requestSize);
     }
 }

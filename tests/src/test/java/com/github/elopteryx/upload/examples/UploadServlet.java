@@ -1,5 +1,7 @@
 package com.github.elopteryx.upload.examples;
 
+import com.github.elopteryx.upload.PartOutput;
+import com.github.elopteryx.upload.PartStream;
 import com.github.elopteryx.upload.UploadParser;
 
 import javax.servlet.ServletException;
@@ -40,17 +42,18 @@ public class UploadServlet extends HttpServlet {
         }
 
         UploadParser.newParser()
-//                .onPartBegin((context, buffer) -> {
-//                    PartStream part = context.getCurrentPart();
-//                    Path path = uploadFilePath.resolve(part.getSubmittedFileName());
-//                    return PartOutput.from(path);
-//                })
-//                .onRequestComplete(context -> context.getUserObject(HttpServletResponse.class).setStatus(200))
-//                .onError((context, throwable) -> {
-//                    throwable.printStackTrace();
-//                    response.sendError(500);
-//                })
+                .onPartBegin((context, buffer) -> {
+                    PartStream part = context.getCurrentPart();
+                    Path path = uploadFilePath.resolve(part.getSubmittedFileName());
+                    return PartOutput.from(path);
+                })
+                .onRequestComplete(context -> context.getUserObject(HttpServletResponse.class).setStatus(200))
+                .onError((context, throwable) -> {
+                    throwable.printStackTrace();
+                    response.sendError(500);
+                })
                 .sizeThreshold(4096)
+                .maxBytesUsed(8092)
                 .maxPartSize(1024 * 1024 * 25)
                 .maxRequestSize(1024 * 1024 * 500)
                 .setupAsyncParse(request);

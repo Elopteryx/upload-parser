@@ -38,10 +38,6 @@ import java.nio.charset.Charset;
 public class MultipartParser {
 
     /**
-     * The default size for the buffers. 
-     */
-    private static final int BUFFER_SIZE = 1024;
-    /**
      * The Carriage Return ASCII character value.
      */
     private static final byte CR = 0x0D;
@@ -75,18 +71,19 @@ public class MultipartParser {
      * @param requestCharset The charset of the input.
      * @return A new state object to allow calling the parser.
      */
-    public static ParseState beginParse(final PartHandler handler, final byte[] boundary, final Charset requestCharset) {
+    public static ParseState beginParse(final PartHandler handler, final byte[] boundary, int bufferSize, final Charset requestCharset) {
 
         // We prepend CR/LF to the boundary to chop trailing CR/LF from body-data tokens.
         byte[] boundaryToken = new byte[boundary.length + BOUNDARY_PREFIX.length];
         System.arraycopy(BOUNDARY_PREFIX, 0, boundaryToken, 0, BOUNDARY_PREFIX.length);
         System.arraycopy(boundary, 0, boundaryToken, BOUNDARY_PREFIX.length, boundary.length);
-        return new ParseState(handler, requestCharset, boundaryToken);
+        return new ParseState(handler, bufferSize, requestCharset, boundaryToken);
     }
 
     public static class ParseState {
         private final PartHandler partHandler;
         private final Charset requestCharset;
+        private final int bufferSize;
 
         /**
          * The boundary, complete with the initial CRLF--.
@@ -105,11 +102,13 @@ public class MultipartParser {
          * Public constructor.
          * @param partHandler The part handler, which is to be called at certain points.
          * @param requestCharset The charset of the input.
+         * @param bufferSize The size of the allocated buffer.
          * @param boundary The boundary value for the multipart stream.
          */
-        public ParseState(final PartHandler partHandler, Charset requestCharset, final byte[] boundary) {
+        public ParseState(PartHandler partHandler, int bufferSize, Charset requestCharset, byte[] boundary) {
             this.partHandler = partHandler;
             this.requestCharset = requestCharset;
+            this.bufferSize = bufferSize;
             this.boundary = boundary;
         }
 
@@ -207,9 +206,9 @@ public class MultipartParser {
                     if (encoding == null) {
                         encodingHandler = new IdentityEncoding();
                     } else if (encoding.equalsIgnoreCase("base64")) {
-                        encodingHandler = new Base64Encoding();
+                        encodingHandler = new Base64Encoding(bufferSize);
                     } else if (encoding.equalsIgnoreCase("quoted-printable")) {
-                        encodingHandler = new QuotedPrintableEncoding();
+                        encodingHandler = new QuotedPrintableEncoding(bufferSize);
                     } else {
                         encodingHandler = new IdentityEncoding();
                     }
@@ -350,7 +349,11 @@ public class MultipartParser {
 
         private final Base64Decoder decoder = new Base64Decoder();
 
-        private final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+        private final ByteBuffer buffer;
+
+        Base64Encoding(int size) {
+            buffer = ByteBuffer.allocate(size);
+        }
 
         @Override
         public void handle(final PartHandler handler, final ByteBuffer rawData) throws IOException {
@@ -372,7 +375,11 @@ public class MultipartParser {
         boolean equalsSeen;
         byte firstCharacter;
 
-        private final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+        private final ByteBuffer buffer;
+
+        QuotedPrintableEncoding(int size) {
+            buffer = ByteBuffer.allocate(size);
+        }
 
         @Override
         public void handle(final PartHandler handler, final ByteBuffer rawData) throws IOException {

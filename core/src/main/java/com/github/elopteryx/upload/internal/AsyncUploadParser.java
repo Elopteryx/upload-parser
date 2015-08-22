@@ -79,7 +79,7 @@ public class AsyncUploadParser extends AbstractUploadParser implements ReadListe
             }
             String encodingHeader = request.getCharacterEncoding();
             Charset charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
-            parseState = MultipartParser.beginParse(this, boundary.getBytes(), charset);
+            parseState = MultipartParser.beginParse(this, boundary.getBytes(), maxBytesUsed, charset);
         }
 
         servletInputStream = request.getInputStream();

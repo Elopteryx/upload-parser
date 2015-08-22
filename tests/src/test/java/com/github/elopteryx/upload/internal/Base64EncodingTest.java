@@ -28,7 +28,7 @@ public class Base64EncodingTest {
 
     private static void checkEncoding(final String original, String encoded) throws IOException {
 
-        MultipartParser.Base64Encoding encoding = new MultipartParser.Base64Encoding();
+        MultipartParser.Base64Encoding encoding = new MultipartParser.Base64Encoding(1024);
         encoding.handle(new MultipartParser.PartHandler() {
 
             @Override

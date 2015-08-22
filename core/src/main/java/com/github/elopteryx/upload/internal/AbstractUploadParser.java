@@ -65,6 +65,10 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      */
     Object userObject;
     /**
+     * The number of bytes to be allocated for the buffers.
+     */
+    protected int maxBytesUsed;
+    /**
      * The number of bytes that should be buffered before calling the part begin callback.
      */
     protected int sizeThreshold;
@@ -104,7 +108,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      * The buffer that stores the bytes which were read from the
      * servlet input stream or from a different source.
      */
-    protected final byte[] buf = new byte[1024];
+    protected byte[] buf;
 
     /**
      * Checks how many bytes have been read so far and stops the
@@ -227,6 +231,17 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
 
     public void setUserObject(Object userObject) {
         this.userObject = userObject;
+    }
+
+    /**
+     * Sets the amount of bytes to allocate. This is distributed
+     * between the buffers used for raw parsing.
+     * @param maxBytesUsed The amount to use
+     */
+    public void setMaxBytesUsed(int maxBytesUsed) {
+        // There are two byte buffers so each one gets half of the amount
+        this.maxBytesUsed = maxBytesUsed / 2;
+        this.buf = new byte[maxBytesUsed / 2];
     }
 
     public void setSizeThreshold(int sizeThreshold) {
