@@ -18,15 +18,20 @@ package com.github.elopteryx.upload.rs;
 
 import com.github.elopteryx.upload.OnPartBegin;
 import com.github.elopteryx.upload.OnPartEnd;
+import com.github.elopteryx.upload.PartOutput;
+import com.github.elopteryx.upload.UploadContext;
 import com.github.elopteryx.upload.internal.Headers;
 import com.github.elopteryx.upload.rs.internal.MultiPartImpl;
 import com.github.elopteryx.upload.rs.internal.RestUploadParser;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -38,8 +43,10 @@ import javax.ws.rs.ext.MessageBodyReader;
 
 /**
  * This class is a message body reader for multipart requests. It works like the blocking
- * upload parser. It was made abstract to make sure that it will be properly configured.
- * Actual readers should extend this and implement the callback interfaces,
+ * upload parser. It provides a default configuration which creates temporary
+ * files to store uploaded file data and stores each normal form field in a
+ * {@link ByteArrayOutputStream} instance.
+ * Other readers can extend this and implement the callback interfaces,
  * which are the part begin and end callbacks.
  *
  * <p>The reader does not support the request callback, because that code can go
@@ -58,7 +65,7 @@ import javax.ws.rs.ext.MessageBodyReader;
  * <p>Other parameters are not supported by the reader.</p>
  */
 @Consumes(MediaType.MULTIPART_FORM_DATA)
-public abstract class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnPartEnd {
+public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnPartEnd {
 
     /**
      * The parser object. Does not support async parsing.
@@ -144,5 +151,21 @@ public abstract class UploadReader implements MessageBodyReader<Object>, OnPartB
             }
         }
         return null;
+    }
+
+    @Override
+    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+        PartOutput output;
+        if (context.getCurrentPart().isFile()) {
+            output = PartOutput.from(Files.createTempFile(null, ".tmp"));
+        } else {
+            output = PartOutput.from(new ByteArrayOutputStream());
+        }
+        return output;
+    }
+
+    @Override
+    public void onPartEnd(UploadContext context) throws IOException {
+        // No need to do anything.
     }
 }
