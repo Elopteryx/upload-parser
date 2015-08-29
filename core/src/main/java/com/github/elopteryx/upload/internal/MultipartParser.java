@@ -68,6 +68,7 @@ public class MultipartParser {
      * Begins parsing the multipart input, sets up the necessary objects.
      * @param handler The part handler, which is to be called at certain points.
      * @param boundary The boundary value for the multipart stream.
+     * @param bufferSize The size of the buffer for the encoding handlers.
      * @param requestCharset The charset of the input.
      * @return A new state object to allow calling the parser.
      */
