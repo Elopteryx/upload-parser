@@ -16,16 +16,12 @@
 
 package com.github.elopteryx.upload.internal;
 
-import static java.nio.charset.StandardCharsets.ISO_8859_1;
-
 import com.github.elopteryx.upload.UploadContext;
 import com.github.elopteryx.upload.errors.MultipartException;
-import com.github.elopteryx.upload.errors.RequestSizeException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -55,33 +51,7 @@ public class BlockingUploadParser extends AbstractUploadParser {
      * @throws IOException If an error occurs with the IO
      */
     private void init() throws IOException {
-
-        // Fail fast mode
-        if (maxRequestSize > -1) {
-            long requestSize = request.getContentLengthLong();
-            if (requestSize > maxRequestSize) {
-                throw new RequestSizeException("The size of the request (" + requestSize
-                        + ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
-            }
-        }
-
-        checkBuffer = ByteBuffer.allocate(sizeThreshold);
-        context = new UploadContextImpl(request, userObject);
-
-        String mimeType = request.getHeader(Headers.CONTENT_TYPE);
-        String boundary;
-        if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
-            boundary = Headers.extractBoundaryFromHeader(mimeType);
-            if (boundary == null) {
-                throw new IllegalArgumentException("Could not find boundary in multipart request with ContentType: "
-                        + mimeType
-                        + ", multipart data will not be available");
-            }
-            String encodingHeader = request.getCharacterEncoding();
-            Charset charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
-            parseState = MultipartParser.beginParse(this, boundary.getBytes(), maxBytesUsed, charset);
-        }
-
+        init(request);
         inputStream = request.getInputStream();
     }
 
@@ -94,19 +64,7 @@ public class BlockingUploadParser extends AbstractUploadParser {
     public UploadContext doBlockingParse() throws IOException, ServletException {
         init();
         try {
-            while (true) {
-                int count = inputStream.read(buf);
-                if (count == -1) {
-                    if (!parseState.isComplete()) {
-                        throw new MultipartException("Stream ended unexpectedly!");
-                    } else {
-                        break;
-                    }
-                } else if (count > 0) {
-                    checkRequestSize(count);
-                    parseState.parse(ByteBuffer.wrap(buf, 0, count));
-                }
-            }
+            blockingRead();
             if (requestCallback != null) {
                 requestCallback.onRequestComplete(context);
             }
@@ -116,5 +74,27 @@ public class BlockingUploadParser extends AbstractUploadParser {
             }
         }
         return context;
+    }
+
+    /**
+     * Reads everything from the input stream in a blocking mode. It will
+     * throw an exception if the data is malformed, for example
+     * it is not closed with the proper characters.
+     * @throws IOException If an error occurred with the I/O
+     */
+    protected void blockingRead() throws IOException {
+        while (true) {
+            int count = inputStream.read(buf);
+            if (count == -1) {
+                if (!parseState.isComplete()) {
+                    throw new MultipartException("Stream ended unexpectedly!");
+                } else {
+                    break;
+                }
+            } else if (count > 0) {
+                checkRequestSize(count);
+                parseState.parse(ByteBuffer.wrap(buf, 0, count));
+            }
+        }
     }
 }

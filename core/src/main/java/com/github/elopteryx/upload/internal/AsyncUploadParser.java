@@ -16,15 +16,12 @@
 
 package com.github.elopteryx.upload.internal;
 
-import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.util.Objects.requireNonNull;
 
 import com.github.elopteryx.upload.errors.MultipartException;
-import com.github.elopteryx.upload.errors.RequestSizeException;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import javax.annotation.Nonnull;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
@@ -55,33 +52,7 @@ public class AsyncUploadParser extends AbstractUploadParser implements ReadListe
      * @throws IOException If an error occurs with the IO
      */
     private void init() throws IOException {
-
-        // Fail fast mode
-        if (maxRequestSize > -1) {
-            long requestSize = request.getContentLengthLong();
-            if (requestSize > maxRequestSize) {
-                throw new RequestSizeException("The size of the request (" + requestSize
-                        + ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
-            }
-        }
-
-        checkBuffer = ByteBuffer.allocate(sizeThreshold);
-        context = new UploadContextImpl(request, userObject);
-
-        String mimeType = request.getHeader(Headers.CONTENT_TYPE);
-        String boundary;
-        if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
-            boundary = Headers.extractBoundaryFromHeader(mimeType);
-            if (boundary == null) {
-                throw new IllegalArgumentException("Could not find boundary in multipart request with ContentType: "
-                        + mimeType
-                        + ", multipart data will not be available");
-            }
-            String encodingHeader = request.getCharacterEncoding();
-            Charset charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
-            parseState = MultipartParser.beginParse(this, boundary.getBytes(), maxBytesUsed, charset);
-        }
-
+        init(request);
         servletInputStream = request.getInputStream();
     }
 

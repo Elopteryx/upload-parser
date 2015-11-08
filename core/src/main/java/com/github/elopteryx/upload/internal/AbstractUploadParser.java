@@ -16,6 +16,7 @@
 
 package com.github.elopteryx.upload.internal;
 
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.WRITE;
@@ -29,11 +30,13 @@ import com.github.elopteryx.upload.PartOutput;
 import com.github.elopteryx.upload.errors.PartSizeException;
 import com.github.elopteryx.upload.errors.RequestSizeException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.EnumSet;
@@ -113,6 +116,41 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      * servlet input stream or from a different source.
      */
     protected byte[] buf;
+
+    /**
+     * Sets up the necessary objects to start the parsing. Depending upon
+     * the environment the concrete implementations can be very different.
+     * @param request The servlet request
+     * @throws IOException If an error occurs with the IO
+     */
+    protected void init(HttpServletRequest request) throws IOException {
+
+        // Fail fast mode
+        if (maxRequestSize > -1) {
+            long requestSize = request.getContentLengthLong();
+            if (requestSize > maxRequestSize) {
+                throw new RequestSizeException("The size of the request (" + requestSize
+                        + ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
+            }
+        }
+
+        checkBuffer = ByteBuffer.allocate(sizeThreshold);
+        context = new UploadContextImpl(request, userObject);
+
+        String mimeType = request.getHeader(Headers.CONTENT_TYPE);
+        String boundary;
+        if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
+            boundary = Headers.extractBoundaryFromHeader(mimeType);
+            if (boundary == null) {
+                throw new IllegalArgumentException("Could not find boundary in multipart request with ContentType: "
+                        + mimeType
+                        + ", multipart data will not be available");
+            }
+            String encodingHeader = request.getCharacterEncoding();
+            Charset charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
+            parseState = MultipartParser.beginParse(this, boundary.getBytes(), maxBytesUsed, charset);
+        }
+    }
 
     /**
      * Checks how many bytes have been read so far and stops the

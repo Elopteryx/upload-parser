@@ -2,7 +2,6 @@ package com.github.elopteryx.upload.rs.internal;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
-import com.github.elopteryx.upload.errors.MultipartException;
 import com.github.elopteryx.upload.errors.RequestSizeException;
 import com.github.elopteryx.upload.internal.BlockingUploadParser;
 import com.github.elopteryx.upload.internal.MultipartParser;
@@ -71,19 +70,7 @@ public class RestUploadParser extends BlockingUploadParser {
 
             inputStream = stream;
         }
-        while (true) {
-            int count = inputStream.read(buf);
-            if (count == -1) {
-                if (!parseState.isComplete()) {
-                    throw new MultipartException("Stream ended unexpectedly!");
-                } else {
-                    break;
-                }
-            } else if (count > 0) {
-                checkRequestSize(count);
-                parseState.parse(ByteBuffer.wrap(buf, 0, count));
-            }
-        }
+        blockingRead();
         List<Part> parts = context.getPartStreams()
                 .stream()
                 .map(PartStreamImpl.class::cast)
