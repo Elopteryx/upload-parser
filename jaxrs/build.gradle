@@ -10,7 +10,7 @@ dependencies {
     provided "javax.ws.rs:javax.ws.rs-api:2.0.1"
 
     /* Annotations for code documentation. */
-    provided "com.google.code.findbugs:jsr305:3.0.0"
+    provided "com.google.code.findbugs:jsr305:3.0.1"
 
 }
 
