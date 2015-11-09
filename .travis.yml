@@ -1,9 +1,24 @@
 language: java
 sudo: false
+
 jdk:
   - oraclejdk8
+
 cache:
   directories:
     - $HOME/.gradle
+
+matrix:
+  fast_finish: true
+
+env:
+ - TERM=dumb
+
+before_install:
+ - cp gradle.properties
+
+script:
+  - ./gradlew build
+
 after_success:
-  - gradle coveralls
+  - ./gradlew coveralls
