@@ -36,19 +36,19 @@ public class AsyncUploadServlet extends HttpServlet {
 
         String query = request.getQueryString();
         switch (query) {
-            case Constants.SIMPLE:
+            case ClientRequest.SIMPLE:
                 simple(request, response);
                 break;
-            case Constants.ERROR:
+            case ClientRequest.ERROR:
                 error(request, response);
                 break;
-            case Constants.IO_ERROR_UPON_ERROR:
+            case ClientRequest.IO_ERROR_UPON_ERROR:
                 ioErrorUponError(request);
                 break;
-            case Constants.SERVLET_ERROR_UPON_ERROR:
+            case ClientRequest.SERVLET_ERROR_UPON_ERROR:
                 servletErrorUponError(request);
                 break;
-            case Constants.COMPLEX:
+            case ClientRequest.COMPLEX:
                 complex(request, response);
                 break;
             default:
@@ -61,15 +61,15 @@ public class AsyncUploadServlet extends HttpServlet {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
                     if (context.getPartStreams().size() == 1) {
-                        Path dir = Constants.fileSystem.getPath("");
+                        Path dir = ClientRequest.fileSystem.getPath("");
                         Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
                         return PartOutput.from(Files.newByteChannel(temp, EnumSet.of(CREATE, TRUNCATE_EXISTING, WRITE)));
                     } else if (context.getPartStreams().size() == 2) {
-                        Path dir = Constants.fileSystem.getPath("");
+                        Path dir = ClientRequest.fileSystem.getPath("");
                         Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
                         return PartOutput.from(Files.newOutputStream(temp));
                     } else if (context.getPartStreams().size() == 3) {
-                        Path dir = Constants.fileSystem.getPath("");
+                        Path dir = ClientRequest.fileSystem.getPath("");
                         Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
                         return PartOutput.from(temp);
                     } else {
@@ -140,7 +140,7 @@ public class AsyncUploadServlet extends HttpServlet {
                 .onPartBegin((context, buffer) -> {
                     System.out.println("Start!");
                     //use the buffer to detect file type
-                    String contentType = Constants.tika.detect(buffer.array());
+                    String contentType = ClientRequest.tika.detect(buffer.array());
                     assertNotNull(contentType);
                     System.out.println(contentType);
                     PartStream part = context.getCurrentPart();
@@ -177,11 +177,11 @@ public class AsyncUploadServlet extends HttpServlet {
                     System.out.println("Request complete!");
                     System.out.println("Total parts: " + context.getPartStreams().size());
 
-                    assertTrue(Arrays.equals(formFields.get(0).toByteArray(), Constants.largeFile));
-                    assertTrue(Arrays.equals(formFields.get(1).toByteArray(), Constants.emptyFile));
-                    assertTrue(Arrays.equals(formFields.get(2).toByteArray(), Constants.smallFile));
-                    assertTrue(Arrays.equals(formFields.get(3).toByteArray(), Constants.textValue1.getBytes(ISO_8859_1)));
-                    assertTrue(Arrays.equals(formFields.get(4).toByteArray(), Constants.textValue2.getBytes(ISO_8859_1)));
+                    assertTrue(Arrays.equals(formFields.get(0).toByteArray(), ClientRequest.largeFile));
+                    assertTrue(Arrays.equals(formFields.get(1).toByteArray(), ClientRequest.emptyFile));
+                    assertTrue(Arrays.equals(formFields.get(2).toByteArray(), ClientRequest.smallFile));
+                    assertTrue(Arrays.equals(formFields.get(3).toByteArray(), ClientRequest.textValue1.getBytes(ISO_8859_1)));
+                    assertTrue(Arrays.equals(formFields.get(4).toByteArray(), ClientRequest.textValue2.getBytes(ISO_8859_1)));
 
                     context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
 

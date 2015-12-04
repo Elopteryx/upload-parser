@@ -22,10 +22,10 @@ public class BlockingUploadServlet extends HttpServlet {
 
         String query = request.getQueryString();
         switch (query) {
-            case Constants.SIMPLE:
+            case ClientRequest.SIMPLE:
                 simple(request, response);
                 break;
-            case Constants.ERROR:
+            case ClientRequest.ERROR:
                 error(request, response);
                 break;
             default:
