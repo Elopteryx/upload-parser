@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -89,7 +90,8 @@ public class TomcatIntegrationTest {
     private void performRequest(String url, Integer expectedStatus) throws IOException {
         try {
             ClientRequest.performRequest(url, expectedStatus);
-        } catch (NoHttpResponseException e) {
+        } catch (NoHttpResponseException | SocketException e) {
+            e.printStackTrace();
             if (expectedStatus != null) {
                 fail();
             }

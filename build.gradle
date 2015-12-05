@@ -98,6 +98,10 @@ subprojects {
         }
     }
 
+    test {
+        testLogging.showStandardStreams = true
+    }
+
     idea {
         module {
             scopes.PROVIDED.plus += [configurations.provided]
