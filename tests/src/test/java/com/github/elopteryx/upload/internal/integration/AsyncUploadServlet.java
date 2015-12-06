@@ -184,18 +184,11 @@ public class AsyncUploadServlet extends HttpServlet {
                     assertTrue(Arrays.equals(formFields.get(4).toByteArray(), ClientRequest.textValue2.getBytes(ISO_8859_1)));
 
                     context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
-
-                    for (ByteArrayOutputStream baos : formFields) {
-                        System.out.println(baos.toString());
-                    }
                     context.getRequest().getAsyncContext().complete();
                 })
                 .onError((context, throwable) -> {
                     System.out.println("Error!");
                     throwable.printStackTrace();
-                    for (ByteArrayOutputStream baos : formFields) {
-                        System.out.println(baos.toString());
-                    }
                     response.sendError(500);
                 })
                 .userObject(response)
