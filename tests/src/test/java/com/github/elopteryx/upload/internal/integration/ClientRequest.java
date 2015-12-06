@@ -46,7 +46,7 @@ public final class ClientRequest {
         smallFile = "0123456789".getBytes(UTF_8);
         Random random = new Random();
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 100000; i++) {
             builder.append(random.nextInt(100));
         }
         largeFile = builder.toString().getBytes(UTF_8);
