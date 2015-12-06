@@ -115,7 +115,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      * The buffer that stores the bytes which were read from the
      * servlet input stream or from a different source.
      */
-    protected byte[] buf;
+    protected ByteBuffer dataBuffer;
 
     /**
      * Sets up the necessary objects to start the parsing. Depending upon
@@ -283,7 +283,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     public void setMaxBytesUsed(int maxBytesUsed) {
         // There are two byte buffers so each one gets half of the amount
         this.maxBytesUsed = maxBytesUsed / 2;
-        this.buf = new byte[maxBytesUsed / 2];
+        this.dataBuffer = ByteBuffer.allocate(maxBytesUsed / 2);
     }
 
     public void setSizeThreshold(int sizeThreshold) {

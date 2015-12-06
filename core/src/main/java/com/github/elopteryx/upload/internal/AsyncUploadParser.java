@@ -21,7 +21,6 @@ import static java.util.Objects.requireNonNull;
 import com.github.elopteryx.upload.errors.MultipartException;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import javax.annotation.Nonnull;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
@@ -95,7 +94,7 @@ public class AsyncUploadParser extends AbstractUploadParser implements ReadListe
     private boolean parseCurrentItem() throws IOException {
         int count = -1;
         if (!servletInputStream.isFinished()) {
-            count = servletInputStream.read(buf);
+            count = servletInputStream.read(dataBuffer.array());
         }
         if (count == -1) {
             if (!parseState.isComplete()) {
@@ -103,7 +102,9 @@ public class AsyncUploadParser extends AbstractUploadParser implements ReadListe
             }
         } else {
             checkRequestSize(count);
-            parseState.parse(ByteBuffer.wrap(buf, 0, count));
+            dataBuffer.position(0);
+            dataBuffer.limit(count);
+            parseState.parse(dataBuffer);
         }
         return !parseState.isComplete();
     }

@@ -21,7 +21,6 @@ import com.github.elopteryx.upload.errors.MultipartException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -84,7 +83,7 @@ public class BlockingUploadParser extends AbstractUploadParser {
      */
     protected void blockingRead() throws IOException {
         while (true) {
-            int count = inputStream.read(buf);
+            int count = inputStream.read(dataBuffer.array());
             if (count == -1) {
                 if (!parseState.isComplete()) {
                     throw new MultipartException("Stream ended unexpectedly!");
@@ -93,7 +92,9 @@ public class BlockingUploadParser extends AbstractUploadParser {
                 }
             } else if (count > 0) {
                 checkRequestSize(count);
-                parseState.parse(ByteBuffer.wrap(buf, 0, count));
+                dataBuffer.position(0);
+                dataBuffer.limit(count);
+                parseState.parse(dataBuffer);
             }
         }
     }
