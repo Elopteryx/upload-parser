@@ -5,7 +5,7 @@ Upload Parser
 [![Build Status](https://travis-ci.org/Elopteryx/upload-parser.svg?branch=master)](https://travis-ci.org/Elopteryx/upload-parser)
 [![Coverage Status](https://coveralls.io/repos/Elopteryx/upload-parser/badge.svg?branch=master&service=github)](https://coveralls.io/github/Elopteryx/upload-parser?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.elopteryx/upload-parser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.elopteryx/upload-parser)
-[![JavaDoc](https://img.shields.io/badge/javadoc-2.0.0-brightgreen.svg)](http://www.javadoc.io/doc/com.github.elopteryx/upload-parser)
+[![JavaDoc](https://img.shields.io/badge/javadoc-2.0.1-brightgreen.svg)](http://www.javadoc.io/doc/com.github.elopteryx/upload-parser)
 
 Upload Parser is a file upload library for servlets and web applications. Although you can already use the standard
 servlet API to retrieve part items from a multipart request this library provides extra functionality not found
@@ -218,13 +218,13 @@ JAX-RS ([javadoc][2])
 Gradle
 -----
 ```xml
-compile "com.github.elopteryx:upload-parser:2.0.0"
+compile "com.github.elopteryx:upload-parser:2.0.1"
 ```
 
 If you want parameter injection for your JAX-RS endpoints:
 
 ```xml
-compile "com.github.elopteryx:upload-parser-jaxrs:2.0.0"
+compile "com.github.elopteryx:upload-parser-jaxrs:2.0.1"
 ```
 Maven
 -----
@@ -232,13 +232,13 @@ Maven
 <dependency>
     <groupId>com.github.elopteryx</groupId>
     <artifactId>upload-parser</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
 </dependency>
 
 <dependency>
     <groupId>com.github.elopteryx</groupId>
     <artifactId>upload-parser-jaxrs</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 
@@ -246,5 +246,5 @@ For the Java 7 compatible versions, change the "upload-parser" in the artifactId
 
 Find available versions on [Maven Central Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.elopteryx%22%20AND%20a%3A%22upload-parser%22).
 
-[1]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser/2.0.0
-[2]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser-jaxrs/2.0.0
+[1]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser/2.0.1
+[2]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser-jaxrs/2.0.1
