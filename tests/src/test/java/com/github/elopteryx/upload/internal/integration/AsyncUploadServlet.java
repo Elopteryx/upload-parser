@@ -107,7 +107,7 @@ public class AsyncUploadServlet extends HttpServlet {
     }
 
     private void ioErrorUponError(HttpServletRequest request) throws ServletException, IOException {
-
+        request.startAsync().setTimeout(500);
         UploadParser.newParser()
                 .onRequestComplete(context -> {
                     throw new IOException();
@@ -119,7 +119,7 @@ public class AsyncUploadServlet extends HttpServlet {
     }
 
     private void servletErrorUponError(HttpServletRequest request) throws ServletException, IOException {
-
+        request.startAsync().setTimeout(500);
         // onError will not be called for ServletException!
         UploadParser.newParser()
                 .onRequestComplete(context -> {
