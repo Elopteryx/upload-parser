@@ -146,12 +146,12 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
      */
     @Nullable
     private Part providePart(String name) {
-        for (Part part : multiPart.getParts()) {
-            if (name.equals(part.getName())) {
-                return part;
-            }
-        }
-        return null;
+        return multiPart
+                .getParts()
+                .stream()
+                .filter(part -> name.equals(part.getName()))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

@@ -70,7 +70,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     /**
      * The user object.
      */
-    Object userObject;
+    private Object userObject;
     /**
      * The number of bytes to be allocated for the buffers.
      */
@@ -121,9 +121,9 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      * Sets up the necessary objects to start the parsing. Depending upon
      * the environment the concrete implementations can be very different.
      * @param request The servlet request
-     * @throws IOException If an error occurs with the IO
+     * @throws RequestSizeException If the supplied size is invalid
      */
-    protected void init(HttpServletRequest request) throws IOException {
+    void init(HttpServletRequest request) {
 
         // Fail fast mode
         if (maxRequestSize > -1) {
@@ -173,7 +173,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      * parsing if a max size has been set and reached.
      * @param additional The amount to add, always non negative
      */
-    protected void checkRequestSize(int additional) {
+    void checkRequestSize(int additional) {
         requestSize += additional;
         if (maxRequestSize > -1 && requestSize > maxRequestSize) {
             throw new RequestSizeException("The size of the request ("

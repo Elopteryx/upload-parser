@@ -25,9 +25,9 @@ import javax.annotation.Nonnull;
 /**
  * Default implementation of {@link Part}.
  */
-public class PartImpl extends PartStreamImpl implements Part {
+class PartImpl extends PartStreamImpl implements Part {
 
-    public PartImpl(PartStreamImpl partStream) {
+    PartImpl(PartStreamImpl partStream) {
         super(partStream.getSubmittedFileName(), partStream.getName(), partStream.getHeadersObject());
         this.output = partStream.getOutput();
     }

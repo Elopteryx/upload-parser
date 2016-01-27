@@ -23,7 +23,7 @@ import java.util.Map;
 @RunWith(Parameterized.class)
 public class MultipartParserTest {
 
-    private int bufferSize;
+    private final int bufferSize;
 
     /**
      * Collects the parameters for each test run.

@@ -32,7 +32,7 @@ import java.nio.ByteBuffer;
  *
  * @author Jason T. Greene
  */
-public class Base64Decoder {
+class Base64Decoder {
 
     private static final byte[] ENCODING_TABLE;
     private static final byte[] DECODING_TABLE = new byte[80];
@@ -103,7 +103,7 @@ public class Base64Decoder {
      * @param target the byte buffer to write decoded data to
      * @throws java.io.IOException if the encoded data is corrupted
      */
-    public void decode(ByteBuffer source, ByteBuffer target) throws IOException {
+    void decode(ByteBuffer source, ByteBuffer target) throws IOException {
         if (target == null) {
             throw new IllegalStateException();
         }

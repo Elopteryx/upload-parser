@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.channels.Channel;
 
-@WebServlet(value = "/blocking", asyncSupported = false)
+@WebServlet(value = "/blocking")
 public class BlockingUploadServlet extends HttpServlet {
 
     @Override

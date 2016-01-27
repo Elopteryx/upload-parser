@@ -36,14 +36,14 @@ public class MultiPartImpl implements MultiPart {
     /**
      * The request size.
      */
-    private long size;
+    private final long size;
     /**
      * The map of the HTTP headers.
      */
     private MultivaluedMap<String, String> headers;
 
     MultiPartImpl(List<Part> parts, long size) {
-        this.parts = parts != null ? Collections.unmodifiableList(parts) : Collections.<Part>emptyList();
+        this.parts = parts != null ? Collections.unmodifiableList(parts) : Collections.emptyList();
         this.size = size;
     }
 
