@@ -37,10 +37,9 @@ public class NullChannel implements WritableByteChannel {
 
     @Override
     public int write(ByteBuffer src) throws IOException {
-        int dataCount = src.remaining();
-        byte[] buf = new byte[dataCount];
-        src.get(buf, 0, dataCount);
-        return dataCount;
+        int remaining = src.remaining();
+        src.position(src.limit());
+        return remaining;
     }
 
     @Override
