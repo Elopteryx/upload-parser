@@ -10,11 +10,11 @@ import java.nio.channels.WritableByteChannel;
  * to the given OutputStream instance.
  *
  * <p>This implementation differs from the one returned
- * in {@link java.nio.channels.Channels#newChannel(OutputStream)} Channels.newChannel
+ * in {@link java.nio.channels.Channels#newChannel(OutputStream)}
  * by one notable thing, it does not use a temporary buffer, because
  * it will not receive read-only ByteBuffers.</p>
  */
-public class StreamBackedChannel implements WritableByteChannel {
+public class OutputStreamBackedChannel implements WritableByteChannel {
 
     /**
      * Flag to determine whether the channel is closed or not.
@@ -26,7 +26,7 @@ public class StreamBackedChannel implements WritableByteChannel {
      */
     private final OutputStream outputStream;
 
-    public StreamBackedChannel(OutputStream outputStream) {
+    public OutputStreamBackedChannel(OutputStream outputStream) {
         this.outputStream = outputStream;
     }
 

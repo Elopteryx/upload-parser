@@ -223,7 +223,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
             if (output.safeToCast(WritableByteChannel.class)) {
                 writableChannel = output.unwrap(WritableByteChannel.class);
             } else if (output.safeToCast(OutputStream.class)) {
-                writableChannel = new StreamBackedChannel(output.unwrap(OutputStream.class));
+                writableChannel = new OutputStreamBackedChannel(output.unwrap(OutputStream.class));
             } else if (output.safeToCast(Path.class)) {
                 writableChannel = Files.newByteChannel(output.unwrap(Path.class), EnumSet.of(APPEND, CREATE, WRITE));
             } else {
