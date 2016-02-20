@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -224,7 +223,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
             if (output.safeToCast(WritableByteChannel.class)) {
                 writableChannel = output.unwrap(WritableByteChannel.class);
             } else if (output.safeToCast(OutputStream.class)) {
-                writableChannel = Channels.newChannel(output.unwrap(OutputStream.class));
+                writableChannel = new StreamBackedChannel(output.unwrap(OutputStream.class));
             } else if (output.safeToCast(Path.class)) {
                 writableChannel = Files.newByteChannel(output.unwrap(Path.class), EnumSet.of(APPEND, CREATE, WRITE));
             } else {
