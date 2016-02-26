@@ -47,7 +47,7 @@ public class BlockingUploadServlet extends HttpServlet {
                 })
                 .onRequestComplete(context1 -> response.setStatus(200))
                 .doBlockingParse(request);
-        assertTrue(context.getPartStreams().size() == 5);
+        assertTrue(context.getPartStreams().size() == 7);
     }
 
     private void error(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @WebServlet(value = "/async", asyncSupported = true)
 public class AsyncUploadServlet extends HttpServlet {
@@ -134,15 +135,24 @@ public class AsyncUploadServlet extends HttpServlet {
             throw new ServletException("Not multipart!");
         }
 
+        AtomicInteger partCounter = new AtomicInteger(0);
         List<ByteArrayOutputStream> formFields = new ArrayList<>();
+
+        List<String> expectedContentTypes = Arrays.asList(
+                "text/plain",
+                "text/plain",
+                "text/plain",
+                "application/x-tika-ooxml",
+                "application/x-tika-ooxml",
+                "application/octet-stream",
+                "application/octet-stream");
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    System.out.println("Start!");
                     //use the buffer to detect file type
                     String contentType = ClientRequest.tika.detect(buffer.array());
                     assertNotNull(contentType);
-                    System.out.println(contentType);
+                    assertTrue(contentType.equals(expectedContentTypes.get(partCounter.getAndIncrement())));
                     PartStream part = context.getCurrentPart();
                     String name = part.getName();
                     if (part.isFile()) {
@@ -180,8 +190,8 @@ public class AsyncUploadServlet extends HttpServlet {
                     assertTrue(Arrays.equals(formFields.get(0).toByteArray(), ClientRequest.largeFile));
                     assertTrue(Arrays.equals(formFields.get(1).toByteArray(), ClientRequest.emptyFile));
                     assertTrue(Arrays.equals(formFields.get(2).toByteArray(), ClientRequest.smallFile));
-                    assertTrue(Arrays.equals(formFields.get(3).toByteArray(), ClientRequest.textValue1.getBytes(ISO_8859_1)));
-                    assertTrue(Arrays.equals(formFields.get(4).toByteArray(), ClientRequest.textValue2.getBytes(ISO_8859_1)));
+                    assertTrue(Arrays.equals(formFields.get(5).toByteArray(), ClientRequest.textValue1.getBytes(ISO_8859_1)));
+                    assertTrue(Arrays.equals(formFields.get(6).toByteArray(), ClientRequest.textValue2.getBytes(ISO_8859_1)));
 
                     context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
                     context.getRequest().getAsyncContext().complete();
