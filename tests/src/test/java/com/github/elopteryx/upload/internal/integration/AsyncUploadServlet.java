@@ -4,14 +4,15 @@ import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.github.elopteryx.upload.PartOutput;
 import com.github.elopteryx.upload.PartStream;
 import com.github.elopteryx.upload.UploadParser;
-import com.github.elopteryx.upload.internal.NullChannel;
+import com.github.elopteryx.upload.util.ByteBufferBackedInputStream;
+import com.github.elopteryx.upload.util.NullChannel;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -142,18 +143,19 @@ public class AsyncUploadServlet extends HttpServlet {
                 "text/plain",
                 "text/plain",
                 "text/plain",
-                "application/x-tika-ooxml",
-                "application/x-tika-ooxml",
-                "application/octet-stream",
-                "application/octet-stream");
+                "text/plain",
+                "text/plain",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "image/jpeg");
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    //use the buffer to detect file type
-                    String contentType = ClientRequest.tika.detect(buffer.array());
-                    assertNotNull(contentType);
-                    assertTrue(contentType.equals(expectedContentTypes.get(partCounter.getAndIncrement())));
                     PartStream part = context.getCurrentPart();
+
+                    String contentType = ClientRequest.tika.detect(new ByteBufferBackedInputStream(buffer), part.getSubmittedFileName());
+                    assertEquals(contentType, expectedContentTypes.get(partCounter.getAndIncrement()));
+
                     String name = part.getName();
                     if (part.isFile()) {
                         if ("".equals(part.getSubmittedFileName())) {
@@ -190,8 +192,8 @@ public class AsyncUploadServlet extends HttpServlet {
                     assertTrue(Arrays.equals(formFields.get(0).toByteArray(), ClientRequest.largeFile));
                     assertTrue(Arrays.equals(formFields.get(1).toByteArray(), ClientRequest.emptyFile));
                     assertTrue(Arrays.equals(formFields.get(2).toByteArray(), ClientRequest.smallFile));
-                    assertTrue(Arrays.equals(formFields.get(5).toByteArray(), ClientRequest.textValue1.getBytes(ISO_8859_1)));
-                    assertTrue(Arrays.equals(formFields.get(6).toByteArray(), ClientRequest.textValue2.getBytes(ISO_8859_1)));
+                    assertTrue(Arrays.equals(formFields.get(3).toByteArray(), ClientRequest.textValue1.getBytes(ISO_8859_1)));
+                    assertTrue(Arrays.equals(formFields.get(4).toByteArray(), ClientRequest.textValue2.getBytes(ISO_8859_1)));
 
                     context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
                     context.getRequest().getAsyncContext().complete();

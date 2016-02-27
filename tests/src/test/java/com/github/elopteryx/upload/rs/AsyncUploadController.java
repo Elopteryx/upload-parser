@@ -6,7 +6,7 @@ import com.github.elopteryx.upload.OnRequestComplete;
 import com.github.elopteryx.upload.PartOutput;
 import com.github.elopteryx.upload.UploadContext;
 import com.github.elopteryx.upload.UploadParser;
-import com.github.elopteryx.upload.internal.NullChannel;
+import com.github.elopteryx.upload.util.NullChannel;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

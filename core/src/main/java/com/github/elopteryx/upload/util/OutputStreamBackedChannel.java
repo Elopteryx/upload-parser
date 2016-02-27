@@ -1,5 +1,6 @@
-package com.github.elopteryx.upload.internal;
+package com.github.elopteryx.upload.util;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -26,12 +27,16 @@ public class OutputStreamBackedChannel implements WritableByteChannel {
      */
     private final OutputStream outputStream;
 
-    public OutputStreamBackedChannel(OutputStream outputStream) {
+    /**
+     * Public constructor.
+     * @param outputStream The output stream
+     */
+    public OutputStreamBackedChannel(@Nonnull OutputStream outputStream) {
         this.outputStream = outputStream;
     }
 
     @Override
-    public int write(ByteBuffer src) throws IOException {
+    public int write(@Nonnull ByteBuffer src) throws IOException {
         byte[] buf = src.array();
         int offset = src.position();
         int len = src.remaining();

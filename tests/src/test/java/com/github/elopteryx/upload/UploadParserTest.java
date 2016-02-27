@@ -8,7 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.github.elopteryx.upload.internal.NullChannel;
+import com.github.elopteryx.upload.util.NullChannel;
 
 import com.google.common.jimfs.Jimfs;
 import org.junit.Before;

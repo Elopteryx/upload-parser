@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package com.github.elopteryx.upload.internal;
+package com.github.elopteryx.upload.util;
 
 import com.github.elopteryx.upload.OnPartBegin;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 
 /**
- * A channel implementation which discards the data supplied.
+ * A channel implementation which provides no data and discards the data supplied.
  * Used by the parser if it doesn't have a channel to write to.
  * The purpose of this is to make the {@link OnPartBegin} callback
  * optional, which is useful for testing.
  */
-public class NullChannel implements WritableByteChannel {
+public class NullChannel implements ReadableByteChannel, WritableByteChannel {
 
     /**
      * Flag to determine whether the channel is closed or not.
@@ -36,7 +39,15 @@ public class NullChannel implements WritableByteChannel {
     private boolean open = true;
 
     @Override
-    public int write(ByteBuffer src) throws IOException {
+    public int read(@Nonnull ByteBuffer dst) throws IOException {
+        if (!open) {
+            throw new ClosedChannelException();
+        }
+        return -1;
+    }
+
+    @Override
+    public int write(@Nonnull ByteBuffer src) throws IOException {
         int remaining = src.remaining();
         src.position(src.limit());
         return remaining;

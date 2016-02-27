@@ -71,10 +71,11 @@ public final class ClientRequest {
                     .addBinaryBody("filefield1", largeFile, ContentType.create("application/octet-stream"), "file1.txt")
                     .addBinaryBody("filefield2", emptyFile, ContentType.create("text/plain"), "file2.txt")
                     .addBinaryBody("filefield3", smallFile, ContentType.create("application/octet-stream"), "file3.txt")
-                    .addBinaryBody("filefield4", getContents("test.xlsx"), ContentType.create("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), "test.xlsx")
-                    .addBinaryBody("filefield5", getContents("test.docx"), ContentType.create("application/vnd.openxmlformats-officedocument.wordprocessingml.document"), "test.docx")
                     .addTextBody("textfield1", textValue1)
                     .addTextBody("textfield2", textValue2)
+                    .addBinaryBody("filefield4", getContents("test.xlsx"), ContentType.create("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), "test.xlsx")
+                    .addBinaryBody("filefield5", getContents("test.docx"), ContentType.create("application/vnd.openxmlformats-officedocument.wordprocessingml.document"), "test.docx")
+                    .addBinaryBody("filefield6", getContents("test.jpg"), ContentType.create("image/jpeg"), "test.jpg")
                     .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
                     .build();
 

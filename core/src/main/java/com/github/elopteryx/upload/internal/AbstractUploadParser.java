@@ -29,6 +29,8 @@ import com.github.elopteryx.upload.OnRequestComplete;
 import com.github.elopteryx.upload.PartOutput;
 import com.github.elopteryx.upload.errors.PartSizeException;
 import com.github.elopteryx.upload.errors.RequestSizeException;
+import com.github.elopteryx.upload.util.NullChannel;
+import com.github.elopteryx.upload.util.OutputStreamBackedChannel;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -218,6 +220,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     private void validate() throws IOException {
         context.finishBuffering();
         PartOutput output = null;
+        checkBuffer.flip();
         if (partBeginCallback != null) {
             output = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
             if (output.safeToCast(WritableByteChannel.class)) {
