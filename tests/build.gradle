@@ -43,6 +43,7 @@ dependencies {
 
     /* Document and file parser. */
     testCompile "org.apache.tika:tika-core:$tikaVersion"
+    testCompile "org.apache.tika:tika-parsers:$tikaVersion"
 
     /* In-memory filesystem. */
     testCompile "com.google.jimfs:jimfs:$jimfsVersion"
