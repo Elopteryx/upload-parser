@@ -4,13 +4,13 @@ dependencies {
     compile project(":upload-parser")
 
     /* Servlet API. */
-    provided "javax.servlet:javax.servlet-api:$servletApiVersion"
+    compileOnly "javax.servlet:javax.servlet-api:$servletApiVersion"
 
     /* Restful web services API. */
-    provided "javax.ws.rs:javax.ws.rs-api:$jaxrsApiVersion"
+    compileOnly "javax.ws.rs:javax.ws.rs-api:$jaxrsApiVersion"
 
     /* Annotations for code documentation. */
-    provided "com.google.code.findbugs:jsr305:$jsr305Version"
+    compileOnly "com.google.code.findbugs:jsr305:$jsr305Version"
 
 }
 
@@ -41,7 +41,7 @@ uploadArchives {
             }
 
             pom.scopeMappings.with {
-                addMapping(1, configurations.provided, "provided")
+                addMapping(1, configurations.compileOnly, "provided")
             }
 
             pom.project {

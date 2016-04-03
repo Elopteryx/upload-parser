@@ -1,19 +1,10 @@
 dependencies {
 
     /* Upload parser. */
-    compile project(":upload-parser")
+    testCompile project(":upload-parser")
 
     /* Upload parser Jax-Rs integration. */
-    compile project(":upload-parser-jaxrs")
-
-    /* Servlet API. */
-    provided "javax.servlet:javax.servlet-api:$servletApiVersion"
-
-    /* Restful web services API. */
-    provided "javax.ws.rs:javax.ws.rs-api:$jaxrsApiVersion"
-
-    /* Annotations for code documentation. */
-    provided "com.google.code.findbugs:jsr305:$jsr305Version"
+    testCompile project(":upload-parser-jaxrs")
 
     /* Test runner. */
     testCompile "junit:junit:$junitVersion"
@@ -50,6 +41,15 @@ dependencies {
 
     /* Object mocking. */
     testCompile "org.mockito:mockito-core:$mockitoVersion"
+
+    /* Servlet API. */
+    testCompileOnly "javax.servlet:javax.servlet-api:$servletApiVersion"
+
+    /* Restful web services API. */
+    testCompileOnly "javax.ws.rs:javax.ws.rs-api:$jaxrsApiVersion"
+
+    /* Annotations for code documentation. */
+    testCompileOnly "com.google.code.findbugs:jsr305:$jsr305Version"
 
 }
 
