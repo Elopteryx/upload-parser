@@ -29,6 +29,8 @@ import java.nio.channels.WritableByteChannel;
  * Used by the parser if it doesn't have a channel to write to.
  * The purpose of this is to make the {@link OnPartBegin} callback
  * optional, which is useful for testing.
+ *
+ * <p>The channel honors the close contract, it cannot be used after closing.</p>
  */
 public class NullChannel implements ReadableByteChannel, WritableByteChannel {
 
@@ -47,6 +49,9 @@ public class NullChannel implements ReadableByteChannel, WritableByteChannel {
 
     @Override
     public int write(ByteBuffer src) throws IOException {
+        if (!open) {
+            throw new ClosedChannelException();
+        }
         int remaining = src.remaining();
         src.position(src.limit());
         return remaining;

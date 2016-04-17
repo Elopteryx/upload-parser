@@ -19,6 +19,7 @@ package com.github.elopteryx.upload.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Objects;
 
 /**
  * An input stream implementation which reads from the given byte buffer.
@@ -33,15 +34,31 @@ public class ByteBufferBackedInputStream extends InputStream {
     private final ByteBuffer buffer;
 
     /**
+     * Flag to determine whether the channel is closed or not.
+     */
+    private boolean open = true;
+
+    /**
      * Public constructor.
      * @param buffer The byte buffer
      */
     public ByteBufferBackedInputStream(ByteBuffer buffer) {
-        this.buffer = buffer;
+        this.buffer = Objects.requireNonNull(buffer);
+        if (buffer.isDirect() || buffer.isReadOnly()) {
+            throw new IllegalArgumentException("The buffer cannot be direct or read-only!");
+        }
+    }
+
+    @Override
+    public int available() throws IOException {
+        return buffer.remaining();
     }
 
     @Override
     public int read() throws IOException {
+        if (!open) {
+            throw new IOException("The stream was closed!");
+        }
         if (!buffer.hasRemaining()) {
             return -1;
         }
@@ -50,12 +67,19 @@ public class ByteBufferBackedInputStream extends InputStream {
 
     @Override
     public int read(byte[] bytes, int off, int len) throws IOException {
+        if (!open) {
+            throw new IOException("The stream was closed!");
+        }
         if (!buffer.hasRemaining()) {
             return -1;
         }
-
         len = Math.min(len, buffer.remaining());
         buffer.get(bytes, off, len);
         return len;
+    }
+
+    @Override
+    public void close() throws IOException {
+        open = false;
     }
 }

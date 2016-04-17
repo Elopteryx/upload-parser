@@ -19,7 +19,9 @@ package com.github.elopteryx.upload.util;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.WritableByteChannel;
+import java.util.Objects;
 
 /**
  * A channel implementation which writes the ByteBuffer data
@@ -28,7 +30,9 @@ import java.nio.channels.WritableByteChannel;
  * <p>This implementation differs from the one returned
  * in {@link java.nio.channels.Channels#newChannel(OutputStream)}
  * by one notable thing, it does not use a temporary buffer, because
- * it will not receive read-only ByteBuffers.</p>
+ * it will not handle read-only or direct ByteBuffers.</p>
+ *
+ * <p>The channel honors the close contract, it cannot be used after closing.</p>
  */
 public class OutputStreamBackedChannel implements WritableByteChannel {
 
@@ -47,11 +51,17 @@ public class OutputStreamBackedChannel implements WritableByteChannel {
      * @param outputStream The output stream
      */
     public OutputStreamBackedChannel(OutputStream outputStream) {
-        this.outputStream = outputStream;
+        this.outputStream = Objects.requireNonNull(outputStream);
     }
 
     @Override
     public int write(ByteBuffer src) throws IOException {
+        if (!open) {
+            throw new ClosedChannelException();
+        }
+        if (src.isDirect() || src.isReadOnly()) {
+            throw new IllegalArgumentException("The buffer cannot be direct or read-only!");
+        }
         byte[] buf = src.array();
         int offset = src.position();
         int len = src.remaining();
