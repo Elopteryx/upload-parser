@@ -19,7 +19,6 @@ import java.nio.ByteBuffer;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -153,7 +152,6 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Override
-    @Nonnull
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
         return PartOutput.from(new NullChannel());
     }

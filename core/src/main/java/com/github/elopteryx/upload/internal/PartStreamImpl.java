@@ -19,7 +19,6 @@ package com.github.elopteryx.upload.internal;
 import com.github.elopteryx.upload.PartOutput;
 import com.github.elopteryx.upload.PartStream;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 
 /**
@@ -112,13 +111,11 @@ public class PartStreamImpl implements PartStream {
     }
 
     @Override
-    @Nonnull
     public Collection<String> getHeaderNames() {
         return headers.getHeaderNames();
     }
 
     @Override
-    @Nonnull
     public Collection<String> getHeaders(String name) {
         return headers.getHeaders(name);
     }

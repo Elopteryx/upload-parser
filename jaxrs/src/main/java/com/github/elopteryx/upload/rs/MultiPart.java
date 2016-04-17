@@ -16,8 +16,6 @@
 
 package com.github.elopteryx.upload.rs;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.List;
 
@@ -31,14 +29,12 @@ public interface MultiPart {
      * parts. Might be empty, but not null.
      * @return The list of the parts
      */
-    @Nonnull
     List<Part> getParts();
 
     /**
      * Returns the size of the whole multipart request.
      * @return The full size of the request
      */
-    @Nonnegative
     long getSize();
 
     /**
@@ -46,7 +42,6 @@ public interface MultiPart {
      * by the Jax-Rs runtime.
      * @return The map of the headers
      */
-    @Nonnull
     MultivaluedMap<String, String> getHeaders();
 
 }

@@ -48,9 +48,6 @@ dependencies {
     /* Restful web services API. */
     testCompileOnly "javax.ws.rs:javax.ws.rs-api:$jaxrsApiVersion"
 
-    /* Annotations for code documentation. */
-    testCompileOnly "com.google.code.findbugs:jsr305:$jsr305Version"
-
 }
 
 publishing {

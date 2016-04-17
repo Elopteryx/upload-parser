@@ -21,7 +21,6 @@ import static java.util.Objects.requireNonNull;
 import com.github.elopteryx.upload.errors.MultipartException;
 
 import java.io.IOException;
-import javax.annotation.Nonnull;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -41,7 +40,7 @@ public class AsyncUploadParser extends AbstractUploadParser implements ReadListe
      */
     private final HttpServletRequest request;
 
-    public AsyncUploadParser(@Nonnull HttpServletRequest request) {
+    public AsyncUploadParser(HttpServletRequest request) {
         this.request = requireNonNull(request);
     }
 

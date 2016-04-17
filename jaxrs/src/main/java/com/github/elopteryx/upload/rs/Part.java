@@ -18,9 +18,6 @@ package com.github.elopteryx.upload.rs;
 
 import com.github.elopteryx.upload.PartOutput;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
@@ -36,7 +33,6 @@ public interface Part {
      *
      * @return The content type of this part
      */
-    @Nullable
     String getContentType();
 
     /**
@@ -45,7 +41,6 @@ public interface Part {
      *
      * @return The name of this part as a String
      */
-    @Nullable
     String getName();
 
     /**
@@ -53,7 +48,6 @@ public interface Part {
      *
      * @return A long specifying the size of this part, in bytes.
      */
-    @Nonnegative
     long getSize();
 
     /**
@@ -62,7 +56,6 @@ public interface Part {
      *
      * @return The submitted file name
      */
-    @Nullable
     String getSubmittedFileName();
 
     /**
@@ -80,7 +73,6 @@ public interface Part {
      * actual output object (channel, path etc.) can be retrieved from it.
      * @return The output object
      */
-    @Nonnull
     PartOutput getOutPut();
 
     /**
@@ -93,7 +85,6 @@ public interface Part {
      * @param name a String specifying the header name
      * @return a String containing the value of the requested header, or null if the part does not have a header of that name
      */
-    @Nullable
     String getHeader(String name);
 
     /**
@@ -102,7 +93,6 @@ public interface Part {
      * @param name the header name whose values to return
      * @return a (possibly empty) Collection of the values of the header with the given name
      */
-    @Nonnull
     Collection<String> getHeaders(String name);
 
     /**
@@ -110,7 +100,6 @@ public interface Part {
      *
      * @return a (possibly empty) Collection of the header names of this Part
      */
-    @Nonnull
     Collection<String> getHeaderNames();
 
 }

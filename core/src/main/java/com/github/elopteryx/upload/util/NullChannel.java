@@ -18,7 +18,6 @@ package com.github.elopteryx.upload.util;
 
 import com.github.elopteryx.upload.OnPartBegin;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
@@ -39,7 +38,7 @@ public class NullChannel implements ReadableByteChannel, WritableByteChannel {
     private boolean open = true;
 
     @Override
-    public int read(@Nonnull ByteBuffer dst) throws IOException {
+    public int read(ByteBuffer dst) throws IOException {
         if (!open) {
             throw new ClosedChannelException();
         }
@@ -47,7 +46,7 @@ public class NullChannel implements ReadableByteChannel, WritableByteChannel {
     }
 
     @Override
-    public int write(@Nonnull ByteBuffer src) throws IOException {
+    public int write(ByteBuffer src) throws IOException {
         int remaining = src.remaining();
         src.position(src.limit());
         return remaining;

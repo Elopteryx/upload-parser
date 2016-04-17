@@ -23,8 +23,6 @@ import com.github.elopteryx.upload.UploadContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -69,7 +67,6 @@ public class UploadContextImpl implements UploadContext {
     }
 
     @Override
-    @Nonnull
     public HttpServletRequest getRequest() {
         return request;
     }
@@ -80,18 +77,15 @@ public class UploadContextImpl implements UploadContext {
     }
 
     @Override
-    @Nonnull
     public PartStream getCurrentPart() {
         return currentPart;
     }
 
     @Override
-    @Nullable
     public PartOutput getCurrentOutput() {
         return output;
     }
 
-    @Nonnull
     @Override
     public List<PartStream> getPartStreams() {
         return Collections.unmodifiableList(partStreams);

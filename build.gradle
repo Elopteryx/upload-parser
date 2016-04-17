@@ -34,7 +34,6 @@ subprojects {
 
     ext {
         servletApiVersion = "3.1.0"
-        jsr305Version = "3.0.1"
         jaxrsApiVersion = "2.0.1"
         junitVersion = "4.12"
         apacheHttpVersion = "4.5.2"
@@ -69,9 +68,9 @@ subprojects {
                 encoding "UTF-8"
                 docEncoding "UTF-8"
                 failOnError true
-                links = [ "http://jsr-305.googlecode.com/svn/trunk/javadoc",
-                          "http://download.oracle.com/javase/8/docs/api/",
-                          "http://download.oracle.com/javaee/7/api/",
+                links = [
+                        "http://download.oracle.com/javase/8/docs/api/",
+                        "http://download.oracle.com/javaee/7/api/",
                 ]
             }
         }

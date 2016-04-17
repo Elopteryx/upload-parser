@@ -3,9 +3,6 @@ dependencies {
     /* Servlet API. */
     compileOnly "javax.servlet:javax.servlet-api:$servletApiVersion"
 
-    /* Annotations for code documentation. */
-    compileOnly "com.google.code.findbugs:jsr305:$jsr305Version"
-
 }
 
 publishing {

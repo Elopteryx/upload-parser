@@ -9,9 +9,6 @@ dependencies {
     /* Restful web services API. */
     compileOnly "javax.ws.rs:javax.ws.rs-api:$jaxrsApiVersion"
 
-    /* Annotations for code documentation. */
-    compileOnly "com.google.code.findbugs:jsr305:$jsr305Version"
-
 }
 
 publishing {

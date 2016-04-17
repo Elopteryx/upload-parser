@@ -34,7 +34,6 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -144,7 +143,6 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
      * @param name The form name.
      * @return The matched part or null if no part exists with that name
      */
-    @Nullable
     private Part providePart(String name) {
         return multiPart
                 .getParts()

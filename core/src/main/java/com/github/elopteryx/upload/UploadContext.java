@@ -17,8 +17,6 @@
 package com.github.elopteryx.upload;
 
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -35,7 +33,6 @@ public interface UploadContext {
      *
      * @return The request object
      */
-    @Nonnull
     HttpServletRequest getRequest();
 
     /**
@@ -55,7 +52,6 @@ public interface UploadContext {
      *
      * @return The currently processed part
      */
-    @Nonnull
     PartStream getCurrentPart();
 
     /**
@@ -66,7 +62,6 @@ public interface UploadContext {
      *
      * @return The latest output provided by the caller
      */
-    @Nullable
     PartOutput getCurrentOutput();
 
     /**
@@ -77,6 +72,5 @@ public interface UploadContext {
      * element of the list.
      * @return The list of the processed parts, in the order they are uploaded
      */
-    @Nonnull
     List<PartStream> getPartStreams();
 }

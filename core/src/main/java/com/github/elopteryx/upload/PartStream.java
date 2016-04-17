@@ -17,9 +17,6 @@
 package com.github.elopteryx.upload;
 
 import java.util.Collection;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This interface represents a part item, which is being
@@ -35,7 +32,6 @@ public interface PartStream {
      *
      * @return The content type of this part
      */
-    @Nullable
     String getContentType();
 
     /**
@@ -44,7 +40,6 @@ public interface PartStream {
      *
      * @return The name of this part as a String
      */
-    @Nullable
     String getName();
 
     /**
@@ -57,7 +52,6 @@ public interface PartStream {
      *
      * @return A long specifying the known size of this part, in bytes.
      */
-    @Nonnegative
     long getKnownSize();
 
     /**
@@ -66,7 +60,6 @@ public interface PartStream {
      *
      * @return The submitted file name
      */
-    @Nullable
     String getSubmittedFileName();
 
     /**
@@ -102,7 +95,6 @@ public interface PartStream {
      * @param name a String specifying the header name
      * @return a String containing the value of the requested header, or null if the part does not have a header of that name
      */
-    @Nullable
     String getHeader(String name);
 
     /**
@@ -111,7 +103,6 @@ public interface PartStream {
      * @param name the header name whose values to return
      * @return a (possibly empty) Collection of the values of the header with the given name
      */
-    @Nonnull
     Collection<String> getHeaders(String name);
 
     /**
@@ -119,7 +110,6 @@ public interface PartStream {
      *
      * @return a (possibly empty) Collection of the header names of this Part
      */
-    @Nonnull
     Collection<String> getHeaderNames();
 
 }

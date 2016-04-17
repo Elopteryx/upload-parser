@@ -20,8 +20,6 @@ import com.github.elopteryx.upload.PartOutput;
 import com.github.elopteryx.upload.internal.PartStreamImpl;
 import com.github.elopteryx.upload.rs.Part;
 
-import javax.annotation.Nonnull;
-
 /**
  * Default implementation of {@link Part}.
  */
@@ -37,7 +35,6 @@ class PartImpl extends PartStreamImpl implements Part {
         return getKnownSize();
     }
 
-    @Nonnull
     @Override
     public PartOutput getOutPut() {
         return output;

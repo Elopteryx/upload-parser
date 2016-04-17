@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -55,7 +54,6 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
     }
 
     @Override
-    @Nonnull
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         strings.add(baos);
