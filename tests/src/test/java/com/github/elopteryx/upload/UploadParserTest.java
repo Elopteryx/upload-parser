@@ -70,7 +70,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
         }
     }
 
-    @Test(expected = ServletException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void invalid_content_type_async() throws Exception {
         HttpServletRequest request = newRequest();
 
@@ -79,7 +79,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
         UploadParser.newParser().userObject(newResponse()).setupAsyncParse(request);
     }
 
-    @Test(expected = ServletException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void invalid_content_type_blocking() throws Exception {
         HttpServletRequest request = newRequest();
 

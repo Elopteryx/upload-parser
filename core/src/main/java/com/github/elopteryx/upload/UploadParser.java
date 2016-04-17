@@ -174,8 +174,8 @@ public class UploadParser {
      * specified in the {@link UploadParser#sizeThreshold(int)} sizeThreshold}
      * method.
      * @param maxBytesUsed The amount to use
-     * @throws IllegalArgumentException If the parameter is negative
      * @return The parser will return itself
+     * @throws IllegalArgumentException If the parameter is negative
      */
     public UploadParser maxBytesUsed(int maxBytesUsed) {
         if (maxBytesUsed < 2) {
@@ -189,8 +189,8 @@ public class UploadParser {
      * Sets the amount of bytes to buffer in the memory, before
      * calling the part end callback.
      * @param sizeThreshold The amount to use
-     * @throws IllegalArgumentException If the parameter is negative
      * @return The parser will return itself
+     * @throws IllegalArgumentException If the parameter is negative
      */
     public UploadParser sizeThreshold(int sizeThreshold) {
         if (sizeThreshold < 0) {
@@ -204,8 +204,8 @@ public class UploadParser {
      * Sets the maximum allowed size for each part. Exceeding this
      * will result in a {@link PartSizeException} exception.
      * @param maxPartSize The amount to use
-     * @throws IllegalArgumentException If the parameter is negative
      * @return The parser will return itself
+     * @throws IllegalArgumentException If the parameter is negative
      */
     public UploadParser maxPartSize(long maxPartSize) {
         if (maxPartSize < 0) {
@@ -219,8 +219,8 @@ public class UploadParser {
      * Sets the maximum allowed size for the request. Exceeding this
      * will result in a {@link RequestSizeException} exception.
      * @param maxRequestSize The amount to use
-     * @throws IllegalArgumentException If the parameter is negative
      * @return The parser will return itself
+     * @throws IllegalArgumentException If the parameter is negative
      */
     public UploadParser maxRequestSize(long maxRequestSize) {
         if (maxRequestSize < 0) {
