@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Adam Forgacs
+ * Copyright (C) 2016 Adam Forgacs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,13 @@ import com.github.elopteryx.upload.OnRequestComplete;
 import com.github.elopteryx.upload.PartOutput;
 import com.github.elopteryx.upload.errors.PartSizeException;
 import com.github.elopteryx.upload.errors.RequestSizeException;
+import com.github.elopteryx.upload.util.NullChannel;
+import com.github.elopteryx.upload.util.OutputStreamBackedChannel;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -70,7 +71,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     /**
      * The user object.
      */
-    Object userObject;
+    private Object userObject;
     /**
      * The number of bytes to be allocated for the buffers.
      */
@@ -121,9 +122,9 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      * Sets up the necessary objects to start the parsing. Depending upon
      * the environment the concrete implementations can be very different.
      * @param request The servlet request
-     * @throws IOException If an error occurs with the IO
+     * @throws RequestSizeException If the supplied size is invalid
      */
-    protected void init(HttpServletRequest request) throws IOException {
+    void init(HttpServletRequest request) {
 
         // Fail fast mode
         if (maxRequestSize > -1) {
@@ -173,7 +174,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      * parsing if a max size has been set and reached.
      * @param additional The amount to add, always non negative
      */
-    protected void checkRequestSize(int additional) {
+    void checkRequestSize(int additional) {
         requestSize += additional;
         if (maxRequestSize > -1 && requestSize > maxRequestSize) {
             throw new RequestSizeException("The size of the request ("
@@ -219,12 +220,13 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     private void validate() throws IOException {
         context.finishBuffering();
         PartOutput output = null;
+        checkBuffer.flip();
         if (partBeginCallback != null) {
             output = requireNonNull(partBeginCallback.onPartBegin(context, checkBuffer));
             if (output.safeToCast(WritableByteChannel.class)) {
                 writableChannel = output.unwrap(WritableByteChannel.class);
             } else if (output.safeToCast(OutputStream.class)) {
-                writableChannel = Channels.newChannel(output.unwrap(OutputStream.class));
+                writableChannel = new OutputStreamBackedChannel(output.unwrap(OutputStream.class));
             } else if (output.safeToCast(Path.class)) {
                 writableChannel = Files.newByteChannel(output.unwrap(Path.class), EnumSet.of(APPEND, CREATE, WRITE));
             } else {

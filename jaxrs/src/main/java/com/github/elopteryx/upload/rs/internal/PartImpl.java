@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Adam Forgacs
+ * Copyright (C) 2016 Adam Forgacs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,12 @@ import com.github.elopteryx.upload.PartOutput;
 import com.github.elopteryx.upload.internal.PartStreamImpl;
 import com.github.elopteryx.upload.rs.Part;
 
-import javax.annotation.Nonnull;
-
 /**
  * Default implementation of {@link Part}.
  */
-public class PartImpl extends PartStreamImpl implements Part {
+class PartImpl extends PartStreamImpl implements Part {
 
-    public PartImpl(PartStreamImpl partStream) {
+    PartImpl(PartStreamImpl partStream) {
         super(partStream.getSubmittedFileName(), partStream.getName(), partStream.getHeadersObject());
         this.output = partStream.getOutput();
     }
@@ -37,7 +35,6 @@ public class PartImpl extends PartStreamImpl implements Part {
         return getKnownSize();
     }
 
-    @Nonnull
     @Override
     public PartOutput getOutPut() {
         return output;

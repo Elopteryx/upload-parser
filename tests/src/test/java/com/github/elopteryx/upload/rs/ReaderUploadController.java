@@ -28,7 +28,7 @@ public class ReaderUploadController {
         assertNotNull(multiPart);
         assertNotNull(parts);
         assertNotNull(firstFile);
-        assertTrue(multiPart.getParts().size() == 5);
+        assertTrue(multiPart.getParts().size() == 8);
         assertTrue(multiPart.getSize() > 0);
         assertFalse(multiPart.getHeaders().isEmpty());
         for (Part part : parts) {

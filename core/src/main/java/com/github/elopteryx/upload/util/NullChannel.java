@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Adam Forgacs
+ * Copyright (C) 2016 Adam Forgacs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package com.github.elopteryx.upload.internal;
+package com.github.elopteryx.upload.util;
 
 import com.github.elopteryx.upload.OnPartBegin;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 
 /**
- * A channel implementation which discards the data supplied.
+ * A channel implementation which provides no data and discards the data supplied.
  * Used by the parser if it doesn't have a channel to write to.
  * The purpose of this is to make the {@link OnPartBegin} callback
  * optional, which is useful for testing.
+ *
+ * <p>The channel honors the close contract, it cannot be used after closing.</p>
  */
-public class NullChannel implements WritableByteChannel {
+public class NullChannel implements ReadableByteChannel, WritableByteChannel {
 
     /**
      * Flag to determine whether the channel is closed or not.
@@ -36,11 +40,21 @@ public class NullChannel implements WritableByteChannel {
     private boolean open = true;
 
     @Override
+    public int read(ByteBuffer dst) throws IOException {
+        if (!open) {
+            throw new ClosedChannelException();
+        }
+        return -1;
+    }
+
+    @Override
     public int write(ByteBuffer src) throws IOException {
-        int dataCount = src.remaining();
-        byte[] buf = new byte[dataCount];
-        src.get(buf, 0, dataCount);
-        return dataCount;
+        if (!open) {
+            throw new ClosedChannelException();
+        }
+        int remaining = src.remaining();
+        src.position(src.limit());
+        return remaining;
     }
 
     @Override

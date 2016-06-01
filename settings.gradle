@@ -4,6 +4,6 @@ include "core"
 include "jaxrs"
 include "tests"
 
-rootProject.children.find { it.name == "core" }.name = "upload-parser"
-rootProject.children.find { it.name == "jaxrs" }.name = "upload-parser-jaxrs"
-rootProject.children.find { it.name == "tests" }.name = "upload-parser-tests"
+findProject(':core')?.name = 'upload-parser'
+findProject(':jaxrs')?.name = 'upload-parser-jaxrs'
+findProject(':tests')?.name = 'upload-parser-tests'

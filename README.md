@@ -3,9 +3,9 @@ Upload Parser
 
 [![Apache 2 License](https://img.shields.io/badge/license-Apache%202-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Build Status](https://travis-ci.org/Elopteryx/upload-parser.svg?branch=master)](https://travis-ci.org/Elopteryx/upload-parser)
-[![Coverage Status](https://coveralls.io/repos/Elopteryx/upload-parser/badge.svg?branch=master&service=github)](https://coveralls.io/github/Elopteryx/upload-parser?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/Elopteryx/upload-parser/badge.svg?branch=master)](https://coveralls.io/github/Elopteryx/upload-parser?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.elopteryx/upload-parser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.elopteryx/upload-parser)
-[![JavaDoc](https://img.shields.io/badge/javadoc-2.0.1-brightgreen.svg)](http://www.javadoc.io/doc/com.github.elopteryx/upload-parser)
+[![JavaDoc](https://img.shields.io/badge/javadoc-2.1.0-brightgreen.svg)](http://www.javadoc.io/doc/com.github.elopteryx/upload-parser)
 
 Upload Parser is a file upload library for servlets and web applications. Although you can already use the standard
 servlet API to retrieve part items from a multipart request this library provides extra functionality not found
@@ -21,8 +21,7 @@ you to handle the uploaded parts as automatically injected method parameters whe
 
 I consider the modules complete, when it comes to features. I don't think I can add more without bloating the
 library, but if you have suggestions for new stuff, or if you have found a bug I would be more than happy to fix that.
-Anyway, I'm not planning to add that much to the library. If a new version of Java SE or EE comes out I will try to
-experiment with it, maybe make a new major version.
+If a new version of Java SE or EE comes out I will try to experiment with it, maybe make a new major version.
 
 Features
 --------
@@ -37,7 +36,7 @@ Features
 
 Requirements
 --------
-* Java 7 for 1.x versions, Java 8 for 2.x versions
+* Java 8
 * Servlet 3.1 environment
 
 Motivation
@@ -61,12 +60,11 @@ Does the library have bugs? Needs extra functionality? Do you like the API? Feel
 Examples
 --------
 
-Very simple code when running on Java 8, have a servlet which is set to support async mode, but has no MultiPartConfig,
+Very simple to setup, have a servlet which has no MultiPartConfig annotation or the identical section in the web.xml,
 import the UploadParser class and pass your logic. The parser class will take care of starting async mode and
-registering the necessary classes to start the parsing. Note that even if you can't enable async support
-for your servlet the parser will still work, but it will use blocking mode. Your functions will still be called
-just like in async mode. Everything works the same on Java 7, the difference is that
-you'll have to use anonymous classes and implement the functional interfaces of this library.
+registering the necessary classes to start the parsing. Note that if you can't enable async support
+for your servlet then you can also use blocking mode, by calling the doBlockingParse method instead. Your functions will
+still be called just like in async mode.
 
 ```java
 
@@ -209,7 +207,7 @@ Note that the JAX-RS API does not support async IO for message body readers, the
 blocking mode, if you use it like in the last example. If you are not planning to use parameter injection, then 
 importing the JAX-RS module is unnecessary, the core library will also work, as shown in the second example.
 
-For more information, please check the javadocs:
+For more information, please check the javadoc:
 
 Core ([javadoc][1])
 
@@ -218,13 +216,13 @@ JAX-RS ([javadoc][2])
 Gradle
 -----
 ```xml
-compile "com.github.elopteryx:upload-parser:2.0.1"
+compile "com.github.elopteryx:upload-parser:2.1.0"
 ```
 
 If you want parameter injection for your JAX-RS endpoints:
 
 ```xml
-compile "com.github.elopteryx:upload-parser-jaxrs:2.0.1"
+compile "com.github.elopteryx:upload-parser-jaxrs:2.1.0"
 ```
 Maven
 -----
@@ -232,19 +230,17 @@ Maven
 <dependency>
     <groupId>com.github.elopteryx</groupId>
     <artifactId>upload-parser</artifactId>
-    <version>2.0.1</version>
+    <version>2.1.0</version>
 </dependency>
 
 <dependency>
     <groupId>com.github.elopteryx</groupId>
     <artifactId>upload-parser-jaxrs</artifactId>
-    <version>2.0.1</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
-For the Java 7 compatible versions, change the "upload-parser" in the artifactId to "paint-upload". The latest version is 1.3.0.
-
 Find available versions on [Maven Central Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.elopteryx%22%20AND%20a%3A%22upload-parser%22).
 
-[1]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser/2.0.1
-[2]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser-jaxrs/2.0.1
+[1]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser/2.1.0
+[2]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser-jaxrs/2.1.0

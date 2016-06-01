@@ -1,10 +1,7 @@
 dependencies {
 
     /* Servlet API. */
-    provided "javax.servlet:javax.servlet-api:3.1.0"
-
-    /* Annotations for code documentation. */
-    provided "com.google.code.findbugs:jsr305:3.0.1"
+    compileOnly "javax.servlet:javax.servlet-api:$servletApiVersion"
 
 }
 
@@ -35,7 +32,7 @@ uploadArchives {
             }
 
             pom.scopeMappings.with {
-                addMapping(1, configurations.provided, "provided")
+                addMapping(1, configurations.compileOnly, "provided")
             }
 
             pom.project {

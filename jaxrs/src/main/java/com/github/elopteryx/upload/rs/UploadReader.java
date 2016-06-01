@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Adam Forgacs
+ * Copyright (C) 2016 Adam Forgacs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -144,14 +143,13 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
      * @param name The form name.
      * @return The matched part or null if no part exists with that name
      */
-    @Nullable
     private Part providePart(String name) {
-        for (Part part : multiPart.getParts()) {
-            if (name.equals(part.getName())) {
-                return part;
-            }
-        }
-        return null;
+        return multiPart
+                .getParts()
+                .stream()
+                .filter(part -> name.equals(part.getName()))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

@@ -4,14 +4,15 @@ import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.github.elopteryx.upload.PartOutput;
 import com.github.elopteryx.upload.PartStream;
 import com.github.elopteryx.upload.UploadParser;
-import com.github.elopteryx.upload.internal.NullChannel;
+import com.github.elopteryx.upload.util.ByteBufferBackedInputStream;
+import com.github.elopteryx.upload.util.NullChannel;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @WebServlet(value = "/async", asyncSupported = true)
 public class AsyncUploadServlet extends HttpServlet {
@@ -107,7 +109,7 @@ public class AsyncUploadServlet extends HttpServlet {
     }
 
     private void ioErrorUponError(HttpServletRequest request) throws ServletException, IOException {
-
+        request.startAsync().setTimeout(500);
         UploadParser.newParser()
                 .onRequestComplete(context -> {
                     throw new IOException();
@@ -119,7 +121,7 @@ public class AsyncUploadServlet extends HttpServlet {
     }
 
     private void servletErrorUponError(HttpServletRequest request) throws ServletException, IOException {
-
+        request.startAsync().setTimeout(500);
         // onError will not be called for ServletException!
         UploadParser.newParser()
                 .onRequestComplete(context -> {
@@ -134,16 +136,31 @@ public class AsyncUploadServlet extends HttpServlet {
             throw new ServletException("Not multipart!");
         }
 
+        AtomicInteger partCounter = new AtomicInteger(0);
         List<ByteArrayOutputStream> formFields = new ArrayList<>();
+
+        List<String> expectedContentTypes = Arrays.asList(
+                "text/plain",
+                "text/plain",
+                "text/plain",
+                "text/plain",
+                "text/plain",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "image/jpeg");
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    System.out.println("Start!");
-                    //use the buffer to detect file type
-                    String contentType = ClientRequest.tika.detect(buffer.array());
-                    assertNotNull(contentType);
-                    System.out.println(contentType);
                     PartStream part = context.getCurrentPart();
+
+                    String detectedType = ClientRequest.tika.detect(new ByteBufferBackedInputStream(buffer), part.getSubmittedFileName());
+                    String expectedType = expectedContentTypes.get(partCounter.getAndIncrement());
+                    if (expectedType.equals("text/plain")) {
+                        assertTrue(detectedType.equals("text/plain") || detectedType.equals("application/octet-stream"));
+                    } else {
+                        assertEquals(detectedType, expectedType);
+                    }
+
                     String name = part.getName();
                     if (part.isFile()) {
                         if ("".equals(part.getSubmittedFileName())) {

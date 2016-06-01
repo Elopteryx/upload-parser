@@ -209,14 +209,14 @@ public class Base64DecoderTest {
          * @param wrap whether or not to wrap at 76 characters with CRLF
          * @return an createEncoder instance
          */
-        public static Encoder createEncoder(boolean wrap) {
+        static Encoder createEncoder(boolean wrap) {
             return new Encoder(wrap);
         }
 
         /**
          * Controls the encoding process.
          */
-        public static final class Encoder {
+        static final class Encoder {
             private int state;
             private int last;
             private int count;
@@ -237,7 +237,7 @@ public class Base64DecoderTest {
              * @param source the byte buffer to read from
              * @param target the byte buffer to write to
              */
-            public void encode(ByteBuffer source, ByteBuffer target) {
+            void encode(ByteBuffer source, ByteBuffer target) {
                 if (target == null) {
                     throw new IllegalStateException();
                 }
@@ -304,7 +304,7 @@ public class Base64DecoderTest {
              *
              * @param target the byte buffer to write to
              */
-            public void complete(ByteBuffer target) {
+            void complete(ByteBuffer target) {
                 if (state > 0) {
                     target.put(ENCODING_TABLE[last]);
                     for (int i = state; i < 3; i++) {

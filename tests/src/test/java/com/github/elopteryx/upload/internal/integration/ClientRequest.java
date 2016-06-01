@@ -16,7 +16,11 @@ import org.apache.http.util.EntityUtils;
 import org.apache.tika.Tika;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Random;
 
 /**
@@ -69,6 +73,9 @@ public final class ClientRequest {
                     .addBinaryBody("filefield3", smallFile, ContentType.create("application/octet-stream"), "file3.txt")
                     .addTextBody("textfield1", textValue1)
                     .addTextBody("textfield2", textValue2)
+                    .addBinaryBody("filefield4", getContents("test.xlsx"), ContentType.create("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), "test.xlsx")
+                    .addBinaryBody("filefield5", getContents("test.docx"), ContentType.create("application/vnd.openxmlformats-officedocument.wordprocessingml.document"), "test.docx")
+                    .addBinaryBody("filefield6", getContents("test.jpg"), ContentType.create("image/jpeg"), "test.jpg")
                     .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
                     .build();
 
@@ -84,6 +91,15 @@ public final class ClientRequest {
                 }
                 EntityUtils.consume(resEntity);
             }
+        }
+    }
+
+    private static byte[] getContents(String resource) {
+        try {
+            Path path = Paths.get(ClientRequest.class.getResource(resource).toURI());
+            return Files.readAllBytes(path);
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

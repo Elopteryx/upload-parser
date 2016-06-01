@@ -56,7 +56,7 @@ public class MultipartParser {
 
     private static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
 
-    public interface PartHandler {
+    interface PartHandler {
         void beginPart(final Headers headers);
 
         void data(final ByteBuffer buffer) throws IOException;
@@ -81,7 +81,7 @@ public class MultipartParser {
         return new ParseState(handler, bufferSize, requestCharset, boundaryToken);
     }
 
-    public static class ParseState {
+    static class ParseState {
         private final PartHandler partHandler;
         private final Charset requestCharset;
         private final int bufferSize;
@@ -106,7 +106,7 @@ public class MultipartParser {
          * @param bufferSize The size of the allocated buffer.
          * @param boundary The boundary value for the multipart stream.
          */
-        public ParseState(PartHandler partHandler, int bufferSize, Charset requestCharset, byte[] boundary) {
+        ParseState(PartHandler partHandler, int bufferSize, Charset requestCharset, byte[] boundary) {
             this.partHandler = partHandler;
             this.requestCharset = requestCharset;
             this.bufferSize = bufferSize;
@@ -118,7 +118,7 @@ public class MultipartParser {
          * @param buffer The buffer containing new data to process
          * @throws IOException If an error occurred with the I/O
          */
-        public void parse(ByteBuffer buffer) throws IOException {
+        void parse(ByteBuffer buffer) throws IOException {
             while (buffer.hasRemaining()) {
                 switch (state) {
                     case 0:
@@ -327,7 +327,7 @@ public class MultipartParser {
             }
         }
 
-        public boolean isComplete() {
+        boolean isComplete() {
             return state == -1;
         }
     }

@@ -1,6 +1,6 @@
 plugins {
-    id "com.github.ben-manes.versions" version "0.11.3"
-    id "com.github.kt3k.coveralls" version "2.4.0"
+    id "com.github.ben-manes.versions" version "0.12.0"
+    id "com.github.kt3k.coveralls" version "2.6.3"
 }
 
 apply plugin: "com.github.kt3k.coveralls"
@@ -24,16 +24,26 @@ subprojects {
     apply plugin: "jacoco"
     apply plugin: "checkstyle"
 
-    configurations {
-        provided
-        provided.extendsFrom(compile)
-    }
-
-    version = "2.0.2-SNAPSHOT"
+    group = "com.github.elopteryx"
+    version = "2.2.0-SNAPSHOT"
 
     repositories {
         mavenCentral()
         mavenLocal()
+    }
+
+    ext {
+        servletApiVersion = "3.1.0"
+        jaxrsApiVersion = "2.0.1"
+        junitVersion = "4.12"
+        apacheHttpVersion = "4.5.2"
+        undertowVersion = "1.3.20.Final"
+        jettyVersion = "9.3.8.v20160314"
+        tomcatVersion = "8.0.33"
+        resteasyVersion = "3.0.16.Final"
+        tikaVersion = "1.12"
+        jimfsVersion = "1.1"
+        mockitoVersion = "1.10.19"
     }
 
     tasks.withType(JavaCompile) {
@@ -48,20 +58,19 @@ subprojects {
 
     javadoc {
         afterEvaluate {
-            classpath += configurations.provided
             configure(options) {
                 windowTitle "Upload Parser API Documentation"
                 docTitle "Upload Parser API Documentation"
-                bottom 'Copyright &#169; 2015 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
+                bottom 'Copyright &#169; 2016 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
                 breakIterator true
                 author false
                 source "1.8"
                 encoding "UTF-8"
                 docEncoding "UTF-8"
                 failOnError true
-                links = [ "http://jsr-305.googlecode.com/svn/trunk/javadoc",
-                          "http://download.oracle.com/javase/8/docs/api/",
-                          "http://download.oracle.com/javaee/7/api/",
+                links = [
+                        "http://download.oracle.com/javase/8/docs/api/",
+                        "http://download.oracle.com/javaee/7/api/",
                 ]
             }
         }
@@ -79,7 +88,7 @@ subprojects {
     }
 
     checkstyle {
-        toolVersion = "6.13"
+        toolVersion = "6.17"
         configFile = new File("${projectDir}/../config/checkstyle/checkstyle.xml")
     }
 
@@ -88,30 +97,8 @@ subprojects {
         sign configurations.archives
     }
 
-    sourceSets {
-        main {
-            compileClasspath += configurations.provided
-        }
-        test {
-            compileClasspath += configurations.provided
-            runtimeClasspath += configurations.provided
-        }
-    }
-
     test {
         testLogging.showStandardStreams = true
-    }
-
-    idea {
-        module {
-            scopes.PROVIDED.plus += [configurations.provided]
-        }
-    }
-
-    eclipse {
-        classpath {
-            plusConfigurations += [configurations.provided]
-        }
     }
 
     tasks.withType(Test) {

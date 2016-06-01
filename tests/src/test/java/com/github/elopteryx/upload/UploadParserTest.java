@@ -8,7 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.github.elopteryx.upload.internal.NullChannel;
+import com.github.elopteryx.upload.util.NullChannel;
 
 import com.google.common.jimfs.Jimfs;
 import org.junit.Before;
@@ -19,7 +19,6 @@ import java.nio.ByteBuffer;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -71,7 +70,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
         }
     }
 
-    @Test(expected = ServletException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void invalid_content_type_async() throws Exception {
         HttpServletRequest request = newRequest();
 
@@ -80,7 +79,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
         UploadParser.newParser().userObject(newResponse()).setupAsyncParse(request);
     }
 
-    @Test(expected = ServletException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void invalid_content_type_blocking() throws Exception {
         HttpServletRequest request = newRequest();
 
@@ -153,7 +152,6 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Override
-    @Nonnull
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
         return PartOutput.from(new NullChannel());
     }

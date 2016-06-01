@@ -6,11 +6,10 @@ import com.github.elopteryx.upload.OnRequestComplete;
 import com.github.elopteryx.upload.PartOutput;
 import com.github.elopteryx.upload.UploadContext;
 import com.github.elopteryx.upload.UploadParser;
-import com.github.elopteryx.upload.internal.NullChannel;
+import com.github.elopteryx.upload.util.NullChannel;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
@@ -41,7 +40,6 @@ public class AsyncUploadController implements OnPartBegin, OnRequestComplete, On
                 .setupAsyncParse(request);
     }
 
-    @Nonnull
     @Override
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
         return PartOutput.from(new NullChannel());

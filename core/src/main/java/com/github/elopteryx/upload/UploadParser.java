@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Adam Forgacs
+ * Copyright (C) 2016 Adam Forgacs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,6 @@ import com.github.elopteryx.upload.internal.BlockingUploadParser;
 
 import java.io.IOException;
 import java.util.Locale;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletException;
 
@@ -111,7 +107,7 @@ public class UploadParser {
      * @param partBeginCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public UploadParser onPartBegin(@Nullable OnPartBegin partBeginCallback) {
+    public UploadParser onPartBegin(OnPartBegin partBeginCallback) {
         this.partBeginCallback = partBeginCallback;
         return this;
     }
@@ -123,7 +119,7 @@ public class UploadParser {
      * @param partEndCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public UploadParser onPartEnd(@Nullable OnPartEnd partEndCallback) {
+    public UploadParser onPartEnd(OnPartEnd partEndCallback) {
         this.partEndCallback = partEndCallback;
         return this;
     }
@@ -135,7 +131,7 @@ public class UploadParser {
      * @param requestCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public UploadParser onRequestComplete(@Nullable OnRequestComplete requestCallback) {
+    public UploadParser onRequestComplete(OnRequestComplete requestCallback) {
         this.requestCallback = requestCallback;
         return this;
     }
@@ -147,7 +143,7 @@ public class UploadParser {
      * @param errorCallback An object or lambda expression
      * @return The parser will return itself
      */
-    public UploadParser onError(@Nullable OnError errorCallback) {
+    public UploadParser onError(OnError errorCallback) {
         this.errorCallback = errorCallback;
         return this;
     }
@@ -167,7 +163,7 @@ public class UploadParser {
      * @param userObject A custom user object
      * @return The parser will return itself
      */
-    public UploadParser userObject(@Nullable Object userObject) {
+    public UploadParser userObject(Object userObject) {
         this.userObject = userObject;
         return this;
     }
@@ -179,8 +175,9 @@ public class UploadParser {
      * method.
      * @param maxBytesUsed The amount to use
      * @return The parser will return itself
+     * @throws IllegalArgumentException If the parameter is negative
      */
-    public UploadParser maxBytesUsed(@Nonnegative int maxBytesUsed) {
+    public UploadParser maxBytesUsed(int maxBytesUsed) {
         if (maxBytesUsed < 2) {
             throw new IllegalArgumentException("The parameter value is too low, the parsing cannot work!");
         }
@@ -193,8 +190,9 @@ public class UploadParser {
      * calling the part end callback.
      * @param sizeThreshold The amount to use
      * @return The parser will return itself
+     * @throws IllegalArgumentException If the parameter is negative
      */
-    public UploadParser sizeThreshold(@Nonnegative int sizeThreshold) {
+    public UploadParser sizeThreshold(int sizeThreshold) {
         if (sizeThreshold < 0) {
             throw new IllegalArgumentException("Invalid parameter value: " + sizeThreshold);
         }
@@ -207,8 +205,9 @@ public class UploadParser {
      * will result in a {@link PartSizeException} exception.
      * @param maxPartSize The amount to use
      * @return The parser will return itself
+     * @throws IllegalArgumentException If the parameter is negative
      */
-    public UploadParser maxPartSize(@Nonnegative long maxPartSize) {
+    public UploadParser maxPartSize(long maxPartSize) {
         if (maxPartSize < 0) {
             throw new IllegalArgumentException("Invalid parameter value: " + maxPartSize);
         }
@@ -221,8 +220,9 @@ public class UploadParser {
      * will result in a {@link RequestSizeException} exception.
      * @param maxRequestSize The amount to use
      * @return The parser will return itself
+     * @throws IllegalArgumentException If the parameter is negative
      */
-    public UploadParser maxRequestSize(@Nonnegative long maxRequestSize) {
+    public UploadParser maxRequestSize(long maxRequestSize) {
         if (maxRequestSize < 0) {
             throw new IllegalArgumentException("Invalid parameter value: " + maxRequestSize);
         }
@@ -236,10 +236,11 @@ public class UploadParser {
      * @param request The request object
      * @throws IOException If an error occurred with the request stream
      * @throws ServletException If an error occurred with the servlet
+     * @throws IllegalArgumentException If the request is not a multipart request
      */
-    public void setupAsyncParse(@Nonnull HttpServletRequest request) throws IOException, ServletException {
+    public void setupAsyncParse(HttpServletRequest request) throws IOException, ServletException {
         if (!isMultipart(request)) {
-            throw new ServletException("Not a multipart request!");
+            throw new IllegalArgumentException("Not a multipart request!");
         }
         AsyncUploadParser parser = new AsyncUploadParser(request);
         build(parser);
@@ -254,10 +255,11 @@ public class UploadParser {
      * @return The upload context
      * @throws IOException If an error occurred with the IO
      * @throws ServletException If an error occurred with the servlet stream
+     * @throws IllegalArgumentException If the request is not a multipart request
      */
-    public UploadContext doBlockingParse(@Nonnull HttpServletRequest request) throws IOException, ServletException {
+    public UploadContext doBlockingParse(HttpServletRequest request) throws IOException, ServletException {
         if (!isMultipart(request)) {
-            throw new ServletException("Not a multipart request!");
+            throw new IllegalArgumentException("Not a multipart request!");
         }
         BlockingUploadParser parser = new BlockingUploadParser(request);
         build(parser);
@@ -287,8 +289,7 @@ public class UploadParser {
      * @param request The servlet request
      * @return Whether the request is a proper multipart request
      */
-    @CheckReturnValue
-    public static boolean isMultipart(@Nonnull HttpServletRequest request) {
+    public static boolean isMultipart(HttpServletRequest request) {
         return request.getContentType() != null && request.getContentType().toLowerCase(Locale.ENGLISH).startsWith(MULTIPART);
     }
 
@@ -296,7 +297,6 @@ public class UploadParser {
      * Returns a new parser, allowing the caller to set configuration.
      * @return A parser object
      */
-    @CheckReturnValue
     public static UploadParser newParser() {
         return new UploadParser();
     }

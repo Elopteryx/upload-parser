@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Adam Forgacs
+ * Copyright (C) 2016 Adam Forgacs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package com.github.elopteryx.upload.rs.internal;
 import com.github.elopteryx.upload.rs.MultiPart;
 import com.github.elopteryx.upload.rs.Part;
 
-import javax.annotation.Nonnull;
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.Collections;
 import java.util.List;
@@ -36,18 +35,17 @@ public class MultiPartImpl implements MultiPart {
     /**
      * The request size.
      */
-    private long size;
+    private final long size;
     /**
      * The map of the HTTP headers.
      */
     private MultivaluedMap<String, String> headers;
 
     MultiPartImpl(List<Part> parts, long size) {
-        this.parts = parts != null ? Collections.unmodifiableList(parts) : Collections.<Part>emptyList();
+        this.parts = parts != null ? Collections.unmodifiableList(parts) : Collections.emptyList();
         this.size = size;
     }
 
-    @Nonnull
     @Override
     public List<Part> getParts() {
         return parts;
@@ -58,7 +56,6 @@ public class MultiPartImpl implements MultiPart {
         return size;
     }
 
-    @Nonnull
     @Override
     public MultivaluedMap<String, String> getHeaders() {
         return headers;

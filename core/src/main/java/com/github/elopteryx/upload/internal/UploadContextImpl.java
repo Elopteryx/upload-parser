@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Adam Forgacs
+ * Copyright (C) 2016 Adam Forgacs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,6 @@ import com.github.elopteryx.upload.UploadContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -69,7 +67,6 @@ public class UploadContextImpl implements UploadContext {
     }
 
     @Override
-    @Nonnull
     public HttpServletRequest getRequest() {
         return request;
     }
@@ -80,18 +77,15 @@ public class UploadContextImpl implements UploadContext {
     }
 
     @Override
-    @Nonnull
     public PartStream getCurrentPart() {
         return currentPart;
     }
 
     @Override
-    @Nullable
     public PartOutput getCurrentOutput() {
         return output;
     }
 
-    @Nonnull
     @Override
     public List<PartStream> getPartStreams() {
         return Collections.unmodifiableList(partStreams);

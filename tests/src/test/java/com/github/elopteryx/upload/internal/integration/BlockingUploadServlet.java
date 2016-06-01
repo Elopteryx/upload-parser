@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.channels.Channel;
 
-@WebServlet(value = "/blocking", asyncSupported = false)
+@WebServlet(value = "/blocking")
 public class BlockingUploadServlet extends HttpServlet {
 
     @Override
@@ -47,7 +47,7 @@ public class BlockingUploadServlet extends HttpServlet {
                 })
                 .onRequestComplete(context1 -> response.setStatus(200))
                 .doBlockingParse(request);
-        assertTrue(context.getPartStreams().size() == 5);
+        assertTrue(context.getPartStreams().size() == 8);
     }
 
     private void error(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
