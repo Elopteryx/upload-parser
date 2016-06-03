@@ -58,8 +58,7 @@ public class RestUploadParser extends BlockingUploadParser {
      * @return The multipart object, representing the request
      * @throws IOException If an error occurred with the I/O
      */
-    public MultiPartImpl doBlockingParse(long contentLength, String mimeType, String encoding, InputStream stream)
-    throws IOException {
+    public MultiPartImpl doBlockingParse(long contentLength, String mimeType, String encoding, InputStream stream) throws IOException {
         if (maxRequestSize > -1) {
             if (contentLength > maxRequestSize) {
                 throw new RequestSizeException("The size of the request ("

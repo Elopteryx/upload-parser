@@ -26,9 +26,9 @@ public class ByteBufferBackedOutputStreamTest {
     public void write_a_byte() throws Exception {
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         ByteBufferBackedOutputStream stream = new ByteBufferBackedOutputStream(buffer);
-        byte b = "T".getBytes()[0];
-        stream.write(b);
-        assertEquals(buffer.get(0), b);
+        byte oneByte = "T".getBytes()[0];
+        stream.write(oneByte);
+        assertEquals(buffer.get(0), oneByte);
     }
 
     @Test(expected = BufferOverflowException.class)
