@@ -23,8 +23,6 @@ dependencies {
 
     /* Tomcat Http server. */
     testCompile "org.apache.tomcat.embed:tomcat-embed-core:$tomcatVersion"
-    testCompile "org.apache.tomcat.embed:tomcat-embed-logging-juli:$tomcatVersion"
-    testCompile "org.apache.tomcat.embed:tomcat-embed-jasper:$tomcatVersion"
 
     /* Restful web services implementation. */
     testCompile "org.jboss.resteasy:resteasy-cdi:$resteasyVersion"
