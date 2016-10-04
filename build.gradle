@@ -43,7 +43,7 @@ subprojects {
         resteasyVersion = "3.0.19.Final"
         tikaVersion = "1.13"
         jimfsVersion = "1.1"
-        mockitoVersion = "1.10.19"
+        mockitoVersion = "2.1.0"
     }
 
     tasks.withType(JavaCompile) {
