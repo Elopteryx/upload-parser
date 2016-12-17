@@ -1,5 +1,8 @@
 package com.github.elopteryx.upload.internal.integration;
 
+import static org.junit.Assert.fail;
+
+import org.apache.http.NoHttpResponseException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.junit.AfterClass;
@@ -8,6 +11,7 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.SocketException;
 
 public class JettyIntegrationTest {
 
@@ -66,8 +70,15 @@ public class JettyIntegrationTest {
         performRequest("http://localhost:8090/async?" + ClientRequest.COMPLEX, HttpServletResponse.SC_OK);
     }
 
-    private void performRequest(String url, int expectedStatus) throws IOException {
-        ClientRequest.performRequest(url, expectedStatus);
+    private void performRequest(String url, Integer expectedStatus) throws IOException {
+        try {
+            ClientRequest.performRequest(url, expectedStatus);
+        } catch (NoHttpResponseException | SocketException e) {
+            e.printStackTrace();
+            if (expectedStatus != null) {
+                fail();
+            }
+        }
     }
 
     @AfterClass
