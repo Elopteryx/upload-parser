@@ -27,7 +27,6 @@ dependencies {
     /* Restful web services implementation. */
     testCompile "org.jboss.resteasy:resteasy-cdi:$resteasyVersion"
     testCompile "org.jboss.resteasy:resteasy-jaxrs:$resteasyVersion"
-    testCompile "org.jboss.resteasy:async-http-servlet-3.0:$resteasyVersion"
     testCompile "org.jboss.resteasy:resteasy-client:$resteasyVersion"
 
     /* Document and file parser. */
