@@ -28,22 +28,22 @@ import java.util.Random;
  */
 public final class ClientRequest {
 
-    public static final String SIMPLE = "simple";
-    public static final String ERROR = "error";
-    public static final String IO_ERROR_UPON_ERROR = "io_error_upon_error";
-    public static final String SERVLET_ERROR_UPON_ERROR = "servlet_error_upon_error";
-    public static final String COMPLEX = "complex";
+    static final String SIMPLE = "simple";
+    static final String ERROR = "error";
+    static final String IO_ERROR_UPON_ERROR = "io_error_upon_error";
+    static final String SERVLET_ERROR_UPON_ERROR = "servlet_error_upon_error";
+    static final String COMPLEX = "complex";
 
-    public static final FileSystem fileSystem = Jimfs.newFileSystem();
+    static final FileSystem fileSystem = Jimfs.newFileSystem();
 
-    public static final Tika tika = new Tika();
+    static final Tika tika = new Tika();
 
-    public static final byte[] emptyFile;
-    public static final byte[] smallFile;
-    public static final byte[] largeFile;
+    static final byte[] emptyFile;
+    static final byte[] smallFile;
+    static final byte[] largeFile;
 
-    public static final String textValue1 = "íéáűúőóüö";
-    public static final String textValue2 = "abcdef";
+    static final String textValue1 = "íéáűúőóüö";
+    static final String textValue2 = "abcdef";
 
     static {
         emptyFile = new byte[0];
@@ -85,11 +85,14 @@ public final class ClientRequest {
                 System.out.println("----------------------------------------");
                 System.out.println(response.getStatusLine());
                 HttpEntity resEntity = response.getEntity();
-                assertTrue(response.getStatusLine().getStatusCode() == expectedStatus);
+                EntityUtils.consume(resEntity);
+                if (expectedStatus != null) {
+                    assertTrue(response.getStatusLine().getStatusCode() == expectedStatus);
+                }
                 if (resEntity != null) {
                     System.out.println("Response content length: " + resEntity.getContentLength());
                 }
-                EntityUtils.consume(resEntity);
+
             }
         }
     }

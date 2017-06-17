@@ -2,6 +2,7 @@ package com.github.elopteryx.upload.internal.integration;
 
 import static org.junit.Assert.fail;
 
+import org.apache.http.ConnectionClosedException;
 import org.apache.http.NoHttpResponseException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
@@ -57,7 +58,7 @@ public class JettyIntegrationTest {
 
     @Test
     public void test_with_a_real_request_servlet_error_upon_error_async() throws IOException {
-        performRequest("http://localhost:8090/async?" + ClientRequest.SERVLET_ERROR_UPON_ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        performRequest("http://localhost:8090/async?" + ClientRequest.SERVLET_ERROR_UPON_ERROR, null);
     }
 
     @Test
@@ -73,7 +74,7 @@ public class JettyIntegrationTest {
     private void performRequest(String url, Integer expectedStatus) throws IOException {
         try {
             ClientRequest.performRequest(url, expectedStatus);
-        } catch (NoHttpResponseException | SocketException e) {
+        } catch (NoHttpResponseException | SocketException | ConnectionClosedException e) {
             e.printStackTrace();
             if (expectedStatus != null) {
                 fail();

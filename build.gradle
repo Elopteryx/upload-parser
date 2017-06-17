@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.ben-manes.versions" version "0.14.0"
+    id "com.github.ben-manes.versions" version "0.15.0"
     id "com.github.kt3k.coveralls" version "2.8.1"
 }
 
@@ -38,12 +38,12 @@ subprojects {
         junitVersion = "4.12"
         apacheHttpVersion = "4.5.3"
         undertowVersion = "1.4.8.Final"
-        jettyVersion = "9.3.15.v20161220"
-        tomcatVersion = "8.5.11"
-        resteasyVersion = "3.1.0.Final"
-        tikaVersion = "1.14"
+        jettyVersion = "9.4.6.v20170531"
+        tomcatVersion = "8.5.15"
+        resteasyVersion = "3.1.3.Final"
+        tikaVersion = "1.15"
         jimfsVersion = "1.1"
-        mockitoVersion = "2.7.5"
+        mockitoVersion = "2.8.47"
     }
 
     tasks.withType(JavaCompile) {
@@ -88,7 +88,7 @@ subprojects {
     }
 
     checkstyle {
-        toolVersion = "7.5.1"
+        toolVersion = "7.8.1"
         configFile = new File("${projectDir}/../config/checkstyle/checkstyle.xml")
     }
 
@@ -106,7 +106,7 @@ subprojects {
         jacoco {
             append true
             destinationFile file("${rootDir}/build/jacoco/jacocoTest.exec")
-            classDumpFile file("${rootDir}/build/jacoco/classpathdumps")
+            setClassDumpDir file("${rootDir}/build/jacoco/classpathdumps")
         }
     }
 }
