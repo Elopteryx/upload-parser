@@ -11,6 +11,17 @@ dependencies {
 
 }
 
+jar {
+    manifest {
+        attributes(
+                "Created-By": "Creative Elopteryx",
+                "Class-Path": configurations.compile.collect { it.getName() }.join(' '),
+                "Automatic-Module-Name": "com.github.elopteryx.upload.rs",
+                "Implementation-Version": version
+        )
+    }
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
