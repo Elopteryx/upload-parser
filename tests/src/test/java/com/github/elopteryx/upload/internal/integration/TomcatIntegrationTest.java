@@ -48,6 +48,7 @@ public class TomcatIntegrationTest {
         resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes",
                 additionWebInfClasses.toAbsolutePath().toString(), "/"));
         context.setResources(resources);
+        context.getJarScanner().setJarScanFilter((jarScanType, jarName) -> false);
 
         server.start();
     }
