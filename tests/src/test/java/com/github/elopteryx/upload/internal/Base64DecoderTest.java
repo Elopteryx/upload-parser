@@ -28,6 +28,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 /**
+ * Copied from Undertow.
+ *
  * @author Jason T. Greene
  */
 public class Base64DecoderTest {
