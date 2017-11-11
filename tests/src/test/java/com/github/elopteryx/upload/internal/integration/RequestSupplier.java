@@ -15,6 +15,9 @@ import java.nio.file.Paths;
 import java.util.Random;
 import java.util.function.Supplier;
 
+/**
+ * Utility class which is responsible for the request body creation.
+ */
 final class RequestSupplier {
 
     static final byte[] emptyFile;

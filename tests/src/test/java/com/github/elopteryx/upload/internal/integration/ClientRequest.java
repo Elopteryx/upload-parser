@@ -49,6 +49,7 @@ public final class ClientRequest {
      * given address.
      * @param url The target address
      * @param expectedStatus The expected HTTP response, can be null
+     * @param requestSupplier Provides a multipart body, can't be null
      * @throws IOException If an IO error occurred
      */
     public static void performRequest(String url, Integer expectedStatus, Supplier<HttpEntity> requestSupplier) throws IOException {
