@@ -1,6 +1,6 @@
 plugins {
-    id "com.github.ben-manes.versions" version "0.15.0"
-    id "com.github.kt3k.coveralls" version "2.8.1"
+    id "com.github.ben-manes.versions" version "0.17.0"
+    id "com.github.kt3k.coveralls" version "2.8.2"
 }
 
 apply plugin: "com.github.kt3k.coveralls"
@@ -37,13 +37,13 @@ subprojects {
         jaxrsApiVersion = "2.0.1"
         junitVersion = "4.12"
         apacheHttpVersion = "4.5.3"
-        undertowVersion = "1.4.8.Final"
-        jettyVersion = "9.4.6.v20170531"
-        tomcatVersion = "8.5.15"
-        resteasyVersion = "3.1.3.Final"
-        tikaVersion = "1.15"
+        undertowVersion = "1.4.21.Final"
+        jettyVersion = "9.4.7.v20170914"
+        tomcatVersion = "8.5.23"
+        resteasyVersion = "3.1.4.Final"
+        tikaVersion = "1.16"
         jimfsVersion = "1.1"
-        mockitoVersion = "2.8.47"
+        mockitoVersion = "2.12.0"
     }
 
     tasks.withType(JavaCompile) {
@@ -88,7 +88,7 @@ subprojects {
     }
 
     checkstyle {
-        toolVersion = "7.8.1"
+        toolVersion = "8.1"
         configFile = new File("${projectDir}/../config/checkstyle/checkstyle.xml")
     }
 
