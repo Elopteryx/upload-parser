@@ -200,7 +200,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
         checkPartSize(buffer.remaining());
         copyBuffer(buffer);
         if (context.isBuffering() && (context.getPartBytesRead() >= sizeThreshold)) {
-            validate();
+            validate(false);
         }
         if (!context.isBuffering()) {
             while (buffer.hasRemaining()) {
@@ -217,8 +217,11 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
         }
     }
 
-    private void validate() throws IOException {
+    private void validate(boolean partFinished) throws IOException {
         context.finishBuffering();
+        if (partFinished) {
+            context.getCurrentPart().markAsFinished();
+        }
         PartOutput output = null;
         checkBuffer.flip();
         if (partBeginCallback != null) {
@@ -247,8 +250,9 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     @Override
     public void endPart() throws IOException {
         if (context.isBuffering()) {
-            validate();
+            validate(true);
         }
+        context.getCurrentPart().markAsFinished();
         checkBuffer.clear();
         context.updatePartBytesRead();
         writableChannel.close();

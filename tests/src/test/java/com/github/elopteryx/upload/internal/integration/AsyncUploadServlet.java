@@ -5,9 +5,11 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.github.elopteryx.upload.OnRequestComplete;
 import com.github.elopteryx.upload.PartOutput;
 import com.github.elopteryx.upload.PartStream;
 import com.github.elopteryx.upload.UploadParser;
@@ -40,6 +42,12 @@ public class AsyncUploadServlet extends HttpServlet {
         switch (query) {
             case ClientRequest.SIMPLE:
                 simple(request, response);
+                break;
+            case ClientRequest.THRESHOLD_LESSER:
+                thresholdLesser(request, response);
+                break;
+            case ClientRequest.THRESHOLD_GREATER:
+                thresholdGreater(request, response);
                 break;
             case ClientRequest.ERROR:
                 error(request, response);
@@ -98,6 +106,32 @@ public class AsyncUploadServlet extends HttpServlet {
         EvilOutput(Object value) {
             super(value);
         }
+    }
+
+    private void thresholdLesser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        UploadParser.newParser()
+                .onPartBegin((context, buffer) -> {
+                    final PartStream currentPart = context.getCurrentPart();
+                    assertTrue(currentPart.isFinished());
+                    return PartOutput.from(new NullChannel());
+                })
+                .onRequestComplete(onSuccessfulFinish(request, response, 512))
+                .sizeThreshold(1024)
+                .setupAsyncParse(request);
+    }
+
+    private void thresholdGreater(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        UploadParser.newParser()
+                .onPartBegin((context, buffer) -> {
+                    final PartStream currentPart = context.getCurrentPart();
+                    assertFalse(currentPart.isFinished());
+                    return PartOutput.from(new NullChannel());
+                })
+                .onRequestComplete(onSuccessfulFinish(request, response, 2048))
+                .sizeThreshold(1024)
+                .setupAsyncParse(request);
     }
 
     private void error(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -194,11 +228,11 @@ public class AsyncUploadServlet extends HttpServlet {
                     System.out.println("Request complete!");
                     System.out.println("Total parts: " + context.getPartStreams().size());
 
-                    assertTrue(Arrays.equals(formFields.get(0).toByteArray(), ClientRequest.largeFile));
-                    assertTrue(Arrays.equals(formFields.get(1).toByteArray(), ClientRequest.emptyFile));
-                    assertTrue(Arrays.equals(formFields.get(2).toByteArray(), ClientRequest.smallFile));
-                    assertTrue(Arrays.equals(formFields.get(3).toByteArray(), ClientRequest.textValue1.getBytes(ISO_8859_1)));
-                    assertTrue(Arrays.equals(formFields.get(4).toByteArray(), ClientRequest.textValue2.getBytes(ISO_8859_1)));
+                    assertTrue(Arrays.equals(formFields.get(0).toByteArray(), RequestSupplier.largeFile));
+                    assertTrue(Arrays.equals(formFields.get(1).toByteArray(), RequestSupplier.emptyFile));
+                    assertTrue(Arrays.equals(formFields.get(2).toByteArray(), RequestSupplier.smallFile));
+                    assertTrue(Arrays.equals(formFields.get(3).toByteArray(), RequestSupplier.textValue1.getBytes(ISO_8859_1)));
+                    assertTrue(Arrays.equals(formFields.get(4).toByteArray(), RequestSupplier.textValue2.getBytes(ISO_8859_1)));
 
                     context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
                     context.getRequest().getAsyncContext().complete();
@@ -213,5 +247,16 @@ public class AsyncUploadServlet extends HttpServlet {
                 .maxPartSize(Long.MAX_VALUE)
                 .maxRequestSize(Long.MAX_VALUE)
                 .setupAsyncParse(request);
+    }
+
+    private static OnRequestComplete onSuccessfulFinish(HttpServletRequest request, HttpServletResponse response, int size) {
+        return context -> {
+            final PartStream currentPart = context.getCurrentPart();
+            assertTrue(currentPart.isFinished());
+            assertEquals(size, currentPart.getKnownSize());
+            assertTrue(request.isAsyncStarted());
+            request.getAsyncContext().complete();
+            response.setStatus(200);
+        };
     }
 }

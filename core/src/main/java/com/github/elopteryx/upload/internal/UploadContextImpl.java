@@ -77,7 +77,7 @@ public class UploadContextImpl implements UploadContext {
     }
 
     @Override
-    public PartStream getCurrentPart() {
+    public PartStreamImpl getCurrentPart() {
         return currentPart;
     }
 
@@ -110,7 +110,6 @@ public class UploadContextImpl implements UploadContext {
 
     void finishBuffering() {
         buffering = false;
-        currentPart.markAsFinished();
     }
 
     void updatePartBytesRead() {

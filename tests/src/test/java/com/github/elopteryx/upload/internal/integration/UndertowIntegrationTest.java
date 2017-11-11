@@ -1,16 +1,21 @@
 package com.github.elopteryx.upload.internal.integration;
 
+import static com.github.elopteryx.upload.internal.integration.RequestSupplier.withOneLargerPicture;
+import static com.github.elopteryx.upload.internal.integration.RequestSupplier.withOneSmallerPicture;
+
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
+import org.apache.http.HttpEntity;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import javax.servlet.http.HttpServletResponse;
 
 public class UndertowIntegrationTest {
@@ -59,6 +64,26 @@ public class UndertowIntegrationTest {
     }
 
     @Test
+    public void test_with_a_real_request_threshold_lesser_async() throws IOException {
+        performRequest("http://localhost:8080/async?" + ClientRequest.THRESHOLD_LESSER, HttpServletResponse.SC_OK, withOneSmallerPicture());
+    }
+
+    @Test
+    public void test_with_a_real_request_threshold_lesser_blocking() throws IOException {
+        performRequest("http://localhost:8080/blocking?" + ClientRequest.THRESHOLD_LESSER, HttpServletResponse.SC_OK, withOneSmallerPicture());
+    }
+
+    @Test
+    public void test_with_a_real_request_threshold_greater_async() throws IOException {
+        performRequest("http://localhost:8080/async?" + ClientRequest.THRESHOLD_GREATER, HttpServletResponse.SC_OK, withOneLargerPicture());
+    }
+
+    @Test
+    public void test_with_a_real_request_threshold_greater_blocking() throws IOException {
+        performRequest("http://localhost:8080/blocking?" + ClientRequest.THRESHOLD_GREATER, HttpServletResponse.SC_OK, withOneLargerPicture());
+    }
+
+    @Test
     public void test_with_a_real_request_error_async() throws IOException {
         performRequest("http://localhost:8080/async?" + ClientRequest.ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
@@ -85,6 +110,10 @@ public class UndertowIntegrationTest {
 
     private void performRequest(String url, int expectedStatus) throws IOException {
         ClientRequest.performRequest(url, expectedStatus);
+    }
+
+    private void performRequest(String url, int expectedStatus, Supplier<HttpEntity> requestSupplier) throws IOException {
+        ClientRequest.performRequest(url, expectedStatus, requestSupplier);
     }
 
     @AfterClass

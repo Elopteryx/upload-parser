@@ -1,8 +1,11 @@
 package com.github.elopteryx.upload.internal.integration;
 
+import static com.github.elopteryx.upload.internal.integration.RequestSupplier.withOneLargerPicture;
+import static com.github.elopteryx.upload.internal.integration.RequestSupplier.withOneSmallerPicture;
 import static org.junit.Assert.fail;
 
 import org.apache.http.ConnectionClosedException;
+import org.apache.http.HttpEntity;
 import org.apache.http.NoHttpResponseException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
@@ -13,6 +16,7 @@ import org.junit.Test;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.function.Supplier;
 
 public class JettyIntegrationTest {
 
@@ -47,6 +51,26 @@ public class JettyIntegrationTest {
     }
 
     @Test
+    public void test_with_a_real_request_threshold_lesser_async() throws IOException {
+        performRequest("http://localhost:8090/async?" + ClientRequest.THRESHOLD_LESSER, HttpServletResponse.SC_OK, withOneSmallerPicture());
+    }
+
+    @Test
+    public void test_with_a_real_request_threshold_lesser_blocking() throws IOException {
+        performRequest("http://localhost:8090/blocking?" + ClientRequest.THRESHOLD_LESSER, HttpServletResponse.SC_OK, withOneSmallerPicture());
+    }
+
+    @Test
+    public void test_with_a_real_request_threshold_greater_async() throws IOException {
+        performRequest("http://localhost:8090/async?" + ClientRequest.THRESHOLD_GREATER, HttpServletResponse.SC_OK, withOneLargerPicture());
+    }
+
+    @Test
+    public void test_with_a_real_request_threshold_greater_blocking() throws IOException {
+        performRequest("http://localhost:8090/blocking?" + ClientRequest.THRESHOLD_GREATER, HttpServletResponse.SC_OK, withOneLargerPicture());
+    }
+
+    @Test
     public void test_with_a_real_request_error_async() throws IOException {
         performRequest("http://localhost:8090/async?" + ClientRequest.ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
@@ -75,6 +99,17 @@ public class JettyIntegrationTest {
         try {
             ClientRequest.performRequest(url, expectedStatus);
         } catch (NoHttpResponseException | SocketException | ConnectionClosedException e) {
+            e.printStackTrace();
+            if (expectedStatus != null) {
+                fail();
+            }
+        }
+    }
+
+    private void performRequest(String url, Integer expectedStatus, Supplier<HttpEntity> requestSupplier) throws IOException {
+        try {
+            ClientRequest.performRequest(url, expectedStatus, requestSupplier);
+        } catch (NoHttpResponseException | SocketException e) {
             e.printStackTrace();
             if (expectedStatus != null) {
                 fail();
