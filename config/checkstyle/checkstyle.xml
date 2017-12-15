@@ -18,6 +18,11 @@
  -->
 
 <module name = "Checker">
+
+    <module name="BeforeExecutionExclusionFileFilter">
+        <property name="fileNamePattern" value="module\-info\.java$"/>
+    </module>
+
     <property name="charset" value="UTF-8"/>
 
     <property name="severity" value="warning"/>
@@ -51,9 +56,7 @@
             <property name="tokens" value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_SWITCH"/>
         </module>
         <module name="NeedBraces"/>
-        <module name="LeftCurly">
-            <property name="maxLineLength" value="220"/>
-        </module>
+        <module name="LeftCurly"/>
         <module name="RightCurly"/>
         <module name="RightCurly">
             <property name="option" value="alone"/>
@@ -154,10 +157,11 @@
             <property name="customImportOrderRules" value="STATIC###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE###STANDARD_JAVA_PACKAGE"/>
         </module>
         <module name="ImportOrder">
-            <property name="separated" value="false"/>
-            <property name="ordered" value="false"/>
+            <property name="groups" value="*,javax,java"/>
+            <property name="ordered" value="true"/>
+            <property name="separated" value="true"/>
             <property name="option" value="above"/>
-            <property name="caseSensitive" value="false"/>
+            <property name="sortStaticImportsAlphabetically" value="true"/>
         </module>
         <module name="MethodParamPad"/>
         <module name="OperatorWrap">
