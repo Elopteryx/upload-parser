@@ -11,6 +11,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletResponse;
@@ -86,6 +87,7 @@ public class JettyIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void test_with_a_real_request_error_blocking() throws IOException {
         performRequest("http://localhost:8090/blocking?" + ClientRequest.ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
