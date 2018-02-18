@@ -1,7 +1,7 @@
 dependencies {
 
     /* Upload parser. */
-    compile project(":upload-parser")
+    compile project(":upload-parser-core")
 
     /* Servlet API. */
     compileOnly "javax.servlet:javax.servlet-api:$servletApiVersion"

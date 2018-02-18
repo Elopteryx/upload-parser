@@ -1,9 +1,5 @@
-rootProject.name = "upload-parser-parent"
+rootProject.name = 'upload-parser-parent'
 
-include "core"
-include "jaxrs"
-include "tests"
-
-findProject(':core')?.name = 'upload-parser'
-findProject(':jaxrs')?.name = 'upload-parser-jaxrs'
-findProject(':tests')?.name = 'upload-parser-tests'
+include 'upload-parser-core'
+include 'upload-parser-jaxrs'
+include 'upload-parser-tests'

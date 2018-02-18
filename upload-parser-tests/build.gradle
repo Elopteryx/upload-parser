@@ -1,7 +1,7 @@
 dependencies {
 
     /* Upload parser. */
-    testCompile project(":upload-parser")
+    testCompile project(":upload-parser-core")
 
     /* Upload parser Jax-Rs integration. */
     testCompile project(":upload-parser-jaxrs")
