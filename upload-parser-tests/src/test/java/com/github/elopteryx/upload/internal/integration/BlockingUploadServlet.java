@@ -1,9 +1,9 @@
 package com.github.elopteryx.upload.internal.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.github.elopteryx.upload.OnRequestComplete;
 import com.github.elopteryx.upload.PartOutput;
@@ -52,14 +52,13 @@ public class BlockingUploadServlet extends HttpServlet {
                     if (context1.getCurrentOutput() != null && context1.getCurrentOutput().safeToCast(Channel.class)) {
                         Channel channel = context1.getCurrentOutput().unwrap(Channel.class);
                         if (channel.isOpen()) {
-                            // The parser should close it
-                            fail();
+                            fail("The parser should close it!");
                         }
                     }
                 })
                 .onRequestComplete(context1 -> response.setStatus(200))
                 .doBlockingParse(request);
-        assertTrue(context.getPartStreams().size() == 8);
+        assertEquals(8, context.getPartStreams().size());
     }
 
     private void thresholdLesser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

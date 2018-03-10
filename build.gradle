@@ -35,11 +35,11 @@ subprojects {
     ext {
         servletApiVersion = "3.1.0"
         jaxrsApiVersion = "2.0.1"
-        junitVersion = "4.12"
+        junitVersion = '5.1.0'
         apacheHttpVersion = "4.5.5"
-        undertowVersion = "1.4.22.Final"
+        undertowVersion = "2.0.1.Final"
         jettyVersion = "9.4.8.v20171121"
-        tomcatVersion = "8.5.27"
+        tomcatVersion = "8.5.28"
         resteasyVersion = "3.1.4.Final"
         tikaVersion = "1.17"
         jimfsVersion = "1.1"
@@ -102,6 +102,7 @@ subprojects {
     }
 
     test {
+        useJUnitPlatform()
         testLogging.showStandardStreams = true
     }
 

@@ -1,18 +1,18 @@
 package com.github.elopteryx.upload.internal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 
-public class HeadersTest {
+class HeadersTest {
 
     @Test
-    public void add_and_retrieve_headers() throws Exception {
+    void add_and_retrieve_headers() {
         Headers headers = new Headers();
         headers.addHeader(Headers.CONTENT_DISPOSITION, "form-data; name=\"FileItem\"; filename=\"file1.txt\"");
         headers.addHeader(Headers.CONTENT_TYPE, "text/plain");
@@ -61,9 +61,9 @@ public class HeadersTest {
     }
 
     @Test
-    public void charset_parsing() {
-        assertEquals(null, Headers.extractQuotedValueFromHeader("text/html; other-data=\"charset=UTF-8\"", "charset"));
-        assertEquals(null, Headers.extractQuotedValueFromHeader("text/html;", "charset"));
+    void charset_parsing() {
+        assertNull(Headers.extractQuotedValueFromHeader("text/html; other-data=\"charset=UTF-8\"", "charset"));
+        assertNull(Headers.extractQuotedValueFromHeader("text/html;", "charset"));
         assertEquals("UTF-8", Headers.extractQuotedValueFromHeader("text/html; charset=\"UTF-8\"", "charset"));
         assertEquals("UTF-8", Headers.extractQuotedValueFromHeader("text/html; charset=UTF-8", "charset"));
         assertEquals("UTF-8", Headers.extractQuotedValueFromHeader("text/html; charset=\"UTF-8\"; foo=bar", "charset"));
@@ -71,17 +71,17 @@ public class HeadersTest {
     }
 
     @Test
-    public void extract_existing_boundary() {
+    void extract_existing_boundary() {
         assertEquals("--xyz", Headers.extractBoundaryFromHeader("multipart/form-data; boundary=--xyz; param=abc"));
     }
 
     @Test
-    public void extract_missing_boundary() {
+    void extract_missing_boundary() {
         assertNull(Headers.extractBoundaryFromHeader("multipart/form-data; boundary;"));
     }
 
     @Test
-    public void extract_param_with_tailing_whitespace() {
+    void extract_param_with_tailing_whitespace() {
         assertEquals("abc", Headers.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param=abc", "param"));
         assertEquals("abc", Headers.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param=abc ", "param"));
         assertEquals("", Headers.extractQuotedValueFromHeader("multipart/form-data; boundary=--xyz; param= abc", "param"));

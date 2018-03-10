@@ -1,41 +1,40 @@
 package com.github.elopteryx.upload;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static com.github.elopteryx.upload.util.Servlets.newRequest;
 import static com.github.elopteryx.upload.util.Servlets.newResponse;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.elopteryx.upload.util.NullChannel;
 
 import com.google.common.jimfs.Jimfs;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.servlet.AsyncContext;
-import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
 
-    private FileSystem fileSystem;
+    private static FileSystem fileSystem;
 
-    @Before
-    public void setUp() {
+    @BeforeAll
+    static void setUp() {
         fileSystem = Jimfs.newFileSystem();
     }
 
     @Test
-    public void valid_content_type() throws Exception {
+    void valid_content_type() throws Exception {
         HttpServletRequest request = newRequest();
 
         when(request.getContentType()).thenReturn("multipart/");
@@ -43,53 +42,39 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Test
-    public void invalid_numeric_arguments() throws Exception {
-        try {
-            UploadParser.newParser().sizeThreshold(-1);
-            fail();
-        } catch (IllegalArgumentException e) {
-            // As expected
-        }
-        try {
-            UploadParser.newParser().maxPartSize(-1);
-            fail();
-        } catch (IllegalArgumentException e) {
-            // As expected
-        }
-        try {
-            UploadParser.newParser().maxRequestSize(-1);
-            fail();
-        } catch (IllegalArgumentException e) {
-            // As expected
-        }
-        try {
-            UploadParser.newParser().maxBytesUsed(-1);
-            fail();
-        } catch (IllegalArgumentException e) {
-            // As expected
-        }
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void invalid_content_type_async() throws Exception {
-        HttpServletRequest request = newRequest();
-
-        when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
-        assertFalse(UploadParser.isMultipart(request));
-        UploadParser.newParser().userObject(newResponse()).setupAsyncParse(request);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void invalid_content_type_blocking() throws Exception {
-        HttpServletRequest request = newRequest();
-
-        when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
-        assertFalse(UploadParser.isMultipart(request));
-        UploadParser.newParser().userObject(newResponse()).doBlockingParse(request);
+    void invalid_numeric_arguments() {
+        assertAll(
+                () -> assertThrows(IllegalArgumentException.class, () -> UploadParser.newParser().sizeThreshold(-1)),
+                () -> assertThrows(IllegalArgumentException.class, () -> UploadParser.newParser().maxPartSize(-1)),
+                () -> assertThrows(IllegalArgumentException.class, () -> UploadParser.newParser().maxRequestSize(-1)),
+                () -> assertThrows(IllegalArgumentException.class, () -> UploadParser.newParser().maxBytesUsed(-1))
+        );
     }
 
     @Test
-    public void use_the_full_api() throws Exception {
+    void invalid_content_type_async() throws Exception {
+        HttpServletRequest request = newRequest();
+
+        when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
+        assertFalse(UploadParser.isMultipart(request));
+        assertThrows(IllegalArgumentException.class, () -> {
+            UploadParser.newParser().userObject(newResponse()).setupAsyncParse(request);
+        });
+    }
+
+    @Test
+    void invalid_content_type_blocking() throws Exception {
+        HttpServletRequest request = newRequest();
+
+        when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
+        assertFalse(UploadParser.isMultipart(request));
+        assertThrows(IllegalArgumentException.class, () -> {
+            UploadParser.newParser().userObject(newResponse()).doBlockingParse(request);
+        });
+    }
+
+    @Test
+    void use_the_full_api() throws Exception {
         HttpServletRequest request = newRequest();
         HttpServletResponse response = newResponse();
 
@@ -110,7 +95,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Test
-    public void output_channel() throws Exception {
+    void output_channel() {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
                     Path test = fileSystem.getPath("test1");
@@ -120,7 +105,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Test
-    public void output_stream() throws Exception {
+    void output_stream() {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
                     Path test = fileSystem.getPath("test2");
@@ -130,7 +115,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Test
-    public void output_path() throws Exception {
+    void output_path() {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
                     Path test = fileSystem.getPath("test2");
@@ -140,7 +125,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Test
-    public void use_with_custom_object() throws Exception {
+    void use_with_custom_object() {
         UploadParser.newParser()
                 .userObject(newResponse())
                 .onPartBegin((context, buffer) -> {
@@ -152,15 +137,15 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Override
-    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) {
         return PartOutput.from(new NullChannel());
     }
 
     @Override
-    public void onPartEnd(UploadContext context) throws IOException {}
+    public void onPartEnd(UploadContext context) {}
 
     @Override
-    public void onRequestComplete(UploadContext context) throws IOException, ServletException {}
+    public void onRequestComplete(UploadContext context) {}
 
     @Override
     public void onError(UploadContext context, Throwable throwable) {}

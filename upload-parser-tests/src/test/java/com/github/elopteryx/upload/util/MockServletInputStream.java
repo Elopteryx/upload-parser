@@ -34,7 +34,7 @@ public class MockServletInputStream extends ServletInputStream {
     
     private ReadListener readListener;
 
-    public MockServletInputStream() {
+    MockServletInputStream() {
         this.sourceStream = new ByteArrayInputStream(requestData.getBytes(StandardCharsets.US_ASCII));
     }
 
@@ -43,7 +43,7 @@ public class MockServletInputStream extends ServletInputStream {
     }
 
     @Override
-    public int read() throws IOException {
+    public int read() {
         return this.sourceStream.read();
     }
 

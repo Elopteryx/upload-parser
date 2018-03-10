@@ -46,19 +46,19 @@ public class UploadController implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Override
-    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) {
         // Your business logic here, check the part, you can use the bytes in the buffer to check
         // the real mime type, then return with a channel, stream or path to write the part
         return PartOutput.from(new NullChannel());
     }
 
     @Override
-    public void onPartEnd(UploadContext context) throws IOException {
+    public void onPartEnd(UploadContext context) {
         // Your business logic here
     }
 
     @Override
-    public void onRequestComplete(UploadContext context) throws IOException, ServletException {
+    public void onRequestComplete(UploadContext context) {
         // Your business logic here, send a response to the client
         context.getUserObject(AsyncResponse.class).resume(Response.ok().build());
     }

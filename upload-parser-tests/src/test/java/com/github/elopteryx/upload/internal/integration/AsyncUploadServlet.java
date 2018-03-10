@@ -4,10 +4,10 @@ import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.github.elopteryx.upload.OnRequestComplete;
 import com.github.elopteryx.upload.PartOutput;
@@ -90,8 +90,7 @@ public class AsyncUploadServlet extends HttpServlet {
                     if (context.getCurrentOutput() != null && context.getCurrentOutput().safeToCast(Channel.class)) {
                         Channel channel = context.getCurrentOutput().unwrap(Channel.class);
                         if (channel.isOpen()) {
-                            // The parser should close it
-                            fail();
+                            fail("The parser should close it!");
                         }
                     }
                 })

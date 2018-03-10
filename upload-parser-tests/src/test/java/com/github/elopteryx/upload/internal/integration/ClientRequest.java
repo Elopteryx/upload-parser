@@ -1,7 +1,7 @@
 package com.github.elopteryx.upload.internal.integration;
 
 import static com.github.elopteryx.upload.internal.integration.RequestSupplier.withSeveralFields;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.jimfs.Jimfs;
 import org.apache.http.HttpEntity;
@@ -64,7 +64,7 @@ public final class ClientRequest {
                 HttpEntity resEntity = response.getEntity();
                 EntityUtils.consume(resEntity);
                 if (expectedStatus != null) {
-                    assertTrue(response.getStatusLine().getStatusCode() == expectedStatus);
+                    assertEquals(response.getStatusLine().getStatusCode(), (int) expectedStatus);
                 }
                 if (resEntity != null) {
                     System.out.println("Response content length: " + resEntity.getContentLength());

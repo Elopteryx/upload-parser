@@ -1,17 +1,18 @@
 package com.github.elopteryx.upload.internal;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class Base64EncodingTest {
+class Base64EncodingTest {
 
     @Test
-    public void these_values_should_work() throws IOException {
+    void these_values_should_work() throws IOException {
         checkEncoding("", "");
         checkEncoding("f", "Zg==");
         checkEncoding("fo", "Zm8=");
@@ -21,9 +22,9 @@ public class Base64EncodingTest {
         checkEncoding("foobar", "Zm9vYmFy");
     }
 
-    @Test(expected = IOException.class)
-    public void must_throw_exception_on_invalid_data() throws IOException {
-        checkEncoding("f", "Zg=�=");
+    @Test
+    void must_throw_exception_on_invalid_data() {
+        assertThrows(IOException.class, () -> checkEncoding("f", "Zg=�="));
     }
 
     private static void checkEncoding(final String original, String encoded) throws IOException {
@@ -35,13 +36,13 @@ public class Base64EncodingTest {
             public void beginPart(Headers headers) {}
 
             @Override
-            public void data(ByteBuffer buffer) throws IOException {
+            public void data(ByteBuffer buffer) {
                 String parserResult = new String(buffer.array(), US_ASCII).trim();
                 assertEquals(parserResult, original);
             }
 
             @Override
-            public void endPart() throws IOException {}
+            public void endPart() {}
 
         }, ByteBuffer.wrap(encoded.getBytes(US_ASCII)));
     }

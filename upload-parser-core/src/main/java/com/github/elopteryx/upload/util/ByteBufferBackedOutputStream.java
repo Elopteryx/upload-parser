@@ -10,7 +10,7 @@ import java.util.Objects;
  * The stream will not copy bytes to a temporary buffer, therefore read-only
  * and direct buffers are not supported.
  */
-public class ByteBufferBackedOutputStream extends OutputStream {
+class ByteBufferBackedOutputStream extends OutputStream {
 
     /**
      * The byte buffer. Cannot be read-only or direct.

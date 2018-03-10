@@ -1,7 +1,7 @@
 package com.github.elopteryx.upload.internal;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import com.github.elopteryx.upload.OnError;
@@ -13,7 +13,7 @@ import com.github.elopteryx.upload.UploadParser;
 import com.github.elopteryx.upload.errors.MultipartException;
 
 import com.github.elopteryx.upload.util.Servlets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
     private final List<ByteArrayOutputStream> strings = new ArrayList<>();
 
     @Test
-    public void this_should_end_with_multipart_exception() throws Exception {
+    void this_should_end_with_multipart_exception() throws Exception {
         HttpServletRequest request = Servlets.newRequest();
         HttpServletResponse response = Servlets.newResponse();
 
@@ -43,14 +43,14 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
                 .doBlockingParse(request);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void this_should_end_with_illegal_argument_exception() throws Exception {
+    @Test
+    void this_should_end_with_illegal_argument_exception() throws Exception {
         HttpServletRequest request = Servlets.newRequest();
 
         when(request.isAsyncSupported()).thenReturn(false);
         when(request.getHeader(Headers.CONTENT_TYPE)).thenReturn("multipart/form-data;");
 
-        UploadParser.newParser().doBlockingParse(request);
+        assertThrows(IllegalArgumentException.class, () -> UploadParser.newParser().doBlockingParse(request));
     }
 
     @Override
@@ -61,12 +61,12 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
     }
 
     @Override
-    public void onPartEnd(UploadContext context) throws IOException {
+    public void onPartEnd(UploadContext context) {
         System.out.println(strings.get(strings.size() - 1).toString());
     }
 
     @Override
     public void onError(UploadContext context, Throwable throwable) {
-        assertThat(throwable, instanceOf(MultipartException.class));
+        assertTrue(throwable instanceof MultipartException);
     }
 }

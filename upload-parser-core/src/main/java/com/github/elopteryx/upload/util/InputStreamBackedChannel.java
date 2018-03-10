@@ -18,7 +18,7 @@ import java.util.Objects;
  *
  * <p>The channel honors the close contract, it cannot be used after closing.</p>
  */
-public class InputStreamBackedChannel implements ReadableByteChannel {
+class InputStreamBackedChannel implements ReadableByteChannel {
 
     /**
      * Flag to determine whether the channel is closed or not.

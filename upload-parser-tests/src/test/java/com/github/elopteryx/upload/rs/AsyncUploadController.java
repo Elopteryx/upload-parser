@@ -41,13 +41,13 @@ public class AsyncUploadController implements OnPartBegin, OnRequestComplete, On
     }
 
     @Override
-    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
+    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) {
         return PartOutput.from(new NullChannel());
     }
 
 
     @Override
-    public void onRequestComplete(UploadContext context) throws IOException, ServletException {
+    public void onRequestComplete(UploadContext context) {
         context.getUserObject(AsyncResponse.class).resume(Response.status(200).build());
     }
 

@@ -10,15 +10,15 @@ import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
 import org.apache.http.HttpEntity;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.function.Supplier;
 import javax.servlet.http.HttpServletResponse;
 
-public class UndertowIntegrationTest {
+class UndertowIntegrationTest {
 
     private static Undertow server;
 
@@ -27,8 +27,8 @@ public class UndertowIntegrationTest {
      * Undertow instance which will receive the client requests.
      * @throws Exception If an error occurred with the servlets
      */
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+    @BeforeAll
+    static void setUpClass() throws Exception {
         DeploymentInfo servletBuilder = Servlets.deployment()
                 .setClassLoader(UndertowIntegrationTest.class.getClassLoader())
                 .setContextPath("/")
@@ -54,57 +54,57 @@ public class UndertowIntegrationTest {
     }
 
     @Test
-    public void test_with_a_real_request_simple_async() throws IOException {
+    void test_with_a_real_request_simple_async() throws IOException {
         performRequest("http://localhost:8080/async?" + ClientRequest.SIMPLE, HttpServletResponse.SC_OK);
     }
 
     @Test
-    public void test_with_a_real_request_simple_blocking() throws IOException {
+    void test_with_a_real_request_simple_blocking() throws IOException {
         performRequest("http://localhost:8080/blocking?" + ClientRequest.SIMPLE, HttpServletResponse.SC_OK);
     }
 
     @Test
-    public void test_with_a_real_request_threshold_lesser_async() throws IOException {
+    void test_with_a_real_request_threshold_lesser_async() throws IOException {
         performRequest("http://localhost:8080/async?" + ClientRequest.THRESHOLD_LESSER, HttpServletResponse.SC_OK, withOneSmallerPicture());
     }
 
     @Test
-    public void test_with_a_real_request_threshold_lesser_blocking() throws IOException {
+    void test_with_a_real_request_threshold_lesser_blocking() throws IOException {
         performRequest("http://localhost:8080/blocking?" + ClientRequest.THRESHOLD_LESSER, HttpServletResponse.SC_OK, withOneSmallerPicture());
     }
 
     @Test
-    public void test_with_a_real_request_threshold_greater_async() throws IOException {
+    void test_with_a_real_request_threshold_greater_async() throws IOException {
         performRequest("http://localhost:8080/async?" + ClientRequest.THRESHOLD_GREATER, HttpServletResponse.SC_OK, withOneLargerPicture());
     }
 
     @Test
-    public void test_with_a_real_request_threshold_greater_blocking() throws IOException {
+    void test_with_a_real_request_threshold_greater_blocking() throws IOException {
         performRequest("http://localhost:8080/blocking?" + ClientRequest.THRESHOLD_GREATER, HttpServletResponse.SC_OK, withOneLargerPicture());
     }
 
     @Test
-    public void test_with_a_real_request_error_async() throws IOException {
+    void test_with_a_real_request_error_async() throws IOException {
         performRequest("http://localhost:8080/async?" + ClientRequest.ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     @Test
-    public void test_with_a_real_request_io_error_upon_error_async() throws IOException {
+    void test_with_a_real_request_io_error_upon_error_async() throws IOException {
         performRequest("http://localhost:8080/async?" + ClientRequest.IO_ERROR_UPON_ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     @Test
-    public void test_with_a_real_request_servlet_error_upon_error_async() throws IOException {
+    void test_with_a_real_request_servlet_error_upon_error_async() throws IOException {
         performRequest("http://localhost:8080/async?" + ClientRequest.SERVLET_ERROR_UPON_ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     @Test
-    public void test_with_a_real_request_error_blocking() throws IOException {
+    void test_with_a_real_request_error_blocking() throws IOException {
         performRequest("http://localhost:8080/blocking?" + ClientRequest.ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     @Test
-    public void test_with_a_real_request_complex() throws IOException {
+    void test_with_a_real_request_complex() throws IOException {
         performRequest("http://localhost:8080/async?" + ClientRequest.COMPLEX, HttpServletResponse.SC_OK);
     }
 
@@ -116,8 +116,8 @@ public class UndertowIntegrationTest {
         ClientRequest.performRequest(url, expectedStatus, requestSupplier);
     }
 
-    @AfterClass
-    public static void tearDown() {
+    @AfterAll
+    static void tearDown() {
         server.stop();
     }
 }

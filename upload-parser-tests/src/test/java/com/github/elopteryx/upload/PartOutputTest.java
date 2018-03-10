@@ -1,13 +1,12 @@
 package com.github.elopteryx.upload;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.channels.Channel;
 import java.nio.channels.Channels;
@@ -15,10 +14,10 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class PartOutputTest {
+class PartOutputTest {
 
     @Test
-    public void create_channel_output() throws IOException {
+    void create_channel_output() {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         WritableByteChannel channel = Channels.newChannel(byteArrayOutputStream);
         PartOutput output = PartOutput.from(channel);
@@ -32,7 +31,7 @@ public class PartOutputTest {
     }
 
     @Test
-    public void create_stream_output() throws IOException {
+    void create_stream_output() {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         PartOutput output = PartOutput.from(byteArrayOutputStream);
 
@@ -45,7 +44,7 @@ public class PartOutputTest {
     }
 
     @Test
-    public void create_path_output() throws IOException {
+    void create_path_output() {
         Path path = Paths.get("");
         PartOutput output = PartOutput.from(path);
 

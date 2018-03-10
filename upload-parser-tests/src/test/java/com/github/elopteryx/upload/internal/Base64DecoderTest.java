@@ -19,9 +19,10 @@
 package com.github.elopteryx.upload.internal;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -32,7 +33,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author Jason T. Greene
  */
-public class Base64DecoderTest {
+class Base64DecoderTest {
 
     private static final String TOWEL = "A towel, it says, is about the most massively useful thing an interstellar "
             + "hitchhiker can have. Partly it has great practical value - you can wrap it around you for warmth as you "
@@ -121,7 +122,7 @@ public class Base64DecoderTest {
             + "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4======\r\n";
 
     @Test
-    public void decode_buffer() throws IOException {
+    void decode_buffer() throws IOException {
         byte[] numbers = new byte[32768];
         for (int i = 0; i < 32768; i++) {
             numbers[i] = (byte)(i % 255);
@@ -133,69 +134,75 @@ public class Base64DecoderTest {
         target.flip();
         decoder.decode(target, decoded);
 
-        Assert.assertEquals(numbers.length, decoded.remaining());
+        assertEquals(numbers.length, decoded.remaining());
     }
 
     @Test
-    public void draining() throws IOException {
+    void draining() throws IOException {
         byte[] bytes = "c3VyZS4=\r\n\r\n!".getBytes("US-ASCII");
         ByteBuffer source = ByteBuffer.wrap(bytes);
         ByteBuffer target = ByteBuffer.allocateDirect(100);
         new Base64Decoder().decode(source, target);
-        Assert.assertEquals((byte) '\r' & 0xFF, source.get() & 0xFF);
-        Assert.assertEquals((byte) '\n' & 0xFF, source.get() & 0xFF);
-        Assert.assertEquals((byte) '!' & 0xFF, source.get() & 0xFF);
+        assertEquals((byte) '\r' & 0xFF, source.get() & 0xFF);
+        assertEquals((byte) '\n' & 0xFF, source.get() & 0xFF);
+        assertEquals((byte) '!' & 0xFF, source.get() & 0xFF);
     }
 
     @Test
-    public void decode_string() throws Exception {
+    void decode_string() throws Exception {
         ByteBuffer buffer = ByteBuffer.wrap(TOWEL.getBytes(US_ASCII));
         buffer.clear();
 
         new Base64Decoder().decode(ByteBuffer.wrap(TOWEL_BASE64.getBytes(US_ASCII)), buffer);
-        Assert.assertEquals(TOWEL, new String(buffer.array(), 0, buffer.limit(), US_ASCII));
+        assertEquals(TOWEL, new String(buffer.array(), 0, buffer.limit(), US_ASCII));
     }
 
     @Test
-    public void decode_string_again() throws Exception {
+    void decode_string_again() throws Exception {
         ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
 
         new Base64Decoder().decode(ByteBuffer.wrap(KNOWLEDGE_ENCODED.getBytes(US_ASCII)), buffer);
-        Assert.assertEquals(KNOWLEDGE, new String(buffer.array(), 0, buffer.limit(), US_ASCII));
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void decode_string_null_target() throws Exception {
-        new Base64Decoder().decode(ByteBuffer.wrap(KNOWLEDGE_ENCODED.getBytes(US_ASCII)), null);
+        assertEquals(KNOWLEDGE, new String(buffer.array(), 0, buffer.limit(), US_ASCII));
     }
 
     @Test
-    public void decode_string_illegal_padding() throws Exception {
+    void decode_string_null_target() {
+        assertThrows(IllegalStateException.class, () -> {
+            new Base64Decoder().decode(ByteBuffer.wrap(KNOWLEDGE_ENCODED.getBytes(US_ASCII)), null);
+        });
+    }
+
+    @Test
+    void decode_string_illegal_padding() throws Exception {
         ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
         new Base64Decoder().decode(ByteBuffer.wrap(ILLEGAL_PADDING.getBytes(US_ASCII)), buffer);
     }
 
     @Test
-    public void decode_string_illegal_character() throws Exception {
+    void decode_string_illegal_character() throws Exception {
         ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
         new Base64Decoder().decode(ByteBuffer.wrap(ILLEGAL_CHARACTER.getBytes(US_ASCII)), buffer);
     }
 
-    @Test(expected = IOException.class)
-    public void decode_string_several_illegal_padding() throws Exception {
+    @Test
+    void decode_string_several_illegal_padding() {
         ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
-        new Base64Decoder().decode(ByteBuffer.wrap(SEVERAL_ILLEGAL_PADDINGS.getBytes(US_ASCII)), buffer);
+        assertThrows(IOException.class, () -> {
+            new Base64Decoder().decode(ByteBuffer.wrap(SEVERAL_ILLEGAL_PADDINGS.getBytes(US_ASCII)), buffer);
+        });
     }
 
-    @Test(expected = IOException.class)
-    public void decode_string_invalid_character() throws Exception {
+    @Test
+    void decode_string_invalid_character() {
         ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
-        new Base64Decoder().decode(ByteBuffer.wrap(INVALID_CHARACTER.getBytes(US_ASCII)), buffer);
+        assertThrows(IOException.class, () -> {
+            new Base64Decoder().decode(ByteBuffer.wrap(INVALID_CHARACTER.getBytes(US_ASCII)), buffer);
+        });
     }
 
     private static class FlexBase64 {
@@ -326,7 +333,7 @@ public class Base64DecoderTest {
     }
 
     @Test
-    public void testEncoderDecoderBuffer() throws IOException {
+    void testEncoderDecoderBuffer() throws IOException {
         byte[] nums = new byte[32768];
         for (int i = 0; i < 32768; i++) {
             nums[i] = (byte)(i % 255);
@@ -346,15 +353,15 @@ public class Base64DecoderTest {
 
         decoded.flip();
 
-        Assert.assertEquals(nums.length, decoded.remaining());
+        assertEquals(nums.length, decoded.remaining());
 
         for (byte num : nums) {
-            Assert.assertEquals(num, decoded.get());
+            assertEquals(num, decoded.get());
         }
     }
 
     @Test
-    public void testEncoderDecoderBufferLoops() throws IOException {
+    void testEncoderDecoderBufferLoops() throws IOException {
         byte[] nums = new byte[32768];
         for (int i = 0; i < 32768; i++) {
             nums[i] = (byte)(i % 255);
@@ -388,10 +395,10 @@ public class Base64DecoderTest {
 
         decoded.flip();
 
-        Assert.assertEquals(nums.length, decoded.remaining());
+        assertEquals(nums.length, decoded.remaining());
 
         for (byte num : nums) {
-            Assert.assertEquals(num, decoded.get());
+            assertEquals(num, decoded.get());
         }
     }
 

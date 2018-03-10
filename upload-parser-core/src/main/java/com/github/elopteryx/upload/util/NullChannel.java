@@ -63,7 +63,7 @@ public class NullChannel implements ReadableByteChannel, WritableByteChannel {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         open = false;
     }
 }
