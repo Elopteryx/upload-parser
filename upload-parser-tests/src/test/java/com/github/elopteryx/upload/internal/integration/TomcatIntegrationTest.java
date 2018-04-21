@@ -54,6 +54,7 @@ class TomcatIntegrationTest {
         context.setResources(resources);
         context.getJarScanner().setJarScanFilter((jarScanType, jarName) -> false);
 
+        server.getConnector();
         server.start();
     }
 

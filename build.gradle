@@ -35,15 +35,15 @@ subprojects {
     ext {
         servletApiVersion = "3.1.0"
         jaxrsApiVersion = "2.0.1"
-        junitVersion = '5.1.0'
+        junitVersion = '5.1.1'
         apacheHttpVersion = "4.5.5"
-        undertowVersion = "2.0.1.Final"
-        jettyVersion = "9.4.8.v20171121"
-        tomcatVersion = "8.5.28"
-        resteasyVersion = "3.1.4.Final"
+        undertowVersion = "2.0.4.Final"
+        jettyVersion = "9.4.9.v20180320"
+        tomcatVersion = "9.0.7"
+        resteasyVersion = "3.5.1.Final"
         tikaVersion = "1.17"
         jimfsVersion = "1.1"
-        mockitoVersion = "2.15.0"
+        mockitoVersion = "2.18.3"
     }
 
     tasks.withType(JavaCompile) {
@@ -88,12 +88,12 @@ subprojects {
     }
 
     checkstyle {
-        toolVersion "8.8"
+        toolVersion "8.9"
         configFile = new File("${projectDir}/../config/checkstyle/checkstyle.xml")
     }
 
     jacoco {
-        toolVersion = "0.8.0"
+        toolVersion = "0.8.1"
     }
 
     signing {
