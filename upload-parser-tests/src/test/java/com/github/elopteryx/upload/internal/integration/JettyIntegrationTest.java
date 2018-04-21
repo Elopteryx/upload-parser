@@ -11,7 +11,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpServletResponse;
@@ -87,7 +86,6 @@ class JettyIntegrationTest {
     }
 
     @Test
-    @Disabled
     void test_with_a_real_request_error_blocking() throws IOException {
         performRequest("http://localhost:8090/blocking?" + ClientRequest.ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
