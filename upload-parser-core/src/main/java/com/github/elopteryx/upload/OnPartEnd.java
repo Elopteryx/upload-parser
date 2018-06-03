@@ -20,7 +20,7 @@ import java.io.IOException;
 
 /**
  * A functional interface. An implementation of it must be passed in the
- * {@link UploadParser#onPartEnd(OnPartEnd)} onPartEnd} method to call it at the end of parsing for each part.
+ * {@link UploadParser#onPartEnd(OnPartEnd)} method to call it at the end of parsing for each part.
  *
  * <p>This function is called after every byte has been read for the given part. There will be
  * an attempt to close the current output object just before calling this. That means setting

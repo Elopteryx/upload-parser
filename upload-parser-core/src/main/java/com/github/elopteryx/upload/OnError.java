@@ -21,7 +21,7 @@ import javax.servlet.ServletException;
 
 /**
  * A functional interface. An implementation of it must be passed in the
- * {@link UploadParser#onError(OnError)} onError} method to call it after an error occurs.
+ * {@link UploadParser#onError(OnError)} method to call it after an error occurs.
  */
 @FunctionalInterface
 public interface OnError {
