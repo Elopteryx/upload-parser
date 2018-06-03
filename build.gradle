@@ -35,13 +35,13 @@ subprojects {
     ext {
         servletApiVersion = "3.1.0"
         jaxrsApiVersion = "2.0.1"
-        junitVersion = '5.1.1'
+        junitVersion = '5.2.0'
         apacheHttpVersion = "4.5.5"
-        undertowVersion = "2.0.4.Final"
+        undertowVersion = "2.0.9.Final"
         jettyVersion = "9.4.9.v20180320"
-        tomcatVersion = "9.0.7"
+        tomcatVersion = "9.0.8"
         resteasyVersion = "3.5.1.Final"
-        tikaVersion = "1.17"
+        tikaVersion = "1.18"
         jimfsVersion = "1.1"
         mockitoVersion = "2.18.3"
     }
@@ -130,8 +130,8 @@ task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
     executionData = files(subprojects.jacocoTestReport.executionData)
 
     reports {
-        html.enabled true
-        xml.enabled true
+        html.enabled = true
+        xml.enabled = true
     }
 
     doFirst {
