@@ -25,8 +25,8 @@ import com.github.elopteryx.upload.rs.internal.MultiPartImpl;
 import com.github.elopteryx.upload.rs.internal.RestUploadParser;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

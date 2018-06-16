@@ -3,7 +3,6 @@ package com.github.elopteryx.upload.rs;
 import com.github.elopteryx.upload.internal.integration.ClientRequest;
 import com.github.elopteryx.upload.rs.errors.PartSizeMapper;
 import com.github.elopteryx.upload.rs.errors.RequestSizeMapper;
-
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;

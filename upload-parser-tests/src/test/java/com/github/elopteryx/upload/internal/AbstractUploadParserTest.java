@@ -1,13 +1,12 @@
 package com.github.elopteryx.upload.internal;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import com.github.elopteryx.upload.errors.PartSizeException;
 import com.github.elopteryx.upload.errors.RequestSizeException;
-
 import com.github.elopteryx.upload.util.Servlets;
 import org.junit.jupiter.api.Test;
 

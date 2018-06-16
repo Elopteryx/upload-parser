@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import com.github.elopteryx.upload.UploadParser;
 import com.github.elopteryx.upload.errors.MultipartException;
 import com.github.elopteryx.upload.util.MockServletInputStream;
-
 import com.github.elopteryx.upload.util.Servlets;
 import org.junit.jupiter.api.Test;
 

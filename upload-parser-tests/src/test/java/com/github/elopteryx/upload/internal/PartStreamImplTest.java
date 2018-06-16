@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.elopteryx.upload.PartStream;
-
 import org.junit.jupiter.api.Test;
 
 class PartStreamImplTest {

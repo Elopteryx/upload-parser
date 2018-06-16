@@ -9,6 +9,8 @@ import com.github.elopteryx.upload.UploadContext;
 import com.github.elopteryx.upload.UploadParser;
 import com.github.elopteryx.upload.util.NullChannel;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
@@ -17,8 +19,6 @@ import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 
 /**
  * Example controller class for the Jax-Rs library. Uses the parser directly.

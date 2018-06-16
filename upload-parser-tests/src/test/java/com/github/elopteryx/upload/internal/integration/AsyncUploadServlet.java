@@ -16,11 +16,6 @@ import com.github.elopteryx.upload.UploadParser;
 import com.github.elopteryx.upload.util.ByteBufferBackedInputStream;
 import com.github.elopteryx.upload.util.NullChannel;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.channels.Channel;
@@ -31,6 +26,11 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(value = "/async", asyncSupported = true)
 public class AsyncUploadServlet extends HttpServlet {

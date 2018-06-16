@@ -16,8 +16,8 @@
 
 package com.github.elopteryx.upload.rs;
 
-import javax.ws.rs.core.MultivaluedMap;
 import java.util.List;
+import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * This interface represents a multipart request.

@@ -1,16 +1,15 @@
 package com.github.elopteryx.upload;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static com.github.elopteryx.upload.util.Servlets.newRequest;
 import static com.github.elopteryx.upload.util.Servlets.newResponse;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.github.elopteryx.upload.util.NullChannel;
-
 import com.google.common.jimfs.Jimfs;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

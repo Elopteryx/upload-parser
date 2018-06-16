@@ -5,10 +5,10 @@ import com.github.elopteryx.upload.rs.Part;
 import com.github.elopteryx.upload.rs.UploadConfig;
 import com.github.elopteryx.upload.rs.UploadParam;
 
+import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import java.io.IOException;
 
 /**
  * Example controller class for the Jax-Rs library. Uses the reader to implicitly parse the upload.

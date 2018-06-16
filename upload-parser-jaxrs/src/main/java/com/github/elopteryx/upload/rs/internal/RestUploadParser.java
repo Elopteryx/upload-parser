@@ -20,8 +20,8 @@ import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
 import com.github.elopteryx.upload.errors.RequestSizeException;
 import com.github.elopteryx.upload.internal.BlockingUploadParser;
-import com.github.elopteryx.upload.internal.MultipartParser;
 import com.github.elopteryx.upload.internal.Headers;
+import com.github.elopteryx.upload.internal.MultipartParser;
 import com.github.elopteryx.upload.internal.PartStreamImpl;
 import com.github.elopteryx.upload.internal.UploadContextImpl;
 import com.github.elopteryx.upload.rs.Part;

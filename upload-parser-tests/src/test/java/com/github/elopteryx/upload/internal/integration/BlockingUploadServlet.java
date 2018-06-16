@@ -12,13 +12,13 @@ import com.github.elopteryx.upload.UploadContext;
 import com.github.elopteryx.upload.UploadParser;
 import com.github.elopteryx.upload.util.NullChannel;
 
+import java.io.IOException;
+import java.nio.channels.Channel;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.nio.channels.Channel;
 
 @WebServlet(value = "/blocking")
 public class BlockingUploadServlet extends HttpServlet {

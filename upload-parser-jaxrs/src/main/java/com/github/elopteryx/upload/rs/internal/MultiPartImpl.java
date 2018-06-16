@@ -19,9 +19,9 @@ package com.github.elopteryx.upload.rs.internal;
 import com.github.elopteryx.upload.rs.MultiPart;
 import com.github.elopteryx.upload.rs.Part;
 
-import javax.ws.rs.core.MultivaluedMap;
 import java.util.Collections;
 import java.util.List;
+import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * Default implementation of {@link MultiPart}.

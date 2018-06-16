@@ -32,7 +32,6 @@ import com.github.elopteryx.upload.errors.RequestSizeException;
 import com.github.elopteryx.upload.util.NullChannel;
 import com.github.elopteryx.upload.util.OutputStreamBackedChannel;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -41,6 +40,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.EnumSet;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Base class for the parser implementations. This holds the common methods, like the more specific
