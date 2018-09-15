@@ -1,26 +1,21 @@
-language: java
-
-sudo: required
-
+sudo: false
 dist: trusty
-
-group: edge
-
-jdk:
-  - oraclejdk8
-  - oraclejdk9
+language: java
 
 cache:
   directories:
     - $HOME/.gradle
 
-matrix:
-  fast_finish: true
+before_install:
+  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
 
-env:
- - TERM=dumb
+matrix:
+  include:
+    - env: JDK='Oracle JDK 11'
+      install: . ./install-jdk.sh -F 11 -L BCL
 
 script:
+  - java -version
   - ./gradlew build
 
 after_success:
