@@ -4,6 +4,7 @@ import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -225,11 +226,11 @@ public class AsyncUploadServlet extends HttpServlet {
                     System.out.println("Request complete!");
                     System.out.println("Total parts: " + context.getPartStreams().size());
 
-                    assertTrue(Arrays.equals(formFields.get(0).toByteArray(), RequestSupplier.largeFile));
-                    assertTrue(Arrays.equals(formFields.get(1).toByteArray(), RequestSupplier.emptyFile));
-                    assertTrue(Arrays.equals(formFields.get(2).toByteArray(), RequestSupplier.smallFile));
-                    assertTrue(Arrays.equals(formFields.get(3).toByteArray(), RequestSupplier.textValue1.getBytes(ISO_8859_1)));
-                    assertTrue(Arrays.equals(formFields.get(4).toByteArray(), RequestSupplier.textValue2.getBytes(ISO_8859_1)));
+                    assertArrayEquals(formFields.get(0).toByteArray(), RequestSupplier.largeFile);
+                    assertArrayEquals(formFields.get(1).toByteArray(), RequestSupplier.emptyFile);
+                    assertArrayEquals(formFields.get(2).toByteArray(), RequestSupplier.smallFile);
+                    assertArrayEquals(formFields.get(3).toByteArray(), RequestSupplier.textValue1.getBytes(ISO_8859_1));
+                    assertArrayEquals(formFields.get(4).toByteArray(), RequestSupplier.textValue2.getBytes(ISO_8859_1));
 
                     context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
                     context.getRequest().getAsyncContext().complete();

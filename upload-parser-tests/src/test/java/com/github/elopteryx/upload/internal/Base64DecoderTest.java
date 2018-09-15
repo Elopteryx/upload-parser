@@ -139,7 +139,7 @@ class Base64DecoderTest {
 
     @Test
     void draining() throws IOException {
-        var bytes = "c3VyZS4=\r\n\r\n!".getBytes("US-ASCII");
+        var bytes = "c3VyZS4=\r\n\r\n!".getBytes(US_ASCII);
         var source = ByteBuffer.wrap(bytes);
         var target = ByteBuffer.allocateDirect(100);
         new Base64Decoder().decode(source, target);
