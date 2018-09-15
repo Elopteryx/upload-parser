@@ -1,3 +1,5 @@
+ext.moduleName = 'com.github.elopteryx.upload.rs'
+
 dependencies {
 
     /* Upload parser. */
@@ -9,6 +11,20 @@ dependencies {
     /* Restful web services API. */
     compileOnly "javax.ws.rs:javax.ws.rs-api:$jaxrsApiVersion"
 
+}
+
+compileJava {
+    inputs.property("moduleName", moduleName)
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath,
+        ]
+        classpath = files()
+    }
+}
+
+javadoc {
+    options.addStringOption('-module-path', classpath.asPath)
 }
 
 jar {
@@ -25,10 +41,11 @@ jar {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId "com.github.elopteryx"
-            artifactId "upload-parser-jaxrs"
-
             from components.java
+            afterEvaluate {
+                groupId "com.github.elopteryx"
+                artifactId "upload-parser-jaxrs"
+            }
         }
     }
 }

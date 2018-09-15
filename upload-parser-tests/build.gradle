@@ -52,10 +52,11 @@ dependencies {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId "com.github.elopteryx"
-            artifactId "upload-parser-tests"
-
             from components.java
+            afterEvaluate {
+                groupId "com.github.elopteryx"
+                artifactId "upload-parser-tests"
+            }
         }
     }
 }

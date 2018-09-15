@@ -1,8 +1,24 @@
+ext.moduleName = 'com.github.elopteryx.upload'
+
 dependencies {
 
     /* Servlet API. */
     compileOnly "javax.servlet:javax.servlet-api:$servletApiVersion"
 
+}
+
+compileJava {
+    inputs.property("moduleName", moduleName)
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath,
+        ]
+        classpath = files()
+    }
+}
+
+javadoc {
+    options.addStringOption('-module-path', classpath.asPath)
 }
 
 jar {
@@ -19,10 +35,11 @@ jar {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId "com.github.elopteryx"
-            artifactId "upload-parser"
-
             from components.java
+            afterEvaluate {
+                groupId "com.github.elopteryx"
+                artifactId "upload-parser"
+            }
         }
     }
 }
