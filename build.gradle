@@ -47,8 +47,8 @@ subprojects {
     }
 
     tasks.withType(JavaCompile) {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility = 11
+        targetCompatibility = 11
     }
 
     task javadocJar(type: Jar) {
@@ -64,12 +64,12 @@ subprojects {
                 bottom 'Copyright &#169; 2018 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
                 breakIterator true
                 author false
-                source "1.8"
+                source "11"
                 encoding "UTF-8"
                 docEncoding "UTF-8"
                 failOnError true
                 links = [
-                        "https://docs.oracle.com/javase/8/docs/api/",
+                        "https://docs.oracle.com/javase/10/docs/api/",
                         "https://docs.oracle.com/javaee/7/api/",
                 ]
             }
