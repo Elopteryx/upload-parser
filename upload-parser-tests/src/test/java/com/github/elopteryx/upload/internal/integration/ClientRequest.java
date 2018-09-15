@@ -5,9 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.jimfs.Jimfs;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.tika.Tika;
@@ -53,15 +51,15 @@ public final class ClientRequest {
      * @throws IOException If an IO error occurred
      */
     public static void performRequest(String url, Integer expectedStatus, Supplier<HttpEntity> requestSupplier) throws IOException {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost httppost = new HttpPost(url);
-            HttpEntity entity = requestSupplier.get();
+        try (var httpClient = HttpClients.createDefault()) {
+            var httppost = new HttpPost(url);
+            var entity = requestSupplier.get();
             httppost.setEntity(entity);
             System.out.println("executing request " + httppost.getRequestLine());
-            try (CloseableHttpResponse response = httpClient.execute(httppost)) {
+            try (var response = httpClient.execute(httppost)) {
                 System.out.println("----------------------------------------");
                 System.out.println(response.getStatusLine());
-                HttpEntity resEntity = response.getEntity();
+                var resEntity = response.getEntity();
                 EntityUtils.consume(resEntity);
                 if (expectedStatus != null) {
                     assertEquals(response.getStatusLine().getStatusCode(), (int) expectedStatus);

@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError {
     
@@ -28,8 +26,8 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
 
     @Test
     void this_should_end_with_multipart_exception() throws Exception {
-        HttpServletRequest request = Servlets.newRequest();
-        HttpServletResponse response = Servlets.newResponse();
+        var request = Servlets.newRequest();
+        var response = Servlets.newResponse();
 
         when(request.isAsyncSupported()).thenReturn(false);
         when(request.getHeader(Headers.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary=----1234");
@@ -44,7 +42,7 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
 
     @Test
     void this_should_end_with_illegal_argument_exception() throws Exception {
-        HttpServletRequest request = Servlets.newRequest();
+        var request = Servlets.newRequest();
 
         when(request.isAsyncSupported()).thenReturn(false);
         when(request.getHeader(Headers.CONTENT_TYPE)).thenReturn("multipart/form-data;");
@@ -54,7 +52,7 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
 
     @Override
     public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        var baos = new ByteArrayOutputStream();
         strings.add(baos);
         return PartOutput.from(baos);
     }

@@ -123,14 +123,14 @@ class Base64DecoderTest {
 
     @Test
     void decode_buffer() throws IOException {
-        byte[] numbers = new byte[32768];
-        for (int i = 0; i < 32768; i++) {
+        var numbers = new byte[32768];
+        for (var i = 0; i < 32768; i++) {
             numbers[i] = (byte)(i % 255);
         }
-        ByteBuffer target = ByteBuffer.allocate(65535);
+        var target = ByteBuffer.allocate(65535);
 
-        ByteBuffer decoded = ByteBuffer.allocate(numbers.length);
-        Base64Decoder decoder = new Base64Decoder();
+        var decoded = ByteBuffer.allocate(numbers.length);
+        var decoder = new Base64Decoder();
         target.flip();
         decoder.decode(target, decoded);
 
@@ -139,9 +139,9 @@ class Base64DecoderTest {
 
     @Test
     void draining() throws IOException {
-        byte[] bytes = "c3VyZS4=\r\n\r\n!".getBytes("US-ASCII");
-        ByteBuffer source = ByteBuffer.wrap(bytes);
-        ByteBuffer target = ByteBuffer.allocateDirect(100);
+        var bytes = "c3VyZS4=\r\n\r\n!".getBytes("US-ASCII");
+        var source = ByteBuffer.wrap(bytes);
+        var target = ByteBuffer.allocateDirect(100);
         new Base64Decoder().decode(source, target);
         assertEquals((byte) '\r' & 0xFF, source.get() & 0xFF);
         assertEquals((byte) '\n' & 0xFF, source.get() & 0xFF);
@@ -150,7 +150,7 @@ class Base64DecoderTest {
 
     @Test
     void decode_string() throws Exception {
-        ByteBuffer buffer = ByteBuffer.wrap(TOWEL.getBytes(US_ASCII));
+        var buffer = ByteBuffer.wrap(TOWEL.getBytes(US_ASCII));
         buffer.clear();
 
         new Base64Decoder().decode(ByteBuffer.wrap(TOWEL_BASE64.getBytes(US_ASCII)), buffer);
@@ -159,7 +159,7 @@ class Base64DecoderTest {
 
     @Test
     void decode_string_again() throws Exception {
-        ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
+        var buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
 
         new Base64Decoder().decode(ByteBuffer.wrap(KNOWLEDGE_ENCODED.getBytes(US_ASCII)), buffer);
@@ -175,21 +175,21 @@ class Base64DecoderTest {
 
     @Test
     void decode_string_illegal_padding() throws Exception {
-        ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
+        var buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
         new Base64Decoder().decode(ByteBuffer.wrap(ILLEGAL_PADDING.getBytes(US_ASCII)), buffer);
     }
 
     @Test
     void decode_string_illegal_character() throws Exception {
-        ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
+        var buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
         new Base64Decoder().decode(ByteBuffer.wrap(ILLEGAL_CHARACTER.getBytes(US_ASCII)), buffer);
     }
 
     @Test
     void decode_string_several_illegal_padding() {
-        ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
+        var buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
         assertThrows(IOException.class, () -> {
             new Base64Decoder().decode(ByteBuffer.wrap(SEVERAL_ILLEGAL_PADDINGS.getBytes(US_ASCII)), buffer);
@@ -198,7 +198,7 @@ class Base64DecoderTest {
 
     @Test
     void decode_string_invalid_character() {
-        ByteBuffer buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
+        var buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
         assertThrows(IOException.class, () -> {
             new Base64Decoder().decode(ByteBuffer.wrap(INVALID_CHARACTER.getBytes(US_ASCII)), buffer);
@@ -251,22 +251,22 @@ class Base64DecoderTest {
                     throw new IllegalStateException();
                 }
 
-                int last = this.last;
-                int state = this.state;
-                boolean wrap = this.wrap;
-                int count = this.count;
-                final byte[] encodingTable = FlexBase64.ENCODING_TABLE;
+                var last = this.last;
+                var state = this.state;
+                var wrap = this.wrap;
+                var count = this.count;
+                final var encodingTable = FlexBase64.ENCODING_TABLE;
 
-                int remaining = source.remaining();
+                var remaining = source.remaining();
                 while (remaining > 0) {
                     // Unrolled state machine for performance (resumes and executes all states in one iteration)
-                    int require = 4 - state;
+                    var require = 4 - state;
                     require = wrap && (count >= 72) ? require + 2 : require;
                     if (target.remaining() < require) {
                         break;
                     }
                     //  ( 6 | 2) (4 | 4) (2 | 6)
-                    int sourceByte = source.get() & 0xFF;
+                    var sourceByte = source.get() & 0xFF;
                     if (state == 0) {
                         target.put(encodingTable[sourceByte >>> 2]);
                         last = (sourceByte & 0x3) << 4;
@@ -316,7 +316,7 @@ class Base64DecoderTest {
             void complete(ByteBuffer target) {
                 if (state > 0) {
                     target.put(ENCODING_TABLE[last]);
-                    for (int i = state; i < 3; i++) {
+                    for (var i = state; i < 3; i++) {
                         target.put((byte)'=');
                     }
 
@@ -334,20 +334,20 @@ class Base64DecoderTest {
 
     @Test
     void testEncoderDecoderBuffer() throws IOException {
-        byte[] nums = new byte[32768];
-        for (int i = 0; i < 32768; i++) {
+        var nums = new byte[32768];
+        for (var i = 0; i < 32768; i++) {
             nums[i] = (byte)(i % 255);
         }
 
-        ByteBuffer source = ByteBuffer.wrap(nums);
-        ByteBuffer target = ByteBuffer.allocate(65535);
+        var source = ByteBuffer.wrap(nums);
+        var target = ByteBuffer.allocate(65535);
 
-        FlexBase64.Encoder encoder = FlexBase64.createEncoder(true);
+        var encoder = FlexBase64.createEncoder(true);
         encoder.encode(source, target);
         encoder.complete(target);
 
-        ByteBuffer decoded = ByteBuffer.allocate(nums.length);
-        Base64Decoder decoder = new Base64Decoder();
+        var decoded = ByteBuffer.allocate(nums.length);
+        var decoder = new Base64Decoder();
         target.flip();
         decoder.decode(target, decoded);
 
@@ -355,40 +355,40 @@ class Base64DecoderTest {
 
         assertEquals(nums.length, decoded.remaining());
 
-        for (byte num : nums) {
+        for (var num : nums) {
             assertEquals(num, decoded.get());
         }
     }
 
     @Test
     void testEncoderDecoderBufferLoops() throws IOException {
-        byte[] nums = new byte[32768];
-        for (int i = 0; i < 32768; i++) {
+        var nums = new byte[32768];
+        for (var i = 0; i < 32768; i++) {
             nums[i] = (byte)(i % 255);
         }
-        ByteBuffer source = ByteBuffer.wrap(nums);
-        ByteBuffer target = ByteBuffer.allocate(65535);
+        var source = ByteBuffer.wrap(nums);
+        var target = ByteBuffer.allocate(65535);
 
-        FlexBase64.Encoder encoder = FlexBase64.createEncoder(true);
-        int limit = target.limit();
+        var encoder = FlexBase64.createEncoder(true);
+        var limit = target.limit();
         target.limit(100);
         while (source.remaining() > 0) {
             encoder.encode(source, target);
-            int add = limit - target.position();
+            var add = limit - target.position();
             add = add < 100 ? add : 100;
             target.limit(target.limit() + add);
         }
         encoder.complete(target);
 
-        ByteBuffer decoded = ByteBuffer.allocate(nums.length);
-        Base64Decoder decoder = new Base64Decoder();
+        var decoded = ByteBuffer.allocate(nums.length);
+        var decoder = new Base64Decoder();
         target.flip();
 
         limit = decoded.limit();
         decoded.limit(100);
         while (target.remaining() > 0) {
             decoder.decode(target, decoded);
-            int add = limit - decoded.position();
+            var add = limit - decoded.position();
             add = add < 100 ? add : 100;
             decoded.limit(decoded.position() + add);
         }
@@ -397,7 +397,7 @@ class Base64DecoderTest {
 
         assertEquals(nums.length, decoded.remaining());
 
-        for (byte num : nums) {
+        for (var num : nums) {
             assertEquals(num, decoded.get());
         }
     }

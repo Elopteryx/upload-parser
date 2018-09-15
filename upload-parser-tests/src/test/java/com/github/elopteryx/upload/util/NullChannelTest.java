@@ -15,13 +15,13 @@ class NullChannelTest {
 
     @Test
     void read_from_open_channel() throws Exception {
-        NullChannel channel = new NullChannel();
+        var channel = new NullChannel();
         assertEquals(-1, channel.read(ByteBuffer.allocate(0)));
     }
 
     @Test
     void read_from_closed_channel() {
-        NullChannel channel = new NullChannel();
+        var channel = new NullChannel();
         assertTrue(channel.isOpen());
         channel.close();
         assertFalse(channel.isOpen());
@@ -30,13 +30,13 @@ class NullChannelTest {
 
     @Test
     void write_to_open_channel() throws IOException {
-        NullChannel channel = new NullChannel();
+        var channel = new NullChannel();
         channel.write(ByteBuffer.allocate(0));
     }
 
     @Test
     void write_to_closed_channel() {
-        NullChannel channel = new NullChannel();
+        var channel = new NullChannel();
         assertTrue(channel.isOpen());
         channel.close();
         assertFalse(channel.isOpen());

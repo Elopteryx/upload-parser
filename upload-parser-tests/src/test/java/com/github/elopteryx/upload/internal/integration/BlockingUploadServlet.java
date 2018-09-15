@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import com.github.elopteryx.upload.OnRequestComplete;
 import com.github.elopteryx.upload.PartOutput;
-import com.github.elopteryx.upload.PartStream;
-import com.github.elopteryx.upload.UploadContext;
 import com.github.elopteryx.upload.UploadParser;
 import com.github.elopteryx.upload.util.NullChannel;
 
@@ -26,7 +24,7 @@ public class BlockingUploadServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String query = request.getQueryString();
+        var query = request.getQueryString();
         switch (query) {
             case ClientRequest.SIMPLE:
                 simple(request, response);
@@ -47,10 +45,10 @@ public class BlockingUploadServlet extends HttpServlet {
     }
 
     private void simple(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        UploadContext context = UploadParser.newParser()
+        var context = UploadParser.newParser()
                 .onPartEnd(context1 -> {
                     if (context1.getCurrentOutput() != null && context1.getCurrentOutput().safeToCast(Channel.class)) {
-                        Channel channel = context1.getCurrentOutput().unwrap(Channel.class);
+                        var channel = context1.getCurrentOutput().unwrap(Channel.class);
                         if (channel.isOpen()) {
                             fail("The parser should close it!");
                         }
@@ -65,7 +63,7 @@ public class BlockingUploadServlet extends HttpServlet {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    final PartStream currentPart = context.getCurrentPart();
+                    final var currentPart = context.getCurrentPart();
                     assertTrue(currentPart.isFinished());
                     return PartOutput.from(new NullChannel());
                 })
@@ -78,7 +76,7 @@ public class BlockingUploadServlet extends HttpServlet {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    final PartStream currentPart = context.getCurrentPart();
+                    final var currentPart = context.getCurrentPart();
                     assertFalse(currentPart.isFinished());
                     return PartOutput.from(new NullChannel());
                 })
@@ -97,7 +95,7 @@ public class BlockingUploadServlet extends HttpServlet {
 
     private static OnRequestComplete onSuccessfulFinish(HttpServletRequest request, HttpServletResponse response, int size) {
         return context -> {
-            final PartStream currentPart = context.getCurrentPart();
+            final var currentPart = context.getCurrentPart();
             assertTrue(currentPart.isFinished());
             assertEquals(size, currentPart.getKnownSize());
             assertFalse(request.isAsyncStarted());

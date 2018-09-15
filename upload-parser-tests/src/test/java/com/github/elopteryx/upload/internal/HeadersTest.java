@@ -13,7 +13,7 @@ class HeadersTest {
 
     @Test
     void add_and_retrieve_headers() {
-        Headers headers = new Headers();
+        var headers = new Headers();
         headers.addHeader(Headers.CONTENT_DISPOSITION, "form-data; name=\"FileItem\"; filename=\"file1.txt\"");
         headers.addHeader(Headers.CONTENT_TYPE, "text/plain");
         headers.addHeader("TestHeader", "headerValue1");
@@ -21,7 +21,7 @@ class HeadersTest {
         headers.addHeader("TestHeader", "headerValue3");
         headers.addHeader("testheader", "headerValue4");
 
-        Iterator<String> headerNames = headers.getHeaderNames().iterator();
+        var headerNames = headers.getHeaderNames().iterator();
         assertEquals(Headers.CONTENT_DISPOSITION.toLowerCase(), headerNames.next());
         assertEquals(Headers.CONTENT_TYPE.toLowerCase(), headerNames.next());
         assertEquals("testheader", headerNames.next());

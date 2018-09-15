@@ -142,9 +142,9 @@ public class PartStreamImpl implements PartStream {
 
     private String checkFileName(String fileName) {
         if (fileName != null && fileName.indexOf('\u0000') != -1) {
-            final StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < fileName.length(); i++) {
-                char character = fileName.charAt(i);
+            final var sb = new StringBuilder();
+            for (var i = 0; i < fileName.length(); i++) {
+                var character = fileName.charAt(i);
                 switch (character) {
                     case 0:
                         sb.append("\\0");

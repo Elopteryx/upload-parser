@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.SocketException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Supplier;
 import javax.servlet.http.HttpServletResponse;
@@ -36,7 +35,7 @@ class TomcatIntegrationTest {
     static void setUpClass() throws Exception {
         server = new Tomcat();
 
-        Path base = Paths.get("build/tomcat");
+        var base = Paths.get("build/tomcat");
         Files.createDirectories(base);
 
         server.setPort(8100);
@@ -45,9 +44,9 @@ class TomcatIntegrationTest {
         server.getHost().setAutoDeploy(true);
         server.getHost().setDeployOnStartup(true);
 
-        StandardContext context = (StandardContext) server.addWebapp("", base.toAbsolutePath().toString());
+        var context = (StandardContext) server.addWebapp("", base.toAbsolutePath().toString());
 
-        Path additionWebInfClasses = Paths.get("build/classes");
+        var additionWebInfClasses = Paths.get("build/classes");
         WebResourceRoot resources = new StandardRoot(context);
         resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes",
                 additionWebInfClasses.toAbsolutePath().toString(), "/"));

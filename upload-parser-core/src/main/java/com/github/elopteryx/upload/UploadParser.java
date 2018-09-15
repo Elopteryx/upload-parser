@@ -242,7 +242,7 @@ public class UploadParser {
         if (!isMultipart(request)) {
             throw new IllegalArgumentException("Not a multipart request!");
         }
-        AsyncUploadParser parser = new AsyncUploadParser(request);
+        var parser = new AsyncUploadParser(request);
         build(parser);
         parser.setupAsyncParse();
     }
@@ -261,7 +261,7 @@ public class UploadParser {
         if (!isMultipart(request)) {
             throw new IllegalArgumentException("Not a multipart request!");
         }
-        BlockingUploadParser parser = new BlockingUploadParser(request);
+        var parser = new BlockingUploadParser(request);
         build(parser);
         return parser.doBlockingParse();
     }

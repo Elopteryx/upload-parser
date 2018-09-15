@@ -91,7 +91,7 @@ public class AsyncUploadParser extends AbstractUploadParser implements ReadListe
      * @throws IOException if an I/O related error has occurred during processing
      */
     private boolean parseCurrentItem() throws IOException {
-        int count = -1;
+        var count = -1;
         if (!servletInputStream.isFinished()) {
             count = servletInputStream.read(dataBuffer.array());
         }

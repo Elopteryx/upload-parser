@@ -46,10 +46,10 @@ class InputStreamBackedChannel implements ReadableByteChannel {
         if (dst.isDirect() || dst.isReadOnly()) {
             throw new IllegalArgumentException("The buffer cannot be direct or read-only!");
         }
-        byte[] buf = dst.array();
-        int offset = dst.position();
-        int len = dst.remaining();
-        int read = inputStream.read(buf, offset, len);
+        var buf = dst.array();
+        var offset = dst.position();
+        var len = dst.remaining();
+        var read = inputStream.read(buf, offset, len);
         dst.position(offset + read);
         return read;
     }

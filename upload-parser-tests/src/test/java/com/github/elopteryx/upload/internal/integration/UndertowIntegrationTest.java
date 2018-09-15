@@ -5,10 +5,7 @@ import static com.github.elopteryx.upload.internal.integration.RequestSupplier.w
 
 import io.undertow.Handlers;
 import io.undertow.Undertow;
-import io.undertow.server.handlers.PathHandler;
 import io.undertow.servlet.Servlets;
-import io.undertow.servlet.api.DeploymentInfo;
-import io.undertow.servlet.api.DeploymentManager;
 import org.apache.http.HttpEntity;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,7 +26,7 @@ class UndertowIntegrationTest {
      */
     @BeforeAll
     static void setUpClass() throws Exception {
-        DeploymentInfo servletBuilder = Servlets.deployment()
+        var servletBuilder = Servlets.deployment()
                 .setClassLoader(UndertowIntegrationTest.class.getClassLoader())
                 .setContextPath("/")
                 .setDeploymentName("ROOT.war")
@@ -42,9 +39,9 @@ class UndertowIntegrationTest {
                                 .setAsyncSupported(false)
                 );
 
-        DeploymentManager manager = Servlets.defaultContainer().addDeployment(servletBuilder);
+        var manager = Servlets.defaultContainer().addDeployment(servletBuilder);
         manager.deploy();
-        PathHandler path = Handlers.path(Handlers.redirect("/")).addPrefixPath("/", manager.start());
+        var path = Handlers.path(Handlers.redirect("/")).addPrefixPath("/", manager.start());
 
         server = Undertow.builder()
                 .addHttpListener(8080, "localhost")

@@ -62,9 +62,9 @@ public class OutputStreamBackedChannel implements WritableByteChannel {
         if (src.isDirect() || src.isReadOnly()) {
             throw new IllegalArgumentException("The buffer cannot be direct or read-only!");
         }
-        byte[] buf = src.array();
-        int offset = src.position();
-        int len = src.remaining();
+        var buf = src.array();
+        var offset = src.position();
+        var len = src.remaining();
         outputStream.write(buf, offset, len);
         src.position(offset + len);
         return len;

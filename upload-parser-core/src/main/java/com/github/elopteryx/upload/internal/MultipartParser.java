@@ -75,7 +75,7 @@ public class MultipartParser {
     public static ParseState beginParse(final PartHandler handler, final byte[] boundary, int bufferSize, final Charset requestCharset) {
 
         // We prepend CR/LF to the boundary to chop trailing CR/LF from body-data tokens.
-        byte[] boundaryToken = new byte[boundary.length + BOUNDARY_PREFIX.length];
+        var boundaryToken = new byte[boundary.length + BOUNDARY_PREFIX.length];
         System.arraycopy(BOUNDARY_PREFIX, 0, boundaryToken, 0, BOUNDARY_PREFIX.length);
         System.arraycopy(boundary, 0, boundaryToken, BOUNDARY_PREFIX.length, boundary.length);
         return new ParseState(handler, bufferSize, requestCharset, boundaryToken);
@@ -143,7 +143,7 @@ public class MultipartParser {
 
         private void preamble(final ByteBuffer buffer) {
             while (buffer.hasRemaining()) {
-                final byte b = buffer.get();
+                final var b = buffer.get();
                 if (subState >= 0) {
                     //handle the case of no preamble. In this case there is no CRLF
                     if (subState == Integer.MAX_VALUE) {
@@ -178,7 +178,7 @@ public class MultipartParser {
 
         private void headerName(final ByteBuffer buffer) throws MultipartException {
             while (buffer.hasRemaining()) {
-                final byte b = buffer.get();
+                final var b = buffer.get();
                 if (b == ':') {
                     if (currentString == null || subState != 0) {
                         throw new MultipartException("Invalid multipart request!");
@@ -203,7 +203,7 @@ public class MultipartParser {
                     subState = 0;
                     partHandler.beginPart(headers);
                     //select the appropriate encoding
-                    String encoding = headers.getHeader(CONTENT_TRANSFER_ENCODING);
+                    var encoding = headers.getHeader(CONTENT_TRANSFER_ENCODING);
                     if (encoding == null) {
                         encodingHandler = new IdentityEncoding();
                     } else if (encoding.equalsIgnoreCase("base64")) {
@@ -229,7 +229,7 @@ public class MultipartParser {
 
         private void headerValue(final ByteBuffer buffer) throws MultipartException {
             while (buffer.hasRemaining()) {
-                final byte b = buffer.get();
+                final var b = buffer.get();
                 if (b == CR) {
                     subState = 1;
                 } else if (b == LF) {
@@ -251,10 +251,10 @@ public class MultipartParser {
         }
 
         private void entity(final ByteBuffer buffer) throws IOException {
-            int startingSubState = subState;
-            int pos = buffer.position();
+            var startingSubState = subState;
+            var pos = buffer.position();
             while (buffer.hasRemaining()) {
-                final byte b = buffer.get();
+                final var b = buffer.get();
                 if (subState >= 0) {
                     if (b == boundary[subState]) {
                         //if we have a potential boundary match
@@ -262,7 +262,7 @@ public class MultipartParser {
                         if (subState == boundary.length) {
                             startingSubState = 0;
                             //we have our data
-                            ByteBuffer retBuffer = buffer.duplicate();
+                            var retBuffer = buffer.duplicate();
                             retBuffer.position(pos);
 
                             retBuffer.limit(Math.max(buffer.position() - boundary.length, 0));
@@ -315,7 +315,7 @@ public class MultipartParser {
                 }
             }
             //handle the data we read so far
-            ByteBuffer retBuffer = buffer.duplicate();
+            var retBuffer = buffer.duplicate();
             retBuffer.position(pos);
             if (subState == 0) {
                 //if we end partially through a boundary we do not handle the data
@@ -384,12 +384,12 @@ public class MultipartParser {
 
         @Override
         public void handle(final PartHandler handler, final ByteBuffer rawData) throws IOException {
-            boolean equalsSeen = this.equalsSeen;
-            byte firstCharacter = this.firstCharacter;
+            var equalsSeen = this.equalsSeen;
+            var firstCharacter = this.firstCharacter;
             buffer.clear();
             try {
                 while (rawData.hasRemaining()) {
-                    byte readByte = rawData.get();
+                    var readByte = rawData.get();
                     if (equalsSeen) {
                         if (firstCharacter == 0) {
                             if (readByte == '\n' || readByte == '\r') {
@@ -400,7 +400,7 @@ public class MultipartParser {
                                 firstCharacter = readByte;
                             }
                         } else {
-                            int result = Character.digit((char) firstCharacter, 16);
+                            var result = Character.digit((char) firstCharacter, 16);
                             result <<= 4; //shift it 4 bytes and then add the next value to the end
                             result += Character.digit((char) readByte, 16);
                             buffer.put((byte) result);

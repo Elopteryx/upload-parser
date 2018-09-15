@@ -39,8 +39,8 @@ class Base64Decoder {
 
     static {
         ENCODING_TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".getBytes(US_ASCII);
-        for (int i = 0; i < ENCODING_TABLE.length; i++) {
-            int offSet = (ENCODING_TABLE[i] & 0xFF) - 43;
+        for (var i = 0; i < ENCODING_TABLE.length; i++) {
+            var offSet = (ENCODING_TABLE[i] & 0xFF) - 43;
             DECODING_TABLE[offSet] = (byte)(i + 1);  // zero = illegal
         }
     }
@@ -81,7 +81,7 @@ class Base64Decoder {
             }
             throw new IOException("Invalid base64 character encountered: " + charInt);
         }
-        int byteInt = (DECODING_TABLE[charInt - 43] & 0xFF) - 1;
+        var byteInt = (DECODING_TABLE[charInt - 43] & 0xFF) - 1;
         if (byteInt < 0) {
             if (ignoreErrors) {
                 return ERROR;
@@ -108,12 +108,12 @@ class Base64Decoder {
             throw new IllegalStateException();
         }
 
-        int last = this.last;
-        int state = this.state;
+        var last = this.last;
+        var state = this.state;
 
-        int remaining = source.remaining();
-        int targetRemaining = target.remaining();
-        int byteInt = 0;
+        var remaining = source.remaining();
+        var targetRemaining = target.remaining();
+        var byteInt = 0;
         while (remaining-- > 0 && targetRemaining > 0) {
             byteInt = nextByte(source, state, last, false);
             if (byteInt == MARK) {

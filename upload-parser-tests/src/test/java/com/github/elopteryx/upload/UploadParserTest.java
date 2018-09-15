@@ -17,10 +17,8 @@ import org.junit.jupiter.api.Test;
 import java.nio.ByteBuffer;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
@@ -34,7 +32,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
     @Test
     void valid_content_type() throws Exception {
-        HttpServletRequest request = newRequest();
+        var request = newRequest();
 
         when(request.getContentType()).thenReturn("multipart/");
         assertTrue(UploadParser.isMultipart(request));
@@ -52,7 +50,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
     @Test
     void invalid_content_type_async() throws Exception {
-        HttpServletRequest request = newRequest();
+        var request = newRequest();
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
         assertFalse(UploadParser.isMultipart(request));
@@ -63,7 +61,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
     @Test
     void invalid_content_type_blocking() throws Exception {
-        HttpServletRequest request = newRequest();
+        var request = newRequest();
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
         assertFalse(UploadParser.isMultipart(request));
@@ -74,8 +72,8 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
     @Test
     void use_the_full_api() throws Exception {
-        HttpServletRequest request = newRequest();
-        HttpServletResponse response = newResponse();
+        var request = newRequest();
+        var response = newResponse();
 
         when(request.startAsync()).thenReturn(mock(AsyncContext.class));
         when(request.getInputStream()).thenReturn(mock(ServletInputStream.class));
@@ -97,7 +95,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     void output_channel() {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    Path test = fileSystem.getPath("test1");
+                    var test = fileSystem.getPath("test1");
                     Files.createFile(test);
                     return PartOutput.from(Files.newByteChannel(test));
                 });
@@ -107,7 +105,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     void output_stream() {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    Path test = fileSystem.getPath("test2");
+                    var test = fileSystem.getPath("test2");
                     Files.createFile(test);
                     return PartOutput.from(Files.newOutputStream(test));
                 });
@@ -117,7 +115,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     void output_path() {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    Path test = fileSystem.getPath("test2");
+                    var test = fileSystem.getPath("test2");
                     Files.createFile(test);
                     return PartOutput.from(test);
                 });
@@ -128,7 +126,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
         UploadParser.newParser()
                 .userObject(newResponse())
                 .onPartBegin((context, buffer) -> {
-                    Path test = fileSystem.getPath("test2");
+                    var test = fileSystem.getPath("test2");
                     Files.createFile(test);
                     return PartOutput.from(test);
                 })

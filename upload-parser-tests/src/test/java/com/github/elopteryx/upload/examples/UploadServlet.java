@@ -1,12 +1,10 @@
 package com.github.elopteryx.upload.examples;
 
 import com.github.elopteryx.upload.PartOutput;
-import com.github.elopteryx.upload.PartStream;
 import com.github.elopteryx.upload.UploadParser;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -28,8 +26,8 @@ public class UploadServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
 
-        String applicationPath = request.getServletContext().getRealPath("");
-        final Path uploadFilePath = Paths.get(applicationPath, UPLOAD_DIR);
+        var applicationPath = request.getServletContext().getRealPath("");
+        final var uploadFilePath = Paths.get(applicationPath, UPLOAD_DIR);
 
         if (!Files.isDirectory(uploadFilePath)) {
             Files.createDirectories(uploadFilePath);
@@ -42,8 +40,8 @@ public class UploadServlet extends HttpServlet {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    PartStream part = context.getCurrentPart();
-                    Path path = uploadFilePath.resolve(part.getSubmittedFileName());
+                    var part = context.getCurrentPart();
+                    var path = uploadFilePath.resolve(part.getSubmittedFileName());
                     return PartOutput.from(path);
                 })
                 .onRequestComplete(context -> context.getUserObject(HttpServletResponse.class).setStatus(200))

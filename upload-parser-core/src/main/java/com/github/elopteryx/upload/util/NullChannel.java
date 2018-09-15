@@ -52,7 +52,7 @@ public class NullChannel implements ReadableByteChannel, WritableByteChannel {
         if (!open) {
             throw new ClosedChannelException();
         }
-        int remaining = src.remaining();
+        var remaining = src.remaining();
         src.position(src.limit());
         return remaining;
     }

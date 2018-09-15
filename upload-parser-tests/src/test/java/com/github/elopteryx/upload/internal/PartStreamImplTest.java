@@ -11,10 +11,10 @@ class PartStreamImplTest {
 
     @Test
     void it_should_return_the_correct_data() {
-        String fileName = "r-" + System.currentTimeMillis();
-        String fieldName = "r-" + System.currentTimeMillis();
-        String contentType = "r-" + System.currentTimeMillis();
-        Headers headers = new Headers();
+        var fileName = "r-" + System.currentTimeMillis();
+        var fieldName = "r-" + System.currentTimeMillis();
+        var contentType = "r-" + System.currentTimeMillis();
+        var headers = new Headers();
         headers.addHeader(Headers.CONTENT_TYPE, contentType);
         PartStream partStream = new PartStreamImpl(fileName, fieldName, headers);
         assertEquals(fileName, partStream.getSubmittedFileName());
@@ -26,7 +26,7 @@ class PartStreamImplTest {
 
     @Test
     void invalid_file_names_are_not_allowed() {
-        String fileName = "r-" + System.currentTimeMillis() + '\u0000';
+        var fileName = "r-" + System.currentTimeMillis() + '\u0000';
         PartStream partStream = new PartStreamImpl(fileName, null, new Headers());
         assertThrows(IllegalArgumentException.class, partStream::getSubmittedFileName);
     }

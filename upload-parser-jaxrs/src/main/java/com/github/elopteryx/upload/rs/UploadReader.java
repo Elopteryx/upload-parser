@@ -21,7 +21,6 @@ import com.github.elopteryx.upload.OnPartEnd;
 import com.github.elopteryx.upload.PartOutput;
 import com.github.elopteryx.upload.UploadContext;
 import com.github.elopteryx.upload.internal.Headers;
-import com.github.elopteryx.upload.rs.internal.MultiPartImpl;
 import com.github.elopteryx.upload.rs.internal.RestUploadParser;
 
 import java.io.ByteArrayOutputStream;
@@ -101,9 +100,9 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
         if (MultiPart.class.equals(type)) {
             return multiPart;
         } else if (Part.class.equals(type)) {
-            for (Annotation annotation : annotations) {
+            for (var annotation : annotations) {
                 if (annotation instanceof UploadParam) {
-                    UploadParam formParam = (UploadParam)annotation;
+                    var formParam = (UploadParam)annotation;
                     return providePart(formParam.value());
                 }
             }
@@ -120,9 +119,9 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
 
     private void parse(Annotation[] annotations, MultivaluedMap<String, String> httpHeaders,
                        InputStream entityStream) throws IOException {
-        for (Annotation annotation : annotations) {
+        for (var annotation : annotations) {
             if (annotation instanceof UploadConfig) {
-                UploadConfig config = (UploadConfig)annotation;
+                var config = (UploadConfig)annotation;
                 parser.setSizeThreshold(config.sizeThreshold());
                 parser.setMaxPartSize(config.maxPartSize());
                 parser.setMaxRequestSize(config.maxRequestSize());
@@ -131,9 +130,9 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
         }
 
         long requestSize = Long.valueOf(httpHeaders.getFirst(Headers.CONTENT_LENGTH));
-        String mimeType = httpHeaders.getFirst(Headers.CONTENT_TYPE);
-        String encodingHeader = httpHeaders.getFirst(Headers.CONTENT_ENCODING);
-        MultiPartImpl multiPart = parser.doBlockingParse(requestSize, mimeType, encodingHeader, entityStream);
+        var mimeType = httpHeaders.getFirst(Headers.CONTENT_TYPE);
+        var encodingHeader = httpHeaders.getFirst(Headers.CONTENT_ENCODING);
+        var multiPart = parser.doBlockingParse(requestSize, mimeType, encodingHeader, entityStream);
         multiPart.setHeaders(httpHeaders);
         this.multiPart = multiPart;
     }

@@ -10,7 +10,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -30,16 +29,16 @@ final class RequestSupplier {
     static {
         emptyFile = new byte[0];
         smallFile = "0123456789".getBytes(UTF_8);
-        Random random = new Random();
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < 100000; i++) {
+        var random = new Random();
+        var builder = new StringBuilder();
+        for (var i = 0; i < 100000; i++) {
             builder.append(random.nextInt(100));
         }
         largeFile = builder.toString().getBytes(UTF_8);
     }
 
     static Supplier<HttpEntity> withSeveralFields() {
-        final HttpEntity entity = MultipartEntityBuilder.create()
+        final var entity = MultipartEntityBuilder.create()
                 .addBinaryBody("filefield1", largeFile, ContentType.create("application/octet-stream"), "file1.txt")
                 .addBinaryBody("filefield2", emptyFile, ContentType.create("text/plain"), "file2.txt")
                 .addBinaryBody("filefield3", smallFile, ContentType.create("application/octet-stream"), "file3.txt")
@@ -54,7 +53,7 @@ final class RequestSupplier {
     }
 
     static Supplier<HttpEntity> withOneSmallerPicture() {
-        final HttpEntity entity = MultipartEntityBuilder.create()
+        final var entity = MultipartEntityBuilder.create()
                 .addBinaryBody("filefield", new byte[512], ContentType.create("image/jpeg"), "test.jpg")
                 .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
                 .build();
@@ -62,7 +61,7 @@ final class RequestSupplier {
     }
 
     static Supplier<HttpEntity> withOneLargerPicture() {
-        final HttpEntity entity = MultipartEntityBuilder.create()
+        final var entity = MultipartEntityBuilder.create()
                 .addBinaryBody("filefield", new byte[2048], ContentType.create("image/jpeg"), "test.jpg")
                 .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
                 .build();
@@ -71,7 +70,7 @@ final class RequestSupplier {
 
     private static byte[] getContents(String resource) {
         try {
-            final Path path = Paths.get(ClientRequest.class.getResource(resource).toURI());
+            final var path = Paths.get(ClientRequest.class.getResource(resource).toURI());
             return Files.readAllBytes(path);
         } catch (final URISyntaxException | IOException e) {
             throw new RuntimeException(e);

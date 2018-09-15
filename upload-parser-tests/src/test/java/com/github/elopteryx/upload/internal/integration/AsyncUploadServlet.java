@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import com.github.elopteryx.upload.OnRequestComplete;
 import com.github.elopteryx.upload.PartOutput;
-import com.github.elopteryx.upload.PartStream;
 import com.github.elopteryx.upload.UploadParser;
 import com.github.elopteryx.upload.util.ByteBufferBackedInputStream;
 import com.github.elopteryx.upload.util.NullChannel;
@@ -20,7 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.channels.Channel;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -38,7 +36,7 @@ public class AsyncUploadServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String query = request.getQueryString();
+        var query = request.getQueryString();
         switch (query) {
             case ClientRequest.SIMPLE:
                 simple(request, response);
@@ -71,16 +69,16 @@ public class AsyncUploadServlet extends HttpServlet {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
                     if (context.getPartStreams().size() == 1) {
-                        Path dir = ClientRequest.fileSystem.getPath("");
-                        Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
+                        var dir = ClientRequest.fileSystem.getPath("");
+                        var temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
                         return PartOutput.from(Files.newByteChannel(temp, EnumSet.of(CREATE, TRUNCATE_EXISTING, WRITE)));
                     } else if (context.getPartStreams().size() == 2) {
-                        Path dir = ClientRequest.fileSystem.getPath("");
-                        Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
+                        var dir = ClientRequest.fileSystem.getPath("");
+                        var temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
                         return PartOutput.from(Files.newOutputStream(temp));
                     } else if (context.getPartStreams().size() == 3) {
-                        Path dir = ClientRequest.fileSystem.getPath("");
-                        Path temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
+                        var dir = ClientRequest.fileSystem.getPath("");
+                        var temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
                         return PartOutput.from(temp);
                     } else {
                         return PartOutput.from(new NullChannel());
@@ -88,7 +86,7 @@ public class AsyncUploadServlet extends HttpServlet {
                 })
                 .onPartEnd(context -> {
                     if (context.getCurrentOutput() != null && context.getCurrentOutput().safeToCast(Channel.class)) {
-                        Channel channel = context.getCurrentOutput().unwrap(Channel.class);
+                        var channel = context.getCurrentOutput().unwrap(Channel.class);
                         if (channel.isOpen()) {
                             fail("The parser should close it!");
                         }
@@ -111,7 +109,7 @@ public class AsyncUploadServlet extends HttpServlet {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    final PartStream currentPart = context.getCurrentPart();
+                    final var currentPart = context.getCurrentPart();
                     assertTrue(currentPart.isFinished());
                     return PartOutput.from(new NullChannel());
                 })
@@ -124,7 +122,7 @@ public class AsyncUploadServlet extends HttpServlet {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    final PartStream currentPart = context.getCurrentPart();
+                    final var currentPart = context.getCurrentPart();
                     assertFalse(currentPart.isFinished());
                     return PartOutput.from(new NullChannel());
                 })
@@ -169,10 +167,10 @@ public class AsyncUploadServlet extends HttpServlet {
             throw new ServletException("Not multipart!");
         }
 
-        AtomicInteger partCounter = new AtomicInteger(0);
+        var partCounter = new AtomicInteger(0);
         List<ByteArrayOutputStream> formFields = new ArrayList<>();
 
-        List<String> expectedContentTypes = Arrays.asList(
+        var expectedContentTypes = Arrays.asList(
                 "text/plain",
                 "text/plain",
                 "text/plain",
@@ -184,37 +182,37 @@ public class AsyncUploadServlet extends HttpServlet {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    PartStream part = context.getCurrentPart();
+                    var part = context.getCurrentPart();
 
-                    String detectedType = ClientRequest.tika.detect(new ByteBufferBackedInputStream(buffer), part.getSubmittedFileName());
-                    String expectedType = expectedContentTypes.get(partCounter.getAndIncrement());
+                    var detectedType = ClientRequest.tika.detect(new ByteBufferBackedInputStream(buffer), part.getSubmittedFileName());
+                    var expectedType = expectedContentTypes.get(partCounter.getAndIncrement());
                     if (expectedType.equals("text/plain")) {
                         assertTrue(detectedType.equals("text/plain") || detectedType.equals("application/octet-stream"));
                     } else {
                         assertEquals(detectedType, expectedType);
                     }
 
-                    String name = part.getName();
+                    var name = part.getName();
                     if (part.isFile()) {
                         if ("".equals(part.getSubmittedFileName())) {
                             throw new IOException("No file was chosen for the form field!");
                         }
                         System.out.println("File field " + name + " with file name "
                                 + part.getSubmittedFileName() + " detected!");
-                        for (String header : part.getHeaderNames()) {
+                        for (var header : part.getHeaderNames()) {
                             System.out.println(header + " " + part.getHeader(header));
                         }
                         part.getHeaders("content-type");
                         System.out.println(part.getContentType());
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        var baos = new ByteArrayOutputStream();
                         formFields.add(baos);
                         return PartOutput.from(baos);
                     } else {
-                        for (String header : part.getHeaderNames()) {
+                        for (var header : part.getHeaderNames()) {
                             System.out.println(header + " " + part.getHeader(header));
                         }
                         System.out.println(part.getContentType());
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        var baos = new ByteArrayOutputStream();
                         formFields.add(baos);
                         return PartOutput.from(baos);
                     }
@@ -250,7 +248,7 @@ public class AsyncUploadServlet extends HttpServlet {
 
     private static OnRequestComplete onSuccessfulFinish(HttpServletRequest request, HttpServletResponse response, int size) {
         return context -> {
-            final PartStream currentPart = context.getCurrentPart();
+            final var currentPart = context.getCurrentPart();
             assertTrue(currentPart.isFinished());
             assertEquals(size, currentPart.getKnownSize());
             assertTrue(request.isAsyncStarted());

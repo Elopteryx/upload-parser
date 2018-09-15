@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.github.elopteryx.upload.PartOutput;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -31,33 +29,33 @@ public class ReaderUploadController {
         assertEquals(8, multiPart.getParts().size());
         assertTrue(multiPart.getSize() > 0);
         assertFalse(multiPart.getHeaders().isEmpty());
-        for (Part part : parts) {
+        for (var part : parts) {
             assertTrue(part.getSize() >= 0);
             if (part.isFile()) {
-                String name = part.getName();
+                var name = part.getName();
                 if ("".equals(part.getSubmittedFileName())) {
                     throw new IOException("No file was chosen for the form field!");
                 }
                 System.out.println("File field " + name + " with file name "
                         + part.getSubmittedFileName() + " detected!");
-                for (String header : part.getHeaderNames()) {
+                for (var header : part.getHeaderNames()) {
                     System.out.println(header + " " + part.getHeader(header));
                 }
                 part.getHeaders("content-type");
                 System.out.println(part.getContentType());
-                PartOutput output = part.getOutPut();
+                var output = part.getOutPut();
                 if (output.safeToCast(ByteArrayOutputStream.class)) {
-                    ByteArrayOutputStream bos = output.unwrap(ByteArrayOutputStream.class);
+                    var bos = output.unwrap(ByteArrayOutputStream.class);
                     System.out.println(bos.toString());
                 }
             } else {
-                for (String header : part.getHeaderNames()) {
+                for (var header : part.getHeaderNames()) {
                     System.out.println(header + " " + part.getHeader(header));
                 }
                 System.out.println(part.getContentType());
-                PartOutput output = part.getOutPut();
+                var output = part.getOutPut();
                 if (output.safeToCast(ByteArrayOutputStream.class)) {
-                    ByteArrayOutputStream bos = output.unwrap(ByteArrayOutputStream.class);
+                    var bos = output.unwrap(ByteArrayOutputStream.class);
                     System.out.println(bos.toString());
                 }
             }

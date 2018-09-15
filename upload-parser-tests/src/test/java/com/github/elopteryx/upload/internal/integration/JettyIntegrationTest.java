@@ -31,7 +31,7 @@ class JettyIntegrationTest {
     static void setUpClass() throws Exception {
         server = new Server(8090);
 
-        ServletHandler handler = new ServletHandler();
+        var handler = new ServletHandler();
         server.setHandler(handler);
 
         handler.addServletWithMapping(AsyncUploadServlet.class, "/async");

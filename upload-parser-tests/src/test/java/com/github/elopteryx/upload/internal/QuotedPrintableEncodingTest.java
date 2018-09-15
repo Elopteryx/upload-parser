@@ -36,7 +36,7 @@ class QuotedPrintableEncodingTest {
     }
 
     private static void checkEncoding(final String original, String encoded) throws IOException {
-        MultipartParser.QuotedPrintableEncoding encoding = new MultipartParser.QuotedPrintableEncoding(1024);
+        var encoding = new MultipartParser.QuotedPrintableEncoding(1024);
         encoding.handle(new MultipartParser.PartHandler() {
 
             @Override
@@ -44,7 +44,7 @@ class QuotedPrintableEncodingTest {
 
             @Override
             public void data(ByteBuffer buffer) {
-                String parserResult = new String(buffer.array(), US_ASCII).trim();
+                var parserResult = new String(buffer.array(), US_ASCII).trim();
                 assertEquals(parserResult, original.trim());
             }
 

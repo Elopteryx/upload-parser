@@ -128,7 +128,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
 
         // Fail fast mode
         if (maxRequestSize > -1) {
-            long requestSize = request.getContentLengthLong();
+            var requestSize = request.getContentLengthLong();
             if (requestSize > maxRequestSize) {
                 throw new RequestSizeException("The size of the request (" + requestSize
                         + ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
@@ -138,7 +138,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
         checkBuffer = ByteBuffer.allocate(sizeThreshold);
         context = new UploadContextImpl(request, userObject);
 
-        String mimeType = request.getHeader(Headers.CONTENT_TYPE);
+        var mimeType = request.getHeader(Headers.CONTENT_TYPE);
         String boundary;
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
             boundary = Headers.extractBoundaryFromHeader(mimeType);
@@ -147,8 +147,8 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
                         + mimeType
                         + ", multipart data will not be available");
             }
-            String encodingHeader = request.getCharacterEncoding();
-            Charset charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
+            var encodingHeader = request.getCharacterEncoding();
+            var charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
             parseState = MultipartParser.beginParse(this, boundary.getBytes(), maxBytesUsed, charset);
         }
     }
@@ -187,10 +187,10 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
 
     @Override
     public void beginPart(final Headers headers) {
-        final String disposition = headers.getHeader(Headers.CONTENT_DISPOSITION);
+        final var disposition = headers.getHeader(Headers.CONTENT_DISPOSITION);
         if (disposition != null && disposition.startsWith("form-data")) {
-            String fieldName = Headers.extractQuotedValueFromHeader(disposition, "name");
-            String fileName = Headers.extractQuotedValueFromHeader(disposition, "filename");
+            var fieldName = Headers.extractQuotedValueFromHeader(disposition, "name");
+            var fileName = Headers.extractQuotedValueFromHeader(disposition, "filename");
             context.reset(new PartStreamImpl(fileName, fieldName, headers));
         }
     }
@@ -210,7 +210,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     }
 
     private void copyBuffer(final ByteBuffer buffer) {
-        int transferCount = Math.min(checkBuffer.remaining(), buffer.remaining());
+        var transferCount = Math.min(checkBuffer.remaining(), buffer.remaining());
         if (transferCount > 0) {
             checkBuffer.put(buffer.array(), buffer.arrayOffset() + buffer.position(), transferCount);
             buffer.position(buffer.position() + transferCount);
