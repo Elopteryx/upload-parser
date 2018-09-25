@@ -10,7 +10,7 @@ class RequestBuilder {
 
     private final ByteBuffer buffer;
 
-    private final byte[] boundary;
+    private final String boundary;
 
     static RequestBuilder newBuilder(String boundary) {
         return new RequestBuilder(boundary);
@@ -18,14 +18,17 @@ class RequestBuilder {
 
     private RequestBuilder(String boundary) {
         this.buffer = ByteBuffer.allocate(300_000);
-        this.boundary = boundary.getBytes(ISO_8859_1);
+        this.boundary = boundary;
     }
 
     RequestBuilder addFormField(String name, String value) {
         buffer.put(LINE_FEED);
-        buffer.put("--".getBytes(ISO_8859_1)).put(boundary).put(LINE_FEED);
-        buffer.put("Content-Disposition: form-data; name=\"".getBytes(ISO_8859_1)).put(name.getBytes(ISO_8859_1)).put("\"".getBytes(ISO_8859_1)).put(LINE_FEED);
-        buffer.put("Content-Type: text/plain; charset=".getBytes(ISO_8859_1)).put(ISO_8859_1.name().getBytes(ISO_8859_1)).put(LINE_FEED);
+        buffer.put(("--" + boundary).getBytes(ISO_8859_1));
+        buffer.put(LINE_FEED);
+        buffer.put(("Content-Disposition: form-data; name=\"" + name + "\"").getBytes(ISO_8859_1));
+        buffer.put(LINE_FEED);
+        buffer.put(("Content-Type: text/plain; charset=" + ISO_8859_1.name()).getBytes(ISO_8859_1));
+        buffer.put(LINE_FEED);
         buffer.put(LINE_FEED);
         buffer.put(value.getBytes(ISO_8859_1));
 
@@ -34,9 +37,12 @@ class RequestBuilder {
 
     RequestBuilder addFilePart(String fieldName, byte[] content, String contentType, String fileName) {
         buffer.put(LINE_FEED);
-        buffer.put("--".getBytes(ISO_8859_1)).put(boundary).put(LINE_FEED);
-        buffer.put("Content-Disposition: form-data; name=\"".getBytes(ISO_8859_1)).put(fieldName.getBytes(ISO_8859_1)).put("\"; filename=\"".getBytes(ISO_8859_1)).put(fileName.getBytes(ISO_8859_1)).put("\"".getBytes(ISO_8859_1)).put(LINE_FEED);
-        buffer.put("Content-Type: ".getBytes(ISO_8859_1)).put(contentType.getBytes(ISO_8859_1)).put(LINE_FEED);
+        buffer.put(("--" + boundary).getBytes(ISO_8859_1));
+        buffer.put(LINE_FEED);
+        buffer.put(("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + fileName + "\"").getBytes(ISO_8859_1));
+        buffer.put(LINE_FEED);
+        buffer.put(("Content-Type: " + contentType).getBytes(ISO_8859_1));
+        buffer.put(LINE_FEED);
         buffer.put(LINE_FEED);
         buffer.put(content);
 
@@ -45,7 +51,8 @@ class RequestBuilder {
 
     ByteBuffer finish() {
         buffer.put(LINE_FEED);
-        buffer.put("--".getBytes(ISO_8859_1)).put(boundary).put("--".getBytes(ISO_8859_1)).put(LINE_FEED);
+        buffer.put(("--" + boundary + "--").getBytes(ISO_8859_1));
+        buffer.put(LINE_FEED);
 
         buffer.flip();
         return buffer;
