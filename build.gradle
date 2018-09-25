@@ -40,7 +40,7 @@ subprojects {
         jettyVersion = "9.4.11.v20180605"
         tomcatVersion = "9.0.12"
         resteasyVersion = "3.6.1.Final"
-        tikaVersion = "1.18"
+        tikaVersion = "1.19"
         jimfsVersion = "1.1"
         mockitoVersion = "2.22.0"
     }
