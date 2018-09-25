@@ -36,7 +36,6 @@ subprojects {
         servletApiVersion = "3.1.0"
         jaxrsApiVersion = "2.0.1"
         junitVersion = '5.3.1'
-        apacheHttpVersion = "4.5.6"
         undertowVersion = "2.0.13.Final"
         jettyVersion = "9.4.11.v20180605"
         tomcatVersion = "9.0.12"

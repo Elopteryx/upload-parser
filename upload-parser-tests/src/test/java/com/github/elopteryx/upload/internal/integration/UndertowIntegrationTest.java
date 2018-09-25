@@ -6,13 +6,12 @@ import static com.github.elopteryx.upload.internal.integration.RequestSupplier.w
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.servlet.Servlets;
-import org.apache.http.HttpEntity;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.function.Supplier;
+import java.nio.ByteBuffer;
 import javax.servlet.http.HttpServletResponse;
 
 class UndertowIntegrationTest {
@@ -109,8 +108,8 @@ class UndertowIntegrationTest {
         ClientRequest.performRequest(url, expectedStatus);
     }
 
-    private void performRequest(String url, int expectedStatus, Supplier<HttpEntity> requestSupplier) throws IOException {
-        ClientRequest.performRequest(url, expectedStatus, requestSupplier);
+    private void performRequest(String url, int expectedStatus, ByteBuffer requestData) throws IOException {
+        ClientRequest.performRequest(url, expectedStatus, requestData);
     }
 
     @AfterAll

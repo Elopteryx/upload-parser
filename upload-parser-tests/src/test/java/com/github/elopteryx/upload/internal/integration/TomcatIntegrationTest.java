@@ -9,17 +9,14 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
-import org.apache.http.HttpEntity;
-import org.apache.http.NoHttpResponseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.SocketException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.function.Supplier;
 import javax.servlet.http.HttpServletResponse;
 
 class TomcatIntegrationTest {
@@ -58,64 +55,64 @@ class TomcatIntegrationTest {
     }
 
     @Test
-    void test_with_a_real_request_simple_async() throws IOException {
+    void test_with_a_real_request_simple_async() {
         performRequest("http://localhost:8100/async?" + ClientRequest.SIMPLE, HttpServletResponse.SC_OK);
     }
 
     @Test
-    void test_with_a_real_request_simple_blocking() throws IOException {
+    void test_with_a_real_request_simple_blocking() {
         performRequest("http://localhost:8100/blocking?" + ClientRequest.SIMPLE, HttpServletResponse.SC_OK);
     }
 
     @Test
-    void test_with_a_real_request_threshold_lesser_async() throws IOException {
+    void test_with_a_real_request_threshold_lesser_async() {
         performRequest("http://localhost:8100/async?" + ClientRequest.THRESHOLD_LESSER, HttpServletResponse.SC_OK, withOneSmallerPicture());
     }
 
     @Test
-    void test_with_a_real_request_threshold_lesser_blocking() throws IOException {
+    void test_with_a_real_request_threshold_lesser_blocking() {
         performRequest("http://localhost:8100/blocking?" + ClientRequest.THRESHOLD_LESSER, HttpServletResponse.SC_OK, withOneSmallerPicture());
     }
 
     @Test
-    void test_with_a_real_request_threshold_greater_async() throws IOException {
+    void test_with_a_real_request_threshold_greater_async() {
         performRequest("http://localhost:8100/async?" + ClientRequest.THRESHOLD_GREATER, HttpServletResponse.SC_OK, withOneLargerPicture());
     }
 
     @Test
-    void test_with_a_real_request_threshold_greater_blocking() throws IOException {
+    void test_with_a_real_request_threshold_greater_blocking() {
         performRequest("http://localhost:8100/blocking?" + ClientRequest.THRESHOLD_GREATER, HttpServletResponse.SC_OK, withOneLargerPicture());
     }
 
     @Test
-    void test_with_a_real_request_error_async() throws IOException {
+    void test_with_a_real_request_error_async() {
         performRequest("http://localhost:8100/async?" + ClientRequest.ERROR, null);
     }
 
     @Test
-    void test_with_a_real_request_io_error_upon_error_async() throws IOException {
+    void test_with_a_real_request_io_error_upon_error_async() {
         performRequest("http://localhost:8100/async?" + ClientRequest.IO_ERROR_UPON_ERROR, null);
     }
 
     @Test
-    void test_with_a_real_request_servlet_error_upon_error_async() throws IOException {
+    void test_with_a_real_request_servlet_error_upon_error_async() {
         performRequest("http://localhost:8100/async?" + ClientRequest.SERVLET_ERROR_UPON_ERROR, null);
     }
 
     @Test
-    void test_with_a_real_request_error_blocking() throws IOException {
+    void test_with_a_real_request_error_blocking() {
         performRequest("http://localhost:8100/blocking?" + ClientRequest.ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     @Test
-    void test_with_a_real_request_complex() throws IOException {
+    void test_with_a_real_request_complex() {
         performRequest("http://localhost:8100/async?" + ClientRequest.COMPLEX, HttpServletResponse.SC_OK);
     }
 
-    private void performRequest(String url, Integer expectedStatus) throws IOException {
+    private void performRequest(String url, Integer expectedStatus) {
         try {
             ClientRequest.performRequest(url, expectedStatus);
-        } catch (NoHttpResponseException | SocketException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             if (expectedStatus != null) {
                 fail("Status returned: " + expectedStatus);
@@ -123,10 +120,10 @@ class TomcatIntegrationTest {
         }
     }
 
-    private void performRequest(String url, Integer expectedStatus, Supplier<HttpEntity> requestSupplier) throws IOException {
+    private void performRequest(String url, Integer expectedStatus, ByteBuffer requestData) {
         try {
-            ClientRequest.performRequest(url, expectedStatus, requestSupplier);
-        } catch (NoHttpResponseException | SocketException e) {
+            ClientRequest.performRequest(url, expectedStatus, requestData);
+        } catch (IOException e) {
             e.printStackTrace();
             if (expectedStatus != null) {
                 fail("Status returned: " + expectedStatus);

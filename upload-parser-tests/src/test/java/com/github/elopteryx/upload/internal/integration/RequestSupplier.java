@@ -1,18 +1,14 @@
 package com.github.elopteryx.upload.internal.integration;
 
+import static com.github.elopteryx.upload.internal.integration.ClientRequest.BOUNDARY;
 import static java.nio.charset.StandardCharsets.UTF_8;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Random;
-import java.util.function.Supplier;
 
 /**
  * Utility class which is responsible for the request body creation.
@@ -37,35 +33,29 @@ final class RequestSupplier {
         largeFile = builder.toString().getBytes(UTF_8);
     }
 
-    static Supplier<HttpEntity> withSeveralFields() {
-        final var entity = MultipartEntityBuilder.create()
-                .addBinaryBody("filefield1", largeFile, ContentType.create("application/octet-stream"), "file1.txt")
-                .addBinaryBody("filefield2", emptyFile, ContentType.create("text/plain"), "file2.txt")
-                .addBinaryBody("filefield3", smallFile, ContentType.create("application/octet-stream"), "file3.txt")
-                .addTextBody("textfield1", textValue1)
-                .addTextBody("textfield2", textValue2)
-                .addBinaryBody("filefield4", getContents("test.xlsx"), ContentType.create("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), "test.xlsx")
-                .addBinaryBody("filefield5", getContents("test.docx"), ContentType.create("application/vnd.openxmlformats-officedocument.wordprocessingml.document"), "test.docx")
-                .addBinaryBody("filefield6", getContents("test.jpg"), ContentType.create("image/jpeg"), "test.jpg")
-                .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-                .build();
-        return () -> entity;
+    static ByteBuffer withSeveralFields() {
+        return RequestBuilder.newBuilder(BOUNDARY)
+                .addFilePart("filefield1", largeFile, "application/octet-stream", "file1.txt")
+                .addFilePart("filefield2", emptyFile, "text/plain", "file2.txt")
+                .addFilePart("filefield3", smallFile, "application/octet-stream", "file3.txt")
+                .addFormField("textfield1", textValue1)
+                .addFormField("textfield2", textValue2)
+                .addFilePart("filefield4", getContents("test.xlsx"), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "test.xlsx")
+                .addFilePart("filefield5", getContents("test.docx"), "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "test.docx")
+                .addFilePart("filefield6", getContents("test.jpg"), "image/jpeg", "test.jpg")
+                .finish();
     }
 
-    static Supplier<HttpEntity> withOneSmallerPicture() {
-        final var entity = MultipartEntityBuilder.create()
-                .addBinaryBody("filefield", new byte[512], ContentType.create("image/jpeg"), "test.jpg")
-                .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-                .build();
-        return () -> entity;
+    static ByteBuffer withOneSmallerPicture() {
+        return RequestBuilder.newBuilder(BOUNDARY)
+                .addFilePart("filefield", new byte[512], "image/jpeg", "test.jpg")
+                .finish();
     }
 
-    static Supplier<HttpEntity> withOneLargerPicture() {
-        final var entity = MultipartEntityBuilder.create()
-                .addBinaryBody("filefield", new byte[2048], ContentType.create("image/jpeg"), "test.jpg")
-                .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-                .build();
-        return () -> entity;
+    static ByteBuffer withOneLargerPicture() {
+        return RequestBuilder.newBuilder(BOUNDARY)
+                .addFilePart("filefield", new byte[2048], "image/jpeg", "test.jpg")
+                .finish();
     }
 
     private static byte[] getContents(String resource) {

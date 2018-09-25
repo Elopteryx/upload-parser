@@ -1,23 +1,28 @@
 package com.github.elopteryx.upload.internal.integration;
 
 import static com.github.elopteryx.upload.internal.integration.RequestSupplier.withSeveralFields;
+import static java.net.http.HttpClient.Version.HTTP_1_1;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.jimfs.Jimfs;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.apache.tika.Tika;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
-import java.util.function.Supplier;
+import java.time.Duration;
 
 /**
  * Utility class for making multipart requests.
  */
 public final class ClientRequest {
+
+    static final String BOUNDARY = "--TNoK9riv6EjfMhxBzj22SKGnOaIhZlxhar";
 
     static final String SIMPLE = "simple";
     static final String THRESHOLD_LESSER = "threshold_lesser";
@@ -47,28 +52,29 @@ public final class ClientRequest {
      * given address.
      * @param url The target address
      * @param expectedStatus The expected HTTP response, can be null
-     * @param requestSupplier Provides a multipart body, can't be null
+     * @param requestData The multipart body, can't be null
      * @throws IOException If an IO error occurred
      */
-    public static void performRequest(String url, Integer expectedStatus, Supplier<HttpEntity> requestSupplier) throws IOException {
-        try (var httpClient = HttpClients.createDefault()) {
-            var httppost = new HttpPost(url);
-            var entity = requestSupplier.get();
-            httppost.setEntity(entity);
-            System.out.println("executing request " + httppost.getRequestLine());
-            try (var response = httpClient.execute(httppost)) {
+    public static void performRequest(String url, Integer expectedStatus, ByteBuffer requestData) throws IOException {
+        var client = HttpClient.newBuilder().version(HTTP_1_1).build();
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .timeout(Duration.ofSeconds(5))
+                .header("Content-Type", "multipart/form-data; boundary=" + BOUNDARY)
+                .POST(HttpRequest.BodyPublishers.ofByteArray(requestData.array(), 0, requestData.limit()))
+                .build();
+        try {
+            client.send(request, responseInfo -> {
+                var statusCode = responseInfo.statusCode();
                 System.out.println("----------------------------------------");
-                System.out.println(response.getStatusLine());
-                var resEntity = response.getEntity();
-                EntityUtils.consume(resEntity);
+                System.out.println(statusCode);
                 if (expectedStatus != null) {
-                    assertEquals(response.getStatusLine().getStatusCode(), (int) expectedStatus);
+                    assertEquals(statusCode, (int) expectedStatus);
                 }
-                if (resEntity != null) {
-                    System.out.println("Response content length: " + resEntity.getContentLength());
-                }
-
-            }
+                return HttpResponse.BodySubscribers.ofString(StandardCharsets.UTF_8);
+            });
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

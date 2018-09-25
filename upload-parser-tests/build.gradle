@@ -11,10 +11,6 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 
-    /* Http client library. */
-    testCompile "org.apache.httpcomponents:httpclient:$apacheHttpVersion"
-    testCompile "org.apache.httpcomponents:httpmime:$apacheHttpVersion"
-
     /* Undertow Http server. */
     testCompile "io.undertow:undertow-core:$undertowVersion"
     testCompile "io.undertow:undertow-servlet:$undertowVersion"
