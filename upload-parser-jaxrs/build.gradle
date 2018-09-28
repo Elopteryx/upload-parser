@@ -3,7 +3,7 @@ ext.moduleName = 'com.github.elopteryx.upload.rs'
 dependencies {
 
     /* Upload parser. */
-    compile project(":upload-parser-core")
+    compile project(':upload-parser-core')
 
     /* Servlet API. */
     compileOnly "javax.servlet:javax.servlet-api:$servletApiVersion"
@@ -14,7 +14,7 @@ dependencies {
 }
 
 compileJava {
-    inputs.property("moduleName", moduleName)
+    inputs.property('moduleName', moduleName)
     doFirst {
         options.compilerArgs = [
                 '--module-path', classpath.asPath,
@@ -30,10 +30,10 @@ javadoc {
 jar {
     manifest {
         attributes(
-                "Created-By": "Creative Elopteryx",
-                "Class-Path": configurations.compile.collect { it.getName() }.join(' '),
-                "Automatic-Module-Name": "com.github.elopteryx.upload.rs",
-                "Implementation-Version": version
+                'Created-By': 'Creative Elopteryx',
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Automatic-Module-Name': 'com.github.elopteryx.upload.rs',
+                'Implementation-Version': version
         )
     }
 }
@@ -43,8 +43,8 @@ publishing {
         maven(MavenPublication) {
             from components.java
             afterEvaluate {
-                groupId "com.github.elopteryx"
-                artifactId "upload-parser-jaxrs"
+                groupId 'com.github.elopteryx'
+                artifactId 'upload-parser-jaxrs'
             }
         }
     }
@@ -57,44 +57,44 @@ uploadArchives {
                 MavenDeployment deployment -> signing.signPom(deployment)
             }
 
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+            repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
                 authentication(userName: ossrhUsername, password: ossrhPassword)
             }
 
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+            snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
                 authentication(userName: ossrhUsername, password: ossrhPassword)
             }
 
             pom.scopeMappings.with {
-                addMapping(1, configurations.compileOnly, "provided")
+                addMapping(1, configurations.compileOnly, 'provided')
             }
 
             pom.project {
-                name "Upload Parser Jax-Rs"
-                groupId "com.github.elopteryx"
-                artifactId "upload-parser-jaxrs"
+                name 'Upload Parser Jax-Rs'
+                groupId 'com.github.elopteryx'
+                artifactId 'upload-parser-jaxrs'
 
-                description "Upload Parser Jax-Rs is a file upload library for Jax-Rs applications."
-                url "https://github.com/Elopteryx/upload-parser"
+                description 'Upload Parser Jax-Rs is a file upload library for Jax-Rs applications.'
+                url 'https://github.com/Elopteryx/upload-parser'
 
                 scm {
-                    connection "scm:git:git@github.com/Elopteryx/upload-parser.git"
-                    developerConnection "scm:git:git@github.com/Elopteryx/upload-parser.git"
-                    url "scm:git:git@github.com/Elopteryx/upload-parser.git"
+                    connection 'scm:git:git@github.com/Elopteryx/upload-parser.git'
+                    developerConnection 'scm:git:git@github.com/Elopteryx/upload-parser.git'
+                    url 'scm:git:git@github.com/Elopteryx/upload-parser.git'
                 }
 
                 licenses {
                     license {
-                        name "The Apache License, Version 2.0"
-                        url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
                 }
 
                 developers {
                     developer {
-                        id "elopteryx"
-                        name "Adam Forgacs"
-                        email "creative.elopteryx@gmail.com"
+                        id 'elopteryx'
+                        name 'Adam Forgacs'
+                        email 'creative.elopteryx@gmail.com'
                     }
                 }
             }

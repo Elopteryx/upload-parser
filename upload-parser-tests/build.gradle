@@ -1,10 +1,10 @@
 dependencies {
 
     /* Upload parser. */
-    testCompile project(":upload-parser-core")
+    testCompile project(':upload-parser-core')
 
     /* Upload parser Jax-Rs integration. */
-    testCompile project(":upload-parser-jaxrs")
+    testCompile project(':upload-parser-jaxrs')
 
     /* Test runner. */
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
@@ -50,8 +50,8 @@ publishing {
         maven(MavenPublication) {
             from components.java
             afterEvaluate {
-                groupId "com.github.elopteryx"
-                artifactId "upload-parser-tests"
+                groupId 'com.github.elopteryx'
+                artifactId 'upload-parser-tests'
             }
         }
     }

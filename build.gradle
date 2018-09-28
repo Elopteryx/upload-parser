@@ -1,30 +1,30 @@
 plugins {
-    id "com.github.ben-manes.versions" version "0.20.0"
-    id "com.github.kt3k.coveralls" version "2.8.2"
+    id 'com.github.ben-manes.versions' version '0.20.0'
+    id 'com.github.kt3k.coveralls' version '2.8.2'
 }
 
-apply plugin: "com.github.kt3k.coveralls"
-apply plugin: "jacoco"
+apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'jacoco'
 
-task testReport(type: TestReport, group: "Build") {
-    description "Generates an aggregate test report."
+task testReport(type: TestReport, group: 'Build') {
+    description 'Generates an aggregate test report.'
     destinationDir file("${buildDir}/reports/allTests")
 }
 
 subprojects {
 
-    apply plugin: "java"
-    apply plugin: "maven-publish"
-    apply plugin: "maven"
-    apply plugin: "signing"
-    apply plugin: "com.github.ben-manes.versions"
-    apply plugin: "com.github.kt3k.coveralls"
-    apply plugin: "jacoco"
-    apply plugin: "checkstyle"
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'maven'
+    apply plugin: 'signing'
+    apply plugin: 'com.github.ben-manes.versions'
+    apply plugin: 'com.github.kt3k.coveralls'
+    apply plugin: 'checkstyle'
     apply plugin: 'pmd'
+    apply plugin: 'jacoco'
 
-    group = "com.github.elopteryx"
-    version = "3.0.0-SNAPSHOT"
+    group = 'com.github.elopteryx'
+    version = '3.0.0-SNAPSHOT'
 
     repositories {
         mavenCentral()
@@ -32,16 +32,20 @@ subprojects {
     }
 
     ext {
-        servletApiVersion = "3.1.0"
-        jaxrsApiVersion = "2.0.1"
+        servletApiVersion = '3.1.0'
+        jaxrsApiVersion = '2.0.1'
         junitVersion = '5.3.1'
-        undertowVersion = "2.0.13.Final"
-        jettyVersion = "9.4.11.v20180605"
-        tomcatVersion = "9.0.12"
-        resteasyVersion = "3.6.1.Final"
-        tikaVersion = "1.19"
-        jimfsVersion = "1.1"
-        mockitoVersion = "2.22.0"
+        undertowVersion = '2.0.13.Final'
+        jettyVersion = '9.4.11.v20180605'
+        tomcatVersion = '9.0.12'
+        resteasyVersion = '3.6.1.Final'
+        tikaVersion = '1.19'
+        jimfsVersion = '1.1'
+        mockitoVersion = '2.22.0'
+
+        checkStyleVersion = '8.11'
+        pmdVersion = '6.7.0'
+        jacocoVersion = '0.8.2'
     }
 
     tasks.withType(JavaCompile) {
@@ -50,32 +54,32 @@ subprojects {
     }
 
     task javadocJar(type: Jar) {
-        classifier "javadoc"
+        classifier 'javadoc'
         from javadoc
     }
 
     javadoc {
         afterEvaluate {
             configure(options) {
-                windowTitle "Upload Parser API Documentation"
-                docTitle "Upload Parser API Documentation"
-                bottom 'Copyright &#169; 2018 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
+                windowTitle 'Upload Parser API Documentation'
+                docTitle 'Upload Parser API Documentation'
+                bottom "Copyright &#169; 2018 <a href='https://github.com/Elopteryx'>Creative Elopteryx</a>"
                 breakIterator true
                 author false
-                source "11"
-                encoding "UTF-8"
-                docEncoding "UTF-8"
+                source '11'
+                encoding 'UTF-8'
+                docEncoding 'UTF-8'
                 failOnError true
                 links = [
-                        "https://docs.oracle.com/en/java/javase/11/docs/api/",
-                        "https://docs.oracle.com/javaee/7/api/",
+                        'https://docs.oracle.com/en/java/javase/11/docs/api/',
+                        'https://docs.oracle.com/javaee/7/api/',
                 ]
             }
         }
     }
 
     task sourcesJar(type: Jar) {
-        classifier "sources"
+        classifier 'sources'
         from sourceSets.main.allSource
     }
 
@@ -86,22 +90,22 @@ subprojects {
     }
 
     checkstyle {
-        toolVersion "8.11"
+        toolVersion = checkStyleVersion
         configFile = new File("${projectDir}/../config/checkstyle/checkstyle.xml")
     }
 
     pmd {
+        toolVersion = pmdVersion
         ruleSets = []
-        toolVersion = '6.7.0'
         ruleSetConfig = resources.text.fromFile(file("${rootDir}/config/pmd/rulesSets.xml"))
     }
 
     jacoco {
-        toolVersion = "0.8.2"
+        toolVersion = jacocoVersion
     }
 
     signing {
-        required { !version.endsWith("SNAPSHOT") && gradle.taskGraph.hasTask("uploadArchives") }
+        required { !version.endsWith('SNAPSHOT') && gradle.taskGraph.hasTask('uploadArchives') }
         sign configurations.archives
     }
 
@@ -124,8 +128,8 @@ repositories {
     jcenter()
 }
 
-task jacocoRootReport(type: JacocoReport, group: "Coverage reports") {
-    description "Generates an aggregate report from all subprojects"
+task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+    description 'Generates an aggregate report from all subprojects'
     dependsOn(subprojects.test)
 
     additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
@@ -149,9 +153,9 @@ coveralls {
 }
 
 tasks.coveralls {
-    group "Coverage reports"
-    description "Uploads the aggregated coverage report to Coveralls."
+    group 'Coverage reports'
+    description 'Uploads the aggregated coverage report to Coveralls.'
 
     dependsOn jacocoRootReport
-    onlyIf { System.env."CI" }
+    onlyIf { System.env.'CI' }
 }
