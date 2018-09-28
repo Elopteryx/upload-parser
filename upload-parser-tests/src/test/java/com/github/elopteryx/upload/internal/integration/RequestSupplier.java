@@ -15,31 +15,31 @@ import java.util.Random;
  */
 final class RequestSupplier {
 
-    static final byte[] emptyFile;
-    static final byte[] smallFile;
-    static final byte[] largeFile;
+    static final byte[] EMPTY_FILE;
+    static final byte[] SMALL_FILE;
+    static final byte[] LARGE_FILE;
 
-    static final String textValue1 = "íéáűúőóüö";
-    static final String textValue2 = "abcdef";
+    static final String TEXT_VALUE_1 = "íéáűúőóüö";
+    static final String TEXT_VALUE_2 = "abcdef";
 
     static {
-        emptyFile = new byte[0];
-        smallFile = "0123456789".getBytes(UTF_8);
+        EMPTY_FILE = new byte[0];
+        SMALL_FILE = "0123456789".getBytes(UTF_8);
         final var random = new Random();
         final var builder = new StringBuilder();
         for (var i = 0; i < 100000; i++) {
             builder.append(random.nextInt(100));
         }
-        largeFile = builder.toString().getBytes(UTF_8);
+        LARGE_FILE = builder.toString().getBytes(UTF_8);
     }
 
     static ByteBuffer withSeveralFields() {
         return RequestBuilder.newBuilder(BOUNDARY)
-                .addFilePart("filefield1", largeFile, "application/octet-stream", "file1.txt")
-                .addFilePart("filefield2", emptyFile, "text/plain", "file2.txt")
-                .addFilePart("filefield3", smallFile, "application/octet-stream", "file3.txt")
-                .addFormField("textfield1", textValue1)
-                .addFormField("textfield2", textValue2)
+                .addFilePart("filefield1", LARGE_FILE, "application/octet-stream", "file1.txt")
+                .addFilePart("filefield2", EMPTY_FILE, "text/plain", "file2.txt")
+                .addFilePart("filefield3", SMALL_FILE, "application/octet-stream", "file3.txt")
+                .addFormField("textfield1", TEXT_VALUE_1)
+                .addFormField("textfield2", TEXT_VALUE_2)
                 .addFilePart("filefield4", getContents("test.xlsx"), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "test.xlsx")
                 .addFilePart("filefield5", getContents("test.docx"), "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "test.docx")
                 .addFilePart("filefield6", getContents("test.jpg"), "image/jpeg", "test.jpg")

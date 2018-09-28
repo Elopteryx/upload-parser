@@ -42,7 +42,7 @@ public class MultiPartImpl implements MultiPart {
     private MultivaluedMap<String, String> headers;
 
     MultiPartImpl(final List<Part> parts, final long size) {
-        this.parts = parts != null ? Collections.unmodifiableList(parts) : Collections.emptyList();
+        this.parts = parts == null ? Collections.emptyList() : Collections.unmodifiableList(parts);
         this.size = size;
     }
 

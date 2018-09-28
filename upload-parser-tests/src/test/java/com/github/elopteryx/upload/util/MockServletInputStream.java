@@ -8,10 +8,10 @@ import javax.servlet.ServletInputStream;
 
 public class MockServletInputStream extends ServletInputStream {
 
-    private static final String fileName = "foo.txt";
-    private static final String requestData =
+    private static final String FILE_NAME = "foo.txt";
+    private static final String REQUEST_DATA =
             "-----1234\r\n"
-                    + "Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"\r\n"
+                    + "Content-Disposition: form-data; name=\"file\"; filename=\"" + FILE_NAME + "\"\r\n"
                     + "Content-Type: text/whatever\r\n"
                     + "\r\n"
                     + "This is the content of the file\n"
@@ -35,7 +35,7 @@ public class MockServletInputStream extends ServletInputStream {
     private ReadListener readListener;
 
     MockServletInputStream() {
-        this.sourceStream = new ByteArrayInputStream(requestData.getBytes(StandardCharsets.US_ASCII));
+        this.sourceStream = new ByteArrayInputStream(REQUEST_DATA.getBytes(StandardCharsets.US_ASCII));
     }
 
     public void onDataAvailable() throws IOException {

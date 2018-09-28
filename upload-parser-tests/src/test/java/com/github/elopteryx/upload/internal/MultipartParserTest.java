@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.undertow.util.FileUtils;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -21,12 +20,6 @@ class MultipartParserTest {
 
     private static int[] bufferSizeProvider() {
         return new int[]{2, 10, 1024, 4096};
-    }
-
-    @Test
-    void creation_works() {
-        // Only to achieve 100% method call
-        new MultipartParser();
     }
 
     @ParameterizedTest

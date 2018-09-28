@@ -70,16 +70,16 @@ public class AsyncUploadServlet extends HttpServlet {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
                     if (context.getPartStreams().size() == 1) {
-                        var dir = ClientRequest.fileSystem.getPath("");
-                        var temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
+                        final var dir = ClientRequest.FILE_SYSTEM.getPath("");
+                        final var temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
                         return PartOutput.from(Files.newByteChannel(temp, EnumSet.of(CREATE, TRUNCATE_EXISTING, WRITE)));
                     } else if (context.getPartStreams().size() == 2) {
-                        var dir = ClientRequest.fileSystem.getPath("");
-                        var temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
+                        final var dir = ClientRequest.FILE_SYSTEM.getPath("");
+                        final var temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
                         return PartOutput.from(Files.newOutputStream(temp));
                     } else if (context.getPartStreams().size() == 3) {
-                        var dir = ClientRequest.fileSystem.getPath("");
-                        var temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
+                        final var dir = ClientRequest.FILE_SYSTEM.getPath("");
+                        final var temp = dir.resolve(context.getCurrentPart().getSubmittedFileName());
                         return PartOutput.from(temp);
                     } else {
                         return PartOutput.from(new NullChannel());
@@ -87,7 +87,7 @@ public class AsyncUploadServlet extends HttpServlet {
                 })
                 .onPartEnd(context -> {
                     if (context.getCurrentOutput() != null && context.getCurrentOutput().safeToCast(Channel.class)) {
-                        var channel = context.getCurrentOutput().unwrap(Channel.class);
+                        final var channel = context.getCurrentOutput().unwrap(Channel.class);
                         if (channel.isOpen()) {
                             fail("The parser should close it!");
                         }
@@ -183,37 +183,37 @@ public class AsyncUploadServlet extends HttpServlet {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    var part = context.getCurrentPart();
+                    final var part = context.getCurrentPart();
 
-                    var detectedType = ClientRequest.tika.detect(new ByteBufferBackedInputStream(buffer), part.getSubmittedFileName());
-                    var expectedType = expectedContentTypes.get(partCounter.getAndIncrement());
-                    if (expectedType.equals("text/plain")) {
-                        assertTrue(detectedType.equals("text/plain") || detectedType.equals("application/octet-stream"));
+                    final var detectedType = ClientRequest.TIKA.detect(new ByteBufferBackedInputStream(buffer), part.getSubmittedFileName());
+                    final var expectedType = expectedContentTypes.get(partCounter.getAndIncrement());
+                    if ("text/plain".equals(expectedType)) {
+                        assertTrue("text/plain".equals(detectedType) || "application/octet-stream".equals(detectedType));
                     } else {
                         assertEquals(detectedType, expectedType);
                     }
 
-                    var name = part.getName();
+                    final var name = part.getName();
                     if (part.isFile()) {
                         if ("".equals(part.getSubmittedFileName())) {
                             throw new IOException("No file was chosen for the form field!");
                         }
                         System.out.println("File field " + name + " with file name "
                                 + part.getSubmittedFileName() + " detected!");
-                        for (var header : part.getHeaderNames()) {
+                        for (final var header : part.getHeaderNames()) {
                             System.out.println(header + " " + part.getHeader(header));
                         }
                         part.getHeaders("content-type");
                         System.out.println(part.getContentType());
-                        var baos = new ByteArrayOutputStream();
+                        final var baos = new ByteArrayOutputStream();
                         formFields.add(baos);
                         return PartOutput.from(baos);
                     } else {
-                        for (var header : part.getHeaderNames()) {
+                        for (final var header : part.getHeaderNames()) {
                             System.out.println(header + " " + part.getHeader(header));
                         }
                         System.out.println(part.getContentType());
-                        var baos = new ByteArrayOutputStream();
+                        final var baos = new ByteArrayOutputStream();
                         formFields.add(baos);
                         return PartOutput.from(baos);
                     }
@@ -226,11 +226,11 @@ public class AsyncUploadServlet extends HttpServlet {
                     System.out.println("Request complete!");
                     System.out.println("Total parts: " + context.getPartStreams().size());
 
-                    assertArrayEquals(formFields.get(0).toByteArray(), RequestSupplier.largeFile);
-                    assertArrayEquals(formFields.get(1).toByteArray(), RequestSupplier.emptyFile);
-                    assertArrayEquals(formFields.get(2).toByteArray(), RequestSupplier.smallFile);
-                    assertArrayEquals(formFields.get(3).toByteArray(), RequestSupplier.textValue1.getBytes(ISO_8859_1));
-                    assertArrayEquals(formFields.get(4).toByteArray(), RequestSupplier.textValue2.getBytes(ISO_8859_1));
+                    assertArrayEquals(formFields.get(0).toByteArray(), RequestSupplier.LARGE_FILE);
+                    assertArrayEquals(formFields.get(1).toByteArray(), RequestSupplier.EMPTY_FILE);
+                    assertArrayEquals(formFields.get(2).toByteArray(), RequestSupplier.SMALL_FILE);
+                    assertArrayEquals(formFields.get(3).toByteArray(), RequestSupplier.TEXT_VALUE_1.getBytes(ISO_8859_1));
+                    assertArrayEquals(formFields.get(4).toByteArray(), RequestSupplier.TEXT_VALUE_2.getBytes(ISO_8859_1));
 
                     context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
                     context.getRequest().getAsyncContext().complete();

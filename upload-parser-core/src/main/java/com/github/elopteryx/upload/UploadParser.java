@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletRequest;
  * freely. The servlet request object is not necessary before the actual parsing starts. In fact
  * the configured parser can be reused for each http request.</p>
  */
-public class UploadParser {
+public final class UploadParser {
 
     /**
      * The default size allocated for the buffers.

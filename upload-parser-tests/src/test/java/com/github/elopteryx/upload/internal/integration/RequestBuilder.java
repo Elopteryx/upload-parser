@@ -4,7 +4,7 @@ import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
 import java.nio.ByteBuffer;
 
-class RequestBuilder {
+final class RequestBuilder {
 
     private static final byte[] LINE_FEED = "\r\n".getBytes(ISO_8859_1);
 

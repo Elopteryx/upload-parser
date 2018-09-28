@@ -139,16 +139,15 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
         context = new UploadContextImpl(request, userObject);
 
         final var mimeType = request.getHeader(Headers.CONTENT_TYPE);
-        final String boundary;
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
-            boundary = Headers.extractBoundaryFromHeader(mimeType);
+            final String boundary = Headers.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
                 throw new IllegalArgumentException("Could not find boundary in multipart request with ContentType: "
                         + mimeType
                         + ", multipart data will not be available");
             }
             final var encodingHeader = request.getCharacterEncoding();
-            final var charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
+            final var charset = encodingHeader == null ? ISO_8859_1 : Charset.forName(encodingHeader);
             parseState = MultipartParser.beginParse(this, boundary.getBytes(), maxBytesUsed, charset);
         }
     }
@@ -199,7 +198,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     public void data(final ByteBuffer buffer) throws IOException {
         checkPartSize(buffer.remaining());
         copyBuffer(buffer);
-        if (context.isBuffering() && (context.getPartBytesRead() >= sizeThreshold)) {
+        if (context.isBuffering() && context.getPartBytesRead() >= sizeThreshold) {
             validate(false);
         }
         if (!context.isBuffering()) {

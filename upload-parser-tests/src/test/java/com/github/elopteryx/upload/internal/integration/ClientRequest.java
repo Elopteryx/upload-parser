@@ -32,9 +32,9 @@ public final class ClientRequest {
     static final String SERVLET_ERROR_UPON_ERROR = "servlet_error_upon_error";
     static final String COMPLEX = "complex";
 
-    static final FileSystem fileSystem = Jimfs.newFileSystem();
+    static final FileSystem FILE_SYSTEM = Jimfs.newFileSystem();
 
-    static final Tika tika = new Tika();
+    static final Tika TIKA = new Tika();
 
     /**
      * Creates and sends a randomized multipart request for the

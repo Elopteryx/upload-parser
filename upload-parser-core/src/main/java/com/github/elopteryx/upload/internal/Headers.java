@@ -46,7 +46,7 @@ public class Headers {
     String getHeader(final String name) {
         final var nameLower = name.toLowerCase(Locale.ENGLISH);
         final var headerValueList = headerNameToValueListMap.get(nameLower);
-        return headerValueList != null ? headerValueList.get(0) : null;
+        return headerValueList == null ? null : headerValueList.get(0);
     }
 
     Collection<String> getHeaders(final String name) {

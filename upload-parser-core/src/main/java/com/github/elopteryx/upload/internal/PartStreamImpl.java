@@ -145,14 +145,8 @@ public class PartStreamImpl implements PartStream {
             final var sb = new StringBuilder();
             for (var i = 0; i < fileName.length(); i++) {
                 final var character = fileName.charAt(i);
-                switch (character) {
-                    case 0:
-                        sb.append("\\0");
-                        break;
-                    default:
-                        sb.append(character);
-                        break;
-                }
+                final var append = character == 0 ? "\\0" : character;
+                sb.append(append);
             }
             throw new IllegalArgumentException(fileName + " Invalid file name: " + sb);
         }

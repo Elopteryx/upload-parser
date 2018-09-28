@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 
 class AbstractUploadParserTest {
 
-    private static final long size = 1024 * 1024 * 100L;
-    private static final long smallSize = 1024;
+    private static final long SIZE = 1024 * 1024 * 100L;
+    private static final long SMALL_SIZE = 1024;
 
     private AbstractUploadParser runSetupForSize(final long requestSize, final long allowedRequestSize, final long allowedPartSize) throws Exception {
         final var request = Servlets.newRequest();
@@ -29,41 +29,41 @@ class AbstractUploadParserTest {
 
     @Test
     void setup_should_work_if_lesser() throws Exception {
-        runSetupForSize(size - 1, size, -1);
+        runSetupForSize(SIZE - 1, SIZE, -1);
     }
 
     @Test
     void setup_should_work_if_equals() throws Exception {
-        runSetupForSize(size, size, -1);
+        runSetupForSize(SIZE, SIZE, -1);
     }
 
     @Test
     void setup_should_throw_size_exception_if_greater() {
-        assertThrows(RequestSizeException.class, () -> runSetupForSize(size + 1, size, -1));
+        assertThrows(RequestSizeException.class, () -> runSetupForSize(SIZE + 1, SIZE, -1));
     }
 
     @Test
     void parser_should_throw_exception_for_request_size() {
         final var exception = assertThrows(RequestSizeException.class, () -> {
-            final var parser = runSetupForSize(0, smallSize, -1);
+            final var parser = runSetupForSize(0, SMALL_SIZE, -1);
             for (var i = 0; i < 11; i++) {
                 parser.checkRequestSize(100);
             }
         });
-        assertEquals(exception.getPermittedSize(), smallSize);
-        assertTrue(exception.getActualSize() > smallSize);
+        assertEquals(exception.getPermittedSize(), SMALL_SIZE);
+        assertTrue(exception.getActualSize() > SMALL_SIZE);
     }
 
     @Test
     void parser_should_throw_exception_for_part_size() {
         final var exception = assertThrows(PartSizeException.class, () -> {
-            final var parser = runSetupForSize(0, -1, smallSize);
+            final var parser = runSetupForSize(0, -1, SMALL_SIZE);
             for (var i = 0; i < 11; i++) {
                 parser.checkPartSize(100);
             }
         });
-        assertEquals(exception.getPermittedSize(), smallSize);
-        assertTrue(exception.getActualSize() > smallSize);
+        assertEquals(exception.getPermittedSize(), SMALL_SIZE);
+        assertTrue(exception.getActualSize() > SMALL_SIZE);
     }
     
 }

@@ -26,7 +26,7 @@ class UndertowIntegrationTest {
     @BeforeAll
     static void setUpClass() throws Exception {
         final var servletBuilder = Servlets.deployment()
-                .setClassLoader(UndertowIntegrationTest.class.getClassLoader())
+                .setClassLoader(Thread.currentThread().getContextClassLoader())
                 .setContextPath("/")
                 .setDeploymentName("ROOT.war")
                 .addServlets(

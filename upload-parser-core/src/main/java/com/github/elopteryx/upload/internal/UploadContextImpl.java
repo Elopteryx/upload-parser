@@ -73,7 +73,7 @@ public class UploadContextImpl implements UploadContext {
 
     @Override
     public <T> T getUserObject(final Class<T> clazz) {
-        return userObject != null ? clazz.cast(userObject) : null;
+        return userObject == null ? null : clazz.cast(userObject);
     }
 
     @Override

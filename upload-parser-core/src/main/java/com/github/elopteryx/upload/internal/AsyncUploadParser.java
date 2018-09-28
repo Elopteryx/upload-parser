@@ -33,12 +33,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class AsyncUploadParser extends AbstractUploadParser implements ReadListener {
 
-    private ServletInputStream servletInputStream;
-
     /**
      * The request object.
      */
     private final HttpServletRequest request;
+
+    /**
+     * The input stream associated with the request.
+     */
+    private ServletInputStream servletInputStream;
 
     public AsyncUploadParser(final HttpServletRequest request) {
         this.request = requireNonNull(request);

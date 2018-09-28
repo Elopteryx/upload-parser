@@ -26,8 +26,8 @@ import java.lang.annotation.Target;
  * Adding them into an annotation will work like if they were passed into the parser using
  * the fluent API.
  */
-@Target(value = { ElementType.PARAMETER, ElementType.FIELD })
-@Retention(value = RetentionPolicy.RUNTIME)
+@Target({ ElementType.PARAMETER, ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
 public @interface UploadConfig {
 
     /**

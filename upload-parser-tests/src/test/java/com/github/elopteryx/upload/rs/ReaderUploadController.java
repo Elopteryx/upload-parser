@@ -32,10 +32,10 @@ public class ReaderUploadController {
         for (final var part : parts) {
             assertTrue(part.getSize() >= 0);
             if (part.isFile()) {
-                final var name = part.getName();
                 if ("".equals(part.getSubmittedFileName())) {
                     throw new IOException("No file was chosen for the form field!");
                 }
+                final var name = part.getName();
                 System.out.println("File field " + name + " with file name "
                         + part.getSubmittedFileName() + " detected!");
                 for (final var header : part.getHeaderNames()) {

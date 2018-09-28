@@ -70,15 +70,14 @@ public class RestUploadParser extends BlockingUploadParser {
         context = new UploadContextImpl(null, null);
         dataBuffer = ByteBuffer.allocate(maxBytesUsed / 2);
 
-        final String boundary;
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
-            boundary = Headers.extractBoundaryFromHeader(mimeType);
+            final String boundary = Headers.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
                 throw new IllegalArgumentException("Could not find boundary in multipart request with ContentType: "
                         + mimeType
                         + ", multipart data will not be available");
             }
-            final var charset = encoding != null ? Charset.forName(encoding) : ISO_8859_1;
+            final var charset = encoding == null ? ISO_8859_1 : Charset.forName(encoding);
             parseState = MultipartParser.beginParse(this, boundary.getBytes(), maxBytesUsed, charset);
 
             inputStream = stream;

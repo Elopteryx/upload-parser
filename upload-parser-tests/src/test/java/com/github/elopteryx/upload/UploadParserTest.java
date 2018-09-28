@@ -126,7 +126,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
         UploadParser.newParser()
                 .userObject(newResponse())
                 .onPartBegin((context, buffer) -> {
-                    var test = fileSystem.getPath("test2");
+                    final var test = fileSystem.getPath("test2");
                     Files.createFile(test);
                     return PartOutput.from(test);
                 })

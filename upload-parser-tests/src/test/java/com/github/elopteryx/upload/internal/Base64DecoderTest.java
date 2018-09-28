@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Copied from Undertow.
@@ -139,8 +138,7 @@ class Base64DecoderTest {
 
     @Test
     void draining() throws IOException {
-        final var bytes = "c3VyZS4=\r\n\r\n!".getBytes(US_ASCII);
-        final var source = ByteBuffer.wrap(bytes);
+        final var source = ByteBuffer.wrap("c3VyZS4=\r\n\r\n!".getBytes(US_ASCII));
         final var target = ByteBuffer.allocateDirect(100);
         new Base64Decoder().decode(source, target);
         assertEquals((byte) '\r' & 0xFF, source.get() & 0xFF);
@@ -205,9 +203,9 @@ class Base64DecoderTest {
         });
     }
 
-    private static class FlexBase64 {
+    private static final class FlexBase64 {
 
-        private static final byte[] ENCODING_TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".getBytes(StandardCharsets.US_ASCII);
+        private static final byte[] ENCODING_TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".getBytes(US_ASCII);
 
         /**
          * Creates a state driven base64 encoder.

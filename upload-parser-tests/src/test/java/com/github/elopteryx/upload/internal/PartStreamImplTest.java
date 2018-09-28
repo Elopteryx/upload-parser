@@ -20,7 +20,7 @@ class PartStreamImplTest {
         assertEquals(fileName, partStream.getSubmittedFileName());
         assertEquals(fieldName, partStream.getName());
         assertEquals(contentType, partStream.getContentType());
-        assertEquals(partStream.isFile(), (partStream.getSubmittedFileName() != null));
+        assertEquals(partStream.isFile(), partStream.getSubmittedFileName() != null);
         assertFalse(partStream.isFinished());
     }
 

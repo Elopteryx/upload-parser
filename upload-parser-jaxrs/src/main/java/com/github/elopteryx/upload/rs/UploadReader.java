@@ -153,13 +153,11 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
 
     @Override
     public PartOutput onPartBegin(final UploadContext context, final ByteBuffer buffer) throws IOException {
-        final PartOutput output;
         if (context.getCurrentPart().isFile()) {
-            output = PartOutput.from(Files.createTempFile(null, ".tmp"));
+            return PartOutput.from(Files.createTempFile(null, ".tmp"));
         } else {
-            output = PartOutput.from(new ByteArrayOutputStream());
+            return PartOutput.from(new ByteArrayOutputStream());
         }
-        return output;
     }
 
     @Override

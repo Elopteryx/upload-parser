@@ -24,6 +24,7 @@ public class UploadServlet extends HttpServlet {
      */
     private static final String UPLOAD_DIR = "uploads";
 
+    @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
 
         final var applicationPath = request.getServletContext().getRealPath("");
@@ -40,8 +41,8 @@ public class UploadServlet extends HttpServlet {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    var part = context.getCurrentPart();
-                    var path = uploadFilePath.resolve(part.getSubmittedFileName());
+                    final var part = context.getCurrentPart();
+                    final var path = uploadFilePath.resolve(part.getSubmittedFileName());
                     return PartOutput.from(path);
                 })
                 .onRequestComplete(context -> context.getUserObject(HttpServletResponse.class).setStatus(200))

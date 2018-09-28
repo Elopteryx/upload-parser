@@ -35,7 +35,7 @@ import java.nio.charset.Charset;
  *
  * @author Stuart Douglas
  */
-public class MultipartParser {
+public final class MultipartParser {
 
     /**
      * The Carriage Return ASCII character value.
@@ -55,6 +55,12 @@ public class MultipartParser {
     private static final byte[] BOUNDARY_PREFIX = {CR, LF, DASH, DASH};
 
     private static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
+    
+    private static final String ERROR_MESSAGE = "Invalid multipart request!";
+
+    private MultipartParser() {
+        // No need to instantiate
+    }
 
     interface PartHandler {
         void beginPart(final Headers headers);
@@ -92,10 +98,10 @@ public class MultipartParser {
         private final byte[] boundary;
 
         // 0=preamble
-        private volatile int state = 0;
+        private volatile int state;
         private volatile int subState = Integer.MAX_VALUE; // used for preamble parsing
-        private volatile ByteArrayOutputStream currentString = null;
-        private volatile String currentHeaderName = null;
+        private volatile ByteArrayOutputStream currentString;
+        private volatile String currentHeaderName;
         private volatile Headers headers;
         private volatile Encoding encodingHandler;
 
@@ -136,7 +142,7 @@ public class MultipartParser {
                     case -1:
                         return;
                     default:
-                        throw new IllegalStateException("" + state);
+                        throw new IllegalStateException(String.valueOf(state));
                 }
             }
         }
@@ -181,7 +187,7 @@ public class MultipartParser {
                 final var b = buffer.get();
                 if (b == ':') {
                     if (currentString == null || subState != 0) {
-                        throw new MultipartException("Invalid multipart request!");
+                        throw new MultipartException(ERROR_MESSAGE);
                     } else {
                         currentHeaderName = new String(currentString.toByteArray(), requestCharset);
                         currentString.reset();
@@ -190,14 +196,14 @@ public class MultipartParser {
                         return;
                     }
                 } else if (b == CR) {
-                    if (currentString != null) {
-                        throw new MultipartException("Invalid multipart request!");
-                    } else {
+                    if (currentString == null) {
                         subState = 1;
+                    } else {
+                        throw new MultipartException(ERROR_MESSAGE);
                     }
                 } else if (b == LF) {
                     if (currentString != null || subState != 1) {
-                        throw new MultipartException("Invalid multipart request!");
+                        throw new MultipartException(ERROR_MESSAGE);
                     }
                     state = 3;
                     subState = 0;
@@ -218,7 +224,7 @@ public class MultipartParser {
 
                 } else {
                     if (subState != 0) {
-                        throw new MultipartException("Invalid multipart request!");
+                        throw new MultipartException(ERROR_MESSAGE);
                     } else if (currentString == null) {
                         currentString = new ByteArrayOutputStream();
                     }
@@ -234,7 +240,7 @@ public class MultipartParser {
                     subState = 1;
                 } else if (b == LF) {
                     if (subState != 1) {
-                        throw new MultipartException("Invalid multipart request!");
+                        throw new MultipartException(ERROR_MESSAGE);
                     }
                     headers.addHeader(currentHeaderName.trim(), new String(currentString.toByteArray(), requestCharset).trim());
                     state = 1;
@@ -243,7 +249,7 @@ public class MultipartParser {
                     return;
                 } else {
                     if (subState != 0) {
-                        throw new MultipartException("Invalid multipart request!");
+                        throw new MultipartException(ERROR_MESSAGE);
                     }
                     currentString.write(b);
                 }

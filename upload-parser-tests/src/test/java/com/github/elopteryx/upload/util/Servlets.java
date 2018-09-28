@@ -6,7 +6,11 @@ import static org.mockito.Mockito.when;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class Servlets {
+public final class Servlets {
+
+    private Servlets() {
+        // No need to instantiate
+    }
 
     /**
      * Creates a new mock servlet request.

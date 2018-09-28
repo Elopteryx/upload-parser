@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
+import java.util.Locale;
 
 class HeadersTest {
 
@@ -22,8 +23,8 @@ class HeadersTest {
         headers.addHeader("testheader", "headerValue4");
 
         final var headerNames = headers.getHeaderNames().iterator();
-        assertEquals(Headers.CONTENT_DISPOSITION.toLowerCase(), headerNames.next());
-        assertEquals(Headers.CONTENT_TYPE.toLowerCase(), headerNames.next());
+        assertEquals(Headers.CONTENT_DISPOSITION.toLowerCase(Locale.ENGLISH), headerNames.next());
+        assertEquals(Headers.CONTENT_TYPE.toLowerCase(Locale.ENGLISH), headerNames.next());
         assertEquals("testheader", headerNames.next());
         assertFalse(headerNames.hasNext());
 

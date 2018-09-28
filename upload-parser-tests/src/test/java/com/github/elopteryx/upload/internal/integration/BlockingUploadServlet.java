@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(value = "/blocking")
+@WebServlet("/blocking")
 public class BlockingUploadServlet extends HttpServlet {
 
     @Override
@@ -48,7 +48,7 @@ public class BlockingUploadServlet extends HttpServlet {
         final var context = UploadParser.newParser()
                 .onPartEnd(context1 -> {
                     if (context1.getCurrentOutput() != null && context1.getCurrentOutput().safeToCast(Channel.class)) {
-                        var channel = context1.getCurrentOutput().unwrap(Channel.class);
+                        final var channel = context1.getCurrentOutput().unwrap(Channel.class);
                         if (channel.isOpen()) {
                             fail("The parser should close it!");
                         }
