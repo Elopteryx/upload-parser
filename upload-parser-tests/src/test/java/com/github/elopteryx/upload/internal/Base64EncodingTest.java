@@ -27,17 +27,17 @@ class Base64EncodingTest {
         assertThrows(IOException.class, () -> checkEncoding("f", "Zg=�="));
     }
 
-    private static void checkEncoding(final String original, String encoded) throws IOException {
+    private static void checkEncoding(final String original, final String encoded) throws IOException {
 
-        var encoding = new MultipartParser.Base64Encoding(1024);
+        final var encoding = new MultipartParser.Base64Encoding(1024);
         encoding.handle(new MultipartParser.PartHandler() {
 
             @Override
-            public void beginPart(Headers headers) {}
+            public void beginPart(final Headers headers) {}
 
             @Override
-            public void data(ByteBuffer buffer) {
-                var parserResult = new String(buffer.array(), US_ASCII).trim();
+            public void data(final ByteBuffer buffer) {
+                final var parserResult = new String(buffer.array(), US_ASCII).trim();
                 assertEquals(parserResult, original);
             }
 

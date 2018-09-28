@@ -42,7 +42,7 @@ public class ByteBufferBackedInputStream extends InputStream {
      * Public constructor.
      * @param buffer The byte buffer
      */
-    public ByteBufferBackedInputStream(ByteBuffer buffer) {
+    public ByteBufferBackedInputStream(final ByteBuffer buffer) {
         this.buffer = Objects.requireNonNull(buffer);
         if (buffer.isDirect() || buffer.isReadOnly()) {
             throw new IllegalArgumentException("The buffer cannot be direct or read-only!");
@@ -66,7 +66,7 @@ public class ByteBufferBackedInputStream extends InputStream {
     }
 
     @Override
-    public int read(byte[] bytes, int off, int len) throws IOException {
+    public int read(final byte[] bytes, final int off, int len) throws IOException {
         if (!open) {
             throw new IOException("The stream was closed!");
         }

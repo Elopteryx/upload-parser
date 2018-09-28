@@ -28,7 +28,7 @@ public class MultipartException extends IOException {
      * Public constructor.
      * @param message The exception message.
      */
-    public MultipartException(String message) {
+    public MultipartException(final String message) {
         super(message);
     }
 }

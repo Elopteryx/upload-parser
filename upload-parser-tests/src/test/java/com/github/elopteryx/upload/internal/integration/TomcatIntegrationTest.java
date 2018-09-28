@@ -32,7 +32,7 @@ class TomcatIntegrationTest {
     static void setUpClass() throws Exception {
         server = new Tomcat();
 
-        var base = Paths.get("build/tomcat");
+        final var base = Paths.get("build/tomcat");
         Files.createDirectories(base);
 
         server.setPort(8100);
@@ -41,10 +41,10 @@ class TomcatIntegrationTest {
         server.getHost().setAutoDeploy(true);
         server.getHost().setDeployOnStartup(true);
 
-        var context = (StandardContext) server.addWebapp("", base.toAbsolutePath().toString());
+        final var context = (StandardContext) server.addWebapp("", base.toAbsolutePath().toString());
 
-        var additionWebInfClasses = Paths.get("build/classes");
-        WebResourceRoot resources = new StandardRoot(context);
+        final var additionWebInfClasses = Paths.get("build/classes");
+        final WebResourceRoot resources = new StandardRoot(context);
         resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes",
                 additionWebInfClasses.toAbsolutePath().toString(), "/"));
         context.setResources(resources);
@@ -109,10 +109,10 @@ class TomcatIntegrationTest {
         performRequest("http://localhost:8100/async?" + ClientRequest.COMPLEX, HttpServletResponse.SC_OK);
     }
 
-    private void performRequest(String url, Integer expectedStatus) {
+    private void performRequest(final String url, final Integer expectedStatus) {
         try {
             ClientRequest.performRequest(url, expectedStatus);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             if (expectedStatus != null) {
                 fail("Status returned: " + expectedStatus);
@@ -120,10 +120,10 @@ class TomcatIntegrationTest {
         }
     }
 
-    private void performRequest(String url, Integer expectedStatus, ByteBuffer requestData) {
+    private void performRequest(final String url, final Integer expectedStatus, final ByteBuffer requestData) {
         try {
             ClientRequest.performRequest(url, expectedStatus, requestData);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             if (expectedStatus != null) {
                 fail("Status returned: " + expectedStatus);

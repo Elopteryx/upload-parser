@@ -40,7 +40,7 @@ class Base64Decoder {
     static {
         ENCODING_TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".getBytes(US_ASCII);
         for (var i = 0; i < ENCODING_TABLE.length; i++) {
-            var offSet = (ENCODING_TABLE[i] & 0xFF) - 43;
+            final var offSet = (ENCODING_TABLE[i] & 0xFF) - 43;
             DECODING_TABLE[offSet] = (byte)(i + 1);  // zero = illegal
         }
     }
@@ -52,11 +52,11 @@ class Base64Decoder {
     private static final int DONE = 0x0FF00;
     private static final int ERROR = 0xF0000;
 
-    private static int nextByte(ByteBuffer buffer, int state, int last, boolean ignoreErrors) throws IOException {
+    private static int nextByte(final ByteBuffer buffer, final int state, final int last, final boolean ignoreErrors) throws IOException {
         return nextByte(buffer.get() & 0xFF, state, last, ignoreErrors);
     }
 
-    private static int nextByte(int charInt, int state, int last, boolean ignoreErrors) throws IOException {
+    private static int nextByte(final int charInt, final int state, final int last, final boolean ignoreErrors) throws IOException {
         if (last == MARK) {
             if (charInt != '=') {
                 throw new IOException("Expected padding character");
@@ -81,7 +81,7 @@ class Base64Decoder {
             }
             throw new IOException("Invalid base64 character encountered: " + charInt);
         }
-        var byteInt = (DECODING_TABLE[charInt - 43] & 0xFF) - 1;
+        final var byteInt = (DECODING_TABLE[charInt - 43] & 0xFF) - 1;
         if (byteInt < 0) {
             if (ignoreErrors) {
                 return ERROR;
@@ -103,7 +103,7 @@ class Base64Decoder {
      * @param target the byte buffer to write decoded data to
      * @throws java.io.IOException if the encoded data is corrupted
      */
-    void decode(ByteBuffer source, ByteBuffer target) throws IOException {
+    void decode(final ByteBuffer source, final ByteBuffer target) throws IOException {
         if (target == null) {
             throw new IllegalStateException();
         }
@@ -184,11 +184,11 @@ class Base64Decoder {
         this.state = state;
     }
 
-    private static void drain(ByteBuffer source, int byteInt, int state, int last) {
+    private static void drain(final ByteBuffer source, int byteInt, final int state, int last) {
         while (byteInt != DONE && source.remaining() > 0) {
             try {
                 byteInt = nextByte(source, state, last, true);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 byteInt = 0;
             }
 

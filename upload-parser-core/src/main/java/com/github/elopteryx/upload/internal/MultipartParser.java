@@ -72,10 +72,10 @@ public class MultipartParser {
      * @param requestCharset The charset of the input.
      * @return A new state object to allow calling the parser.
      */
-    public static ParseState beginParse(final PartHandler handler, final byte[] boundary, int bufferSize, final Charset requestCharset) {
+    public static ParseState beginParse(final PartHandler handler, final byte[] boundary, final int bufferSize, final Charset requestCharset) {
 
         // We prepend CR/LF to the boundary to chop trailing CR/LF from body-data tokens.
-        var boundaryToken = new byte[boundary.length + BOUNDARY_PREFIX.length];
+        final var boundaryToken = new byte[boundary.length + BOUNDARY_PREFIX.length];
         System.arraycopy(BOUNDARY_PREFIX, 0, boundaryToken, 0, BOUNDARY_PREFIX.length);
         System.arraycopy(boundary, 0, boundaryToken, BOUNDARY_PREFIX.length, boundary.length);
         return new ParseState(handler, bufferSize, requestCharset, boundaryToken);
@@ -106,7 +106,7 @@ public class MultipartParser {
          * @param bufferSize The size of the allocated buffer.
          * @param boundary The boundary value for the multipart stream.
          */
-        ParseState(PartHandler partHandler, int bufferSize, Charset requestCharset, byte[] boundary) {
+        ParseState(final PartHandler partHandler, final int bufferSize, final Charset requestCharset, final byte[] boundary) {
             this.partHandler = partHandler;
             this.requestCharset = requestCharset;
             this.bufferSize = bufferSize;
@@ -118,7 +118,7 @@ public class MultipartParser {
          * @param buffer The buffer containing new data to process
          * @throws IOException If an error occurred with the I/O
          */
-        void parse(ByteBuffer buffer) throws IOException {
+        void parse(final ByteBuffer buffer) throws IOException {
             while (buffer.hasRemaining()) {
                 switch (state) {
                     case 0:
@@ -203,7 +203,7 @@ public class MultipartParser {
                     subState = 0;
                     partHandler.beginPart(headers);
                     //select the appropriate encoding
-                    var encoding = headers.getHeader(CONTENT_TRANSFER_ENCODING);
+                    final var encoding = headers.getHeader(CONTENT_TRANSFER_ENCODING);
                     if (encoding == null) {
                         encodingHandler = new IdentityEncoding();
                     } else if (encoding.equalsIgnoreCase("base64")) {
@@ -252,7 +252,7 @@ public class MultipartParser {
 
         private void entity(final ByteBuffer buffer) throws IOException {
             var startingSubState = subState;
-            var pos = buffer.position();
+            final var pos = buffer.position();
             while (buffer.hasRemaining()) {
                 final var b = buffer.get();
                 if (subState >= 0) {
@@ -262,7 +262,7 @@ public class MultipartParser {
                         if (subState == boundary.length) {
                             startingSubState = 0;
                             //we have our data
-                            var retBuffer = buffer.duplicate();
+                            final var retBuffer = buffer.duplicate();
                             retBuffer.position(pos);
 
                             retBuffer.limit(Math.max(buffer.position() - boundary.length, 0));
@@ -315,7 +315,7 @@ public class MultipartParser {
                 }
             }
             //handle the data we read so far
-            var retBuffer = buffer.duplicate();
+            final var retBuffer = buffer.duplicate();
             retBuffer.position(pos);
             if (subState == 0) {
                 //if we end partially through a boundary we do not handle the data
@@ -352,7 +352,7 @@ public class MultipartParser {
 
         private final ByteBuffer buffer;
 
-        Base64Encoding(int size) {
+        Base64Encoding(final int size) {
             buffer = ByteBuffer.allocate(size);
         }
 
@@ -378,7 +378,7 @@ public class MultipartParser {
 
         private final ByteBuffer buffer;
 
-        QuotedPrintableEncoding(int size) {
+        QuotedPrintableEncoding(final int size) {
             buffer = ByteBuffer.allocate(size);
         }
 
@@ -389,7 +389,7 @@ public class MultipartParser {
             buffer.clear();
             try {
                 while (rawData.hasRemaining()) {
-                    var readByte = rawData.get();
+                    final var readByte = rawData.get();
                     if (equalsSeen) {
                         if (firstCharacter == 0) {
                             if (readByte == '\n' || readByte == '\r') {

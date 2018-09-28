@@ -28,7 +28,7 @@ public class PartSizeException extends UploadSizeException {
      * @param actual The known size at the time of the exception
      * @param permitted The maximum permitted size
      */
-    public PartSizeException(String message, long actual, long permitted) {
+    public PartSizeException(final String message, final long actual, final long permitted) {
         super(message, actual, permitted);
     }
 }

@@ -67,7 +67,7 @@ public class PartStreamImpl implements PartStream {
      * @param fieldName The form field name.
      * @param headers The object containing the headers
      */
-    public PartStreamImpl(String fileName, String fieldName, Headers headers) {
+    public PartStreamImpl(final String fileName, final String fieldName, final Headers headers) {
         this.fileName = fileName;
         this.fieldName = fieldName;
         this.contentType = headers.getHeader(Headers.CONTENT_TYPE);
@@ -106,7 +106,7 @@ public class PartStreamImpl implements PartStream {
     }
 
     @Override
-    public String getHeader(String name) {
+    public String getHeader(final String name) {
         return headers.getHeader(name);
     }
 
@@ -116,7 +116,7 @@ public class PartStreamImpl implements PartStream {
     }
 
     @Override
-    public Collection<String> getHeaders(String name) {
+    public Collection<String> getHeaders(final String name) {
         return headers.getHeaders(name);
     }
 
@@ -124,7 +124,7 @@ public class PartStreamImpl implements PartStream {
         return headers;
     }
 
-    void setSize(long size) {
+    void setSize(final long size) {
         this.size = size;
     }
 
@@ -136,15 +136,15 @@ public class PartStreamImpl implements PartStream {
         return output;
     }
 
-    void setOutput(PartOutput output) {
+    void setOutput(final PartOutput output) {
         this.output = output;
     }
 
-    private String checkFileName(String fileName) {
+    private String checkFileName(final String fileName) {
         if (fileName != null && fileName.indexOf('\u0000') != -1) {
             final var sb = new StringBuilder();
             for (var i = 0; i < fileName.length(); i++) {
-                var character = fileName.charAt(i);
+                final var character = fileName.charAt(i);
                 switch (character) {
                     case 0:
                         sb.append("\\0");

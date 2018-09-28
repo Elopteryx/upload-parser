@@ -34,22 +34,22 @@ class InputStreamBackedChannel implements ReadableByteChannel {
      * Public constructor.
      * @param inputStream The input stream
      */
-    public InputStreamBackedChannel(InputStream inputStream) {
+    public InputStreamBackedChannel(final InputStream inputStream) {
         this.inputStream = Objects.requireNonNull(inputStream);
     }
 
     @Override
-    public int read(ByteBuffer dst) throws IOException {
+    public int read(final ByteBuffer dst) throws IOException {
         if (!open) {
             throw new ClosedChannelException();
         }
         if (dst.isDirect() || dst.isReadOnly()) {
             throw new IllegalArgumentException("The buffer cannot be direct or read-only!");
         }
-        var buf = dst.array();
-        var offset = dst.position();
-        var len = dst.remaining();
-        var read = inputStream.read(buf, offset, len);
+        final var buf = dst.array();
+        final var offset = dst.position();
+        final var len = dst.remaining();
+        final var read = inputStream.read(buf, offset, len);
         dst.position(offset + read);
         return read;
     }

@@ -41,7 +41,7 @@ public class MultiPartImpl implements MultiPart {
      */
     private MultivaluedMap<String, String> headers;
 
-    MultiPartImpl(List<Part> parts, long size) {
+    MultiPartImpl(final List<Part> parts, final long size) {
         this.parts = parts != null ? Collections.unmodifiableList(parts) : Collections.emptyList();
         this.size = size;
     }
@@ -61,7 +61,7 @@ public class MultiPartImpl implements MultiPart {
         return headers;
     }
 
-    public void setHeaders(MultivaluedMap<String, String> headers) {
+    public void setHeaders(final MultivaluedMap<String, String> headers) {
         this.headers = headers;
     }
 }

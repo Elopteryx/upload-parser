@@ -35,7 +35,7 @@ public class UploadController implements OnPartBegin, OnPartEnd, OnRequestComple
      */
     @POST
     @Path("upload")
-    public void multipart(@Context HttpServletRequest request, @Suspended final AsyncResponse asyncResponse) throws IOException, ServletException {
+    public void multipart(@Context final HttpServletRequest request, @Suspended final AsyncResponse asyncResponse) throws IOException, ServletException {
         UploadParser.newParser()
                 .onPartBegin(this)
                 .onPartEnd(this)
@@ -46,25 +46,25 @@ public class UploadController implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Override
-    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) {
+    public PartOutput onPartBegin(final UploadContext context, final ByteBuffer buffer) {
         // Your business logic here, check the part, you can use the bytes in the buffer to check
         // the real mime type, then return with a channel, stream or path to write the part
         return PartOutput.from(new NullChannel());
     }
 
     @Override
-    public void onPartEnd(UploadContext context) {
+    public void onPartEnd(final UploadContext context) {
         // Your business logic here
     }
 
     @Override
-    public void onRequestComplete(UploadContext context) {
+    public void onRequestComplete(final UploadContext context) {
         // Your business logic here, send a response to the client
         context.getUserObject(AsyncResponse.class).resume(Response.ok().build());
     }
 
     @Override
-    public void onError(UploadContext context, Throwable throwable) {
+    public void onError(final UploadContext context, final Throwable throwable) {
         // Your business logic here, handle the error
         context.getUserObject(AsyncResponse.class).resume(Response.serverError().build());
     }

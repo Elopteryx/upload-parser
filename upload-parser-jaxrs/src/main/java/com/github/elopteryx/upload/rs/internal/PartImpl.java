@@ -25,7 +25,7 @@ import com.github.elopteryx.upload.rs.Part;
  */
 class PartImpl extends PartStreamImpl implements Part {
 
-    PartImpl(PartStreamImpl partStream) {
+    PartImpl(final PartStreamImpl partStream) {
         super(partStream.getSubmittedFileName(), partStream.getName(), partStream.getHeadersObject());
         this.output = partStream.getOutput();
     }

@@ -22,40 +22,40 @@ public class ReaderUploadController {
      */
     @POST
     @Path("uploadWithReader")
-    public Response multipart(MultiPart multiPart, List<Part> parts, @UploadParam("filefield1") Part firstFile) throws IOException {
+    public Response multipart(final MultiPart multiPart, final List<Part> parts, @UploadParam("filefield1") final Part firstFile) throws IOException {
         assertNotNull(multiPart);
         assertNotNull(parts);
         assertNotNull(firstFile);
         assertEquals(8, multiPart.getParts().size());
         assertTrue(multiPart.getSize() > 0);
         assertFalse(multiPart.getHeaders().isEmpty());
-        for (var part : parts) {
+        for (final var part : parts) {
             assertTrue(part.getSize() >= 0);
             if (part.isFile()) {
-                var name = part.getName();
+                final var name = part.getName();
                 if ("".equals(part.getSubmittedFileName())) {
                     throw new IOException("No file was chosen for the form field!");
                 }
                 System.out.println("File field " + name + " with file name "
                         + part.getSubmittedFileName() + " detected!");
-                for (var header : part.getHeaderNames()) {
+                for (final var header : part.getHeaderNames()) {
                     System.out.println(header + " " + part.getHeader(header));
                 }
                 part.getHeaders("content-type");
                 System.out.println(part.getContentType());
-                var output = part.getOutPut();
+                final var output = part.getOutPut();
                 if (output.safeToCast(ByteArrayOutputStream.class)) {
-                    var bos = output.unwrap(ByteArrayOutputStream.class);
+                    final var bos = output.unwrap(ByteArrayOutputStream.class);
                     System.out.println(bos.toString());
                 }
             } else {
-                for (var header : part.getHeaderNames()) {
+                for (final var header : part.getHeaderNames()) {
                     System.out.println(header + " " + part.getHeader(header));
                 }
                 System.out.println(part.getContentType());
-                var output = part.getOutPut();
+                final var output = part.getOutPut();
                 if (output.safeToCast(ByteArrayOutputStream.class)) {
-                    var bos = output.unwrap(ByteArrayOutputStream.class);
+                    final var bos = output.unwrap(ByteArrayOutputStream.class);
                     System.out.println(bos.toString());
                 }
             }
@@ -68,7 +68,7 @@ public class ReaderUploadController {
      */
     @POST
     @Path("uploadWithInvalidParameters")
-    public Response invalidParamInjection(@UploadParam("nonExistent") Part part1, Part part2, ByteBuffer buffer, List<String> names) {
+    public Response invalidParamInjection(@UploadParam("nonExistent") final Part part1, final Part part2, final ByteBuffer buffer, final List<String> names) {
         // These parameters are not valid injection targets, the reader does not support them
         assertNull(part1);
         assertNull(part2);
@@ -82,7 +82,7 @@ public class ReaderUploadController {
      */
     @POST
     @Path("uploadWithReaderAndPartLimit")
-    public Response multipartSizeLimited(@UploadConfig(maxPartSize = 4096) MultiPart multiPart) {
+    public Response multipartSizeLimited(@UploadConfig(maxPartSize = 4096) final MultiPart multiPart) {
         // This should be called only when each part size is smaller than the limit
         assertNotNull(multiPart);
         return Response.status(200).build();
@@ -93,7 +93,7 @@ public class ReaderUploadController {
      */
     @POST
     @Path("uploadWithReaderAndRequestLimit")
-    public Response multipartRequestSizeLimited(@UploadConfig(maxRequestSize = 4096) MultiPart multiPart) {
+    public Response multipartRequestSizeLimited(@UploadConfig(maxRequestSize = 4096) final MultiPart multiPart) {
         // This should be called only when the request size is smaller than the limit
         assertNotNull(multiPart);
         return Response.status(200).build();

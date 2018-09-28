@@ -37,7 +37,7 @@ public abstract class UploadSizeException extends RuntimeException {
      * @param actual The known size at the time of the exception in bytes
      * @param permitted The maximum permitted size in bytes
      */
-    UploadSizeException(String message, long actual, long permitted) {
+    UploadSizeException(final String message, final long actual, final long permitted) {
         super(message);
         this.actual = actual;
         this.permitted = permitted;

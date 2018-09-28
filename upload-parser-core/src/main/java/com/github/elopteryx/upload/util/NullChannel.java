@@ -40,7 +40,7 @@ public class NullChannel implements ReadableByteChannel, WritableByteChannel {
     private boolean open = true;
 
     @Override
-    public int read(ByteBuffer dst) throws IOException {
+    public int read(final ByteBuffer dst) throws IOException {
         if (!open) {
             throw new ClosedChannelException();
         }
@@ -48,11 +48,11 @@ public class NullChannel implements ReadableByteChannel, WritableByteChannel {
     }
 
     @Override
-    public int write(ByteBuffer src) throws IOException {
+    public int write(final ByteBuffer src) throws IOException {
         if (!open) {
             throw new ClosedChannelException();
         }
-        var remaining = src.remaining();
+        final var remaining = src.remaining();
         src.position(src.limit());
         return remaining;
     }

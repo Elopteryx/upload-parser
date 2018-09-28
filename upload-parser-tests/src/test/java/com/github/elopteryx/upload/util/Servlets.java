@@ -14,7 +14,7 @@ public class Servlets {
      * @throws Exception If an error occurred
      */
     public static HttpServletRequest newRequest() throws Exception {
-        var request = mock(HttpServletRequest.class);
+        final var request = mock(HttpServletRequest.class);
 
         when(request.getMethod()).thenReturn("POST");
         when(request.getContentType()).thenReturn("multipart/");
@@ -30,7 +30,7 @@ public class Servlets {
      * @return The mocked response.
      */
     public static HttpServletResponse newResponse() {
-        var response = mock(HttpServletResponse.class);
+        final var response = mock(HttpServletResponse.class);
 
         when(response.getStatus()).thenReturn(200);
 

@@ -43,7 +43,7 @@ public final class ClientRequest {
      * @param expectedStatus The expected HTTP response, can be null
      * @throws IOException If an IO error occurred
      */
-    public static void performRequest(String url, Integer expectedStatus) throws IOException {
+    public static void performRequest(final String url, final Integer expectedStatus) throws IOException {
         performRequest(url, expectedStatus, withSeveralFields());
     }
 
@@ -55,9 +55,9 @@ public final class ClientRequest {
      * @param requestData The multipart body, can't be null
      * @throws IOException If an IO error occurred
      */
-    public static void performRequest(String url, Integer expectedStatus, ByteBuffer requestData) throws IOException {
-        var client = HttpClient.newBuilder().version(HTTP_1_1).build();
-        var request = HttpRequest.newBuilder()
+    public static void performRequest(final String url, final Integer expectedStatus, final ByteBuffer requestData) throws IOException {
+        final var client = HttpClient.newBuilder().version(HTTP_1_1).build();
+        final var request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .timeout(Duration.ofSeconds(5))
                 .header("Content-Type", "multipart/form-data; boundary=" + BOUNDARY)
@@ -65,7 +65,7 @@ public final class ClientRequest {
                 .build();
         try {
             client.send(request, responseInfo -> {
-                var statusCode = responseInfo.statusCode();
+                final var statusCode = responseInfo.statusCode();
                 System.out.println("----------------------------------------");
                 System.out.println(statusCode);
                 if (expectedStatus != null) {
@@ -73,7 +73,7 @@ public final class ClientRequest {
                 }
                 return HttpResponse.BodySubscribers.ofString(StandardCharsets.UTF_8);
             });
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

@@ -25,7 +25,7 @@ public class ReaderUploadController {
      */
     @POST
     @Path("upload1")
-    public void multiPart(@UploadConfig(sizeThreshold = 4096)MultiPart multiPart) throws IOException, ServletException {
+    public void multiPart(@UploadConfig(sizeThreshold = 4096) final MultiPart multiPart) throws IOException, ServletException {
         multiPart.getParts();
         multiPart.getHeaders();
         multiPart.getSize();
@@ -42,9 +42,9 @@ public class ReaderUploadController {
      */
     @POST
     @Path("upload2")
-    public void separateParts(@UploadParam("text1")Part part1,
-                              @UploadParam("text2")Part part2,
-                              @UploadParam("file")Part part3
+    public void separateParts(@UploadParam("text1") final Part part1,
+                              @UploadParam("text2") final Part part2,
+                              @UploadParam("file") final Part part3
     ) throws IOException, ServletException {
         // ...
     }

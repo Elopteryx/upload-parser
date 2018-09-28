@@ -35,16 +35,16 @@ class QuotedPrintableEncodingTest {
         checkEncoding("=\r\n", "=3d=0d=0a");
     }
 
-    private static void checkEncoding(final String original, String encoded) throws IOException {
-        var encoding = new MultipartParser.QuotedPrintableEncoding(1024);
+    private static void checkEncoding(final String original, final String encoded) throws IOException {
+        final var encoding = new MultipartParser.QuotedPrintableEncoding(1024);
         encoding.handle(new MultipartParser.PartHandler() {
 
             @Override
-            public void beginPart(Headers headers) {}
+            public void beginPart(final Headers headers) {}
 
             @Override
-            public void data(ByteBuffer buffer) {
-                var parserResult = new String(buffer.array(), US_ASCII).trim();
+            public void data(final ByteBuffer buffer) {
+                final var parserResult = new String(buffer.array(), US_ASCII).trim();
                 assertEquals(parserResult, original.trim());
             }
 

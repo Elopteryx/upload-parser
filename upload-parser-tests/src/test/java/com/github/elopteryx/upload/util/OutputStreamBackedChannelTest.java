@@ -17,33 +17,33 @@ class OutputStreamBackedChannelTest {
 
     @Test
     void write_the_string() throws IOException {
-        var stream = new ByteArrayOutputStream(1024);
-        var channel = new OutputStreamBackedChannel(stream);
-        var buffer = ByteBuffer.wrap(TEST_TEXT.getBytes());
+        final var stream = new ByteArrayOutputStream(1024);
+        final var channel = new OutputStreamBackedChannel(stream);
+        final var buffer = ByteBuffer.wrap(TEST_TEXT.getBytes());
         channel.write(buffer);
         assertEquals(TEST_TEXT, new String(buffer.array(), 0, buffer.position()));
     }
 
     @Test
     void try_to_write_from_direct_buffer() {
-        var stream = new ByteArrayOutputStream(1024);
-        var channel = new OutputStreamBackedChannel(stream);
-        var buffer = ByteBuffer.allocateDirect(0);
+        final var stream = new ByteArrayOutputStream(1024);
+        final var channel = new OutputStreamBackedChannel(stream);
+        final var buffer = ByteBuffer.allocateDirect(0);
         assertThrows(IllegalArgumentException.class, () -> channel.write(buffer));
     }
 
     @Test
     void try_to_write_from_read_only_buffer() throws Exception {
-        var stream = new ByteArrayOutputStream(1024);
-        var channel = new OutputStreamBackedChannel(stream);
-        var buffer = ByteBuffer.allocate(0).asReadOnlyBuffer();
+        final var stream = new ByteArrayOutputStream(1024);
+        final var channel = new OutputStreamBackedChannel(stream);
+        final var buffer = ByteBuffer.allocate(0).asReadOnlyBuffer();
         assertThrows(IllegalArgumentException.class, () -> channel.write(buffer));
     }
 
     @Test
     void open_and_close_and_try_to_write() throws Exception {
-        var stream = new ByteArrayOutputStream(1024);
-        var channel = new OutputStreamBackedChannel(stream);
+        final var stream = new ByteArrayOutputStream(1024);
+        final var channel = new OutputStreamBackedChannel(stream);
         assertTrue(channel.isOpen());
         channel.close();
         assertThrows(ClosedChannelException.class, () -> channel.write(ByteBuffer.wrap(TEST_TEXT.getBytes())));

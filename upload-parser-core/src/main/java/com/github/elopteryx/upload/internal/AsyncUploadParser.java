@@ -40,7 +40,7 @@ public class AsyncUploadParser extends AbstractUploadParser implements ReadListe
      */
     private final HttpServletRequest request;
 
-    public AsyncUploadParser(HttpServletRequest request) {
+    public AsyncUploadParser(final HttpServletRequest request) {
         this.request = requireNonNull(request);
     }
 
@@ -126,7 +126,7 @@ public class AsyncUploadParser extends AbstractUploadParser implements ReadListe
             if (requestCallback != null) {
                 requestCallback.onRequestComplete(context);
             }
-        } catch (ServletException e) {
+        } catch (final ServletException e) {
             throw new RuntimeException(e);
         }
     }
@@ -136,12 +136,12 @@ public class AsyncUploadParser extends AbstractUploadParser implements ReadListe
      * @param throwable The unhandled error that happened
      */
     @Override
-    public void onError(Throwable throwable) {
+    public void onError(final Throwable throwable) {
         try {
             if (errorCallback != null) {
                 errorCallback.onError(context, throwable);
             }
-        } catch (IOException | ServletException e) {
+        } catch (final IOException | ServletException e) {
             throw new RuntimeException(e);
         }
     }

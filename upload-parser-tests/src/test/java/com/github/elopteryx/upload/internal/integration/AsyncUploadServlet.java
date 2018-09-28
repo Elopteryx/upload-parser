@@ -35,9 +35,9 @@ import javax.servlet.http.HttpServletResponse;
 public class AsyncUploadServlet extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-        var query = request.getQueryString();
+        final var query = request.getQueryString();
         switch (query) {
             case ClientRequest.SIMPLE:
                 simple(request, response);
@@ -66,7 +66,7 @@ public class AsyncUploadServlet extends HttpServlet {
 
     }
 
-    private void simple(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void simple(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
                     if (context.getPartStreams().size() == 1) {
@@ -101,12 +101,12 @@ public class AsyncUploadServlet extends HttpServlet {
     }
 
     private class EvilOutput extends PartOutput {
-        EvilOutput(Object value) {
+        EvilOutput(final Object value) {
             super(value);
         }
     }
 
-    private void thresholdLesser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void thresholdLesser(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
@@ -119,7 +119,7 @@ public class AsyncUploadServlet extends HttpServlet {
                 .setupAsyncParse(request);
     }
 
-    private void thresholdGreater(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void thresholdGreater(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
@@ -132,7 +132,7 @@ public class AsyncUploadServlet extends HttpServlet {
                 .setupAsyncParse(request);
     }
 
-    private void error(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void error(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> new EvilOutput("This will cause an error!"))
@@ -140,7 +140,7 @@ public class AsyncUploadServlet extends HttpServlet {
                 .setupAsyncParse(request);
     }
 
-    private void ioErrorUponError(HttpServletRequest request) throws ServletException, IOException {
+    private void ioErrorUponError(final HttpServletRequest request) throws ServletException, IOException {
         request.startAsync().setTimeout(500);
         UploadParser.newParser()
                 .onRequestComplete(context -> {
@@ -152,7 +152,7 @@ public class AsyncUploadServlet extends HttpServlet {
                 .setupAsyncParse(request);
     }
 
-    private void servletErrorUponError(HttpServletRequest request) throws ServletException, IOException {
+    private void servletErrorUponError(final HttpServletRequest request) throws ServletException, IOException {
         request.startAsync().setTimeout(500);
         // onError will not be called for ServletException!
         UploadParser.newParser()
@@ -162,16 +162,16 @@ public class AsyncUploadServlet extends HttpServlet {
                 .setupAsyncParse(request);
     }
 
-    private void complex(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void complex(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
         if (!UploadParser.isMultipart(request)) {
             throw new ServletException("Not multipart!");
         }
 
-        var partCounter = new AtomicInteger(0);
-        List<ByteArrayOutputStream> formFields = new ArrayList<>();
+        final var partCounter = new AtomicInteger(0);
+        final List<ByteArrayOutputStream> formFields = new ArrayList<>();
 
-        var expectedContentTypes = Arrays.asList(
+        final var expectedContentTypes = Arrays.asList(
                 "text/plain",
                 "text/plain",
                 "text/plain",
@@ -247,7 +247,7 @@ public class AsyncUploadServlet extends HttpServlet {
                 .setupAsyncParse(request);
     }
 
-    private static OnRequestComplete onSuccessfulFinish(HttpServletRequest request, HttpServletResponse response, int size) {
+    private static OnRequestComplete onSuccessfulFinish(final HttpServletRequest request, final HttpServletResponse response, final int size) {
         return context -> {
             final var currentPart = context.getCurrentPart();
             assertTrue(currentPart.isFinished());

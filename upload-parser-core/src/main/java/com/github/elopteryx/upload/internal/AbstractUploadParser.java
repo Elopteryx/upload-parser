@@ -124,11 +124,11 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      * @param request The servlet request
      * @throws RequestSizeException If the supplied size is invalid
      */
-    void init(HttpServletRequest request) {
+    void init(final HttpServletRequest request) {
 
         // Fail fast mode
         if (maxRequestSize > -1) {
-            var requestSize = request.getContentLengthLong();
+            final var requestSize = request.getContentLengthLong();
             if (requestSize > maxRequestSize) {
                 throw new RequestSizeException("The size of the request (" + requestSize
                         + ") is greater than the allowed size (" + maxRequestSize + ")!", requestSize, maxRequestSize);
@@ -138,8 +138,8 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
         checkBuffer = ByteBuffer.allocate(sizeThreshold);
         context = new UploadContextImpl(request, userObject);
 
-        var mimeType = request.getHeader(Headers.CONTENT_TYPE);
-        String boundary;
+        final var mimeType = request.getHeader(Headers.CONTENT_TYPE);
+        final String boundary;
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
             boundary = Headers.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
@@ -147,8 +147,8 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
                         + mimeType
                         + ", multipart data will not be available");
             }
-            var encodingHeader = request.getCharacterEncoding();
-            var charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
+            final var encodingHeader = request.getCharacterEncoding();
+            final var charset = encodingHeader != null ? Charset.forName(encodingHeader) : ISO_8859_1;
             parseState = MultipartParser.beginParse(this, boundary.getBytes(), maxBytesUsed, charset);
         }
     }
@@ -158,8 +158,8 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      * parsing if a max size has been set and reached.
      * @param additional The amount to add, always non negative
      */
-    void checkPartSize(int additional) {
-        long partSize = context.incrementAndGetPartBytesRead(additional);
+    void checkPartSize(final int additional) {
+        final long partSize = context.incrementAndGetPartBytesRead(additional);
         if (maxPartSize > -1 && partSize > maxPartSize) {
             throw new PartSizeException("The size of the part ("
                     + partSize
@@ -174,7 +174,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      * parsing if a max size has been set and reached.
      * @param additional The amount to add, always non negative
      */
-    void checkRequestSize(int additional) {
+    void checkRequestSize(final int additional) {
         requestSize += additional;
         if (maxRequestSize > -1 && requestSize > maxRequestSize) {
             throw new RequestSizeException("The size of the request ("
@@ -189,8 +189,8 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     public void beginPart(final Headers headers) {
         final var disposition = headers.getHeader(Headers.CONTENT_DISPOSITION);
         if (disposition != null && disposition.startsWith("form-data")) {
-            var fieldName = Headers.extractQuotedValueFromHeader(disposition, "name");
-            var fileName = Headers.extractQuotedValueFromHeader(disposition, "filename");
+            final var fieldName = Headers.extractQuotedValueFromHeader(disposition, "name");
+            final var fileName = Headers.extractQuotedValueFromHeader(disposition, "filename");
             context.reset(new PartStreamImpl(fileName, fieldName, headers));
         }
     }
@@ -210,14 +210,14 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
     }
 
     private void copyBuffer(final ByteBuffer buffer) {
-        var transferCount = Math.min(checkBuffer.remaining(), buffer.remaining());
+        final var transferCount = Math.min(checkBuffer.remaining(), buffer.remaining());
         if (transferCount > 0) {
             checkBuffer.put(buffer.array(), buffer.arrayOffset() + buffer.position(), transferCount);
             buffer.position(buffer.position() + transferCount);
         }
     }
 
-    private void validate(boolean partFinished) throws IOException {
+    private void validate(final boolean partFinished) throws IOException {
         context.finishBuffering();
         if (partFinished) {
             context.getCurrentPart().markAsFinished();
@@ -261,23 +261,23 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
         }
     }
 
-    public void setPartBeginCallback(OnPartBegin partBeginCallback) {
+    public void setPartBeginCallback(final OnPartBegin partBeginCallback) {
         this.partBeginCallback = partBeginCallback;
     }
 
-    public void setPartEndCallback(OnPartEnd partEndCallback) {
+    public void setPartEndCallback(final OnPartEnd partEndCallback) {
         this.partEndCallback = partEndCallback;
     }
 
-    public void setRequestCallback(OnRequestComplete requestCallback) {
+    public void setRequestCallback(final OnRequestComplete requestCallback) {
         this.requestCallback = requestCallback;
     }
 
-    public void setErrorCallback(OnError errorCallback) {
+    public void setErrorCallback(final OnError errorCallback) {
         this.errorCallback = errorCallback;
     }
 
-    public void setUserObject(Object userObject) {
+    public void setUserObject(final Object userObject) {
         this.userObject = userObject;
     }
 
@@ -286,21 +286,21 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
      * between the buffers used for raw parsing.
      * @param maxBytesUsed The amount to use
      */
-    public void setMaxBytesUsed(int maxBytesUsed) {
+    public void setMaxBytesUsed(final int maxBytesUsed) {
         // There are two byte buffers so each one gets half of the amount
         this.maxBytesUsed = maxBytesUsed / 2;
         this.dataBuffer = ByteBuffer.allocate(maxBytesUsed / 2);
     }
 
-    public void setSizeThreshold(int sizeThreshold) {
+    public void setSizeThreshold(final int sizeThreshold) {
         this.sizeThreshold = sizeThreshold;
     }
 
-    public void setMaxPartSize(long maxPartSize) {
+    public void setMaxPartSize(final long maxPartSize) {
         this.maxPartSize = maxPartSize;
     }
 
-    public void setMaxRequestSize(long maxRequestSize) {
+    public void setMaxRequestSize(final long maxRequestSize) {
         this.maxRequestSize = maxRequestSize;
     }
 }

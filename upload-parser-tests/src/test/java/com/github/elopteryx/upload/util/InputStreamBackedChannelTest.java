@@ -17,33 +17,33 @@ class InputStreamBackedChannelTest {
 
     @Test
     void read_the_string() throws Exception {
-        var stream = new ByteArrayInputStream(TEST_TEXT.getBytes());
-        var channel = new InputStreamBackedChannel(stream);
-        var buffer = ByteBuffer.allocate(1024);
+        final var stream = new ByteArrayInputStream(TEST_TEXT.getBytes());
+        final var channel = new InputStreamBackedChannel(stream);
+        final var buffer = ByteBuffer.allocate(1024);
         channel.read(buffer);
         assertEquals(TEST_TEXT, new String(buffer.array(), 0, buffer.position()));
     }
 
     @Test
     void try_to_read_to_direct_buffer() {
-        var stream = new ByteArrayInputStream(TEST_TEXT.getBytes());
-        var channel = new InputStreamBackedChannel(stream);
-        var buffer = ByteBuffer.allocateDirect(1024);
+        final var stream = new ByteArrayInputStream(TEST_TEXT.getBytes());
+        final var channel = new InputStreamBackedChannel(stream);
+        final var buffer = ByteBuffer.allocateDirect(1024);
         assertThrows(IllegalArgumentException.class, () -> channel.read(buffer));
     }
 
     @Test
     void try_to_read_to_read_only_buffer() {
-        var stream = new ByteArrayInputStream(TEST_TEXT.getBytes());
-        var channel = new InputStreamBackedChannel(stream);
-        var buffer = ByteBuffer.allocateDirect(1024).asReadOnlyBuffer();
+        final var stream = new ByteArrayInputStream(TEST_TEXT.getBytes());
+        final var channel = new InputStreamBackedChannel(stream);
+        final var buffer = ByteBuffer.allocateDirect(1024).asReadOnlyBuffer();
         assertThrows(IllegalArgumentException.class, () -> channel.read(buffer));
     }
 
     @Test
     void open_and_close_and_try_to_read() throws IOException {
-        var stream = new ByteArrayInputStream(TEST_TEXT.getBytes());
-        var channel = new InputStreamBackedChannel(stream);
+        final var stream = new ByteArrayInputStream(TEST_TEXT.getBytes());
+        final var channel = new InputStreamBackedChannel(stream);
         assertTrue(channel.isOpen());
         channel.close();
         assertThrows(ClosedChannelException.class, () -> channel.read(ByteBuffer.allocate(0)));

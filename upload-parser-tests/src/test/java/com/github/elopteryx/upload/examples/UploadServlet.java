@@ -24,9 +24,9 @@ public class UploadServlet extends HttpServlet {
      */
     private static final String UPLOAD_DIR = "uploads";
 
-    protected void doPost(HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
 
-        var applicationPath = request.getServletContext().getRealPath("");
+        final var applicationPath = request.getServletContext().getRealPath("");
         final var uploadFilePath = Paths.get(applicationPath, UPLOAD_DIR);
 
         if (!Files.isDirectory(uploadFilePath)) {

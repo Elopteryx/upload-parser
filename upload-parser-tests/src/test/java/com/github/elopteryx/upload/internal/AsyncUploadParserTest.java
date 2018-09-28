@@ -13,19 +13,19 @@ class AsyncUploadParserTest {
 
     @Test
     void this_should_end_with_multipart_exception() throws Exception {
-        var request = Servlets.newRequest();
+        final var request = Servlets.newRequest();
 
         when(request.isAsyncSupported()).thenReturn(true);
         when(request.getHeader(Headers.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary=----1234");
 
         UploadParser.newParser().setupAsyncParse(request);
-        var servletInputStream = (MockServletInputStream)request.getInputStream();
+        final var servletInputStream = (MockServletInputStream)request.getInputStream();
         assertThrows(MultipartException.class, servletInputStream::onDataAvailable);
     }
 
     @Test
     void this_should_end_with_illegal_state_exception() throws Exception {
-        var request = Servlets.newRequest();
+        final var request = Servlets.newRequest();
 
         when(request.isAsyncSupported()).thenReturn(false);
 
@@ -34,7 +34,7 @@ class AsyncUploadParserTest {
 
     @Test
     void this_should_end_with_illegal_argument_exception() throws Exception {
-        var request = Servlets.newRequest();
+        final var request = Servlets.newRequest();
 
         when(request.isAsyncSupported()).thenReturn(true);
         when(request.getHeader(Headers.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary;");

@@ -43,14 +43,14 @@ public class Headers {
 
     private final Map<String, List<String>> headerNameToValueListMap = new LinkedHashMap<>();
 
-    String getHeader(String name) {
-        var nameLower = name.toLowerCase(Locale.ENGLISH);
-        var headerValueList = headerNameToValueListMap.get(nameLower);
+    String getHeader(final String name) {
+        final var nameLower = name.toLowerCase(Locale.ENGLISH);
+        final var headerValueList = headerNameToValueListMap.get(nameLower);
         return headerValueList != null ? headerValueList.get(0) : null;
     }
 
-    Collection<String> getHeaders(String name) {
-        var nameLower = name.toLowerCase(Locale.ENGLISH);
+    Collection<String> getHeaders(final String name) {
+        final var nameLower = name.toLowerCase(Locale.ENGLISH);
         return headerNameToValueListMap.getOrDefault(nameLower, Collections.emptyList());
     }
 
@@ -64,8 +64,8 @@ public class Headers {
      * @param name  name of this header
      * @param value value of this header
      */
-    void addHeader(String name, String value) {
-        var nameLower = name.toLowerCase(Locale.ENGLISH);
+    void addHeader(final String name, final String value) {
+        final var nameLower = name.toLowerCase(Locale.ENGLISH);
         headerNameToValueListMap.computeIfAbsent(nameLower, key -> new ArrayList<>()).add(value);
     }
 
@@ -79,14 +79,14 @@ public class Headers {
      */
     public static String extractBoundaryFromHeader(final String header) {
 
-        var pos = header.indexOf(BOUNDARY + '=');
+        final var pos = header.indexOf(BOUNDARY + '=');
         if (pos == -1) {
             return null;
         }
         int end;
-        var start = pos + BOUNDARY.length() + 1;
+        final var start = pos + BOUNDARY.length() + 1;
         for (end = start; end < header.length(); ++end) {
-            var character = header.charAt(end);
+            final var character = header.charAt(end);
             if (character == ' ' || character == '\t' || character == ';') {
                 break;
             }
@@ -109,7 +109,7 @@ public class Headers {
         var pos = -1;
         var inQuotes = false;
         for (var i = 0; i < header.length() - 1; ++i) { //-1 because we need room for the = at the end
-            var character = header.charAt(i);
+            final var character = header.charAt(i);
             if (inQuotes) {
                 if (character == '"') {
                     inQuotes = false;
@@ -143,7 +143,7 @@ public class Headers {
         if (header.charAt(start) == '"') {
             start++;
             for (end = start; end < header.length(); ++end) {
-                var character = header.charAt(end);
+                final var character = header.charAt(end);
                 if (character == '"') {
                     break;
                 }
@@ -153,7 +153,7 @@ public class Headers {
         } else {
             //no quotes
             for (end = start; end < header.length(); ++end) {
-                var character = header.charAt(end);
+                final var character = header.charAt(end);
                 if (character == ' ' || character == '\t') {
                     break;
                 }

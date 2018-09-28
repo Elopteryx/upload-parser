@@ -50,21 +50,21 @@ public class OutputStreamBackedChannel implements WritableByteChannel {
      * Public constructor.
      * @param outputStream The output stream
      */
-    public OutputStreamBackedChannel(OutputStream outputStream) {
+    public OutputStreamBackedChannel(final OutputStream outputStream) {
         this.outputStream = Objects.requireNonNull(outputStream);
     }
 
     @Override
-    public int write(ByteBuffer src) throws IOException {
+    public int write(final ByteBuffer src) throws IOException {
         if (!open) {
             throw new ClosedChannelException();
         }
         if (src.isDirect() || src.isReadOnly()) {
             throw new IllegalArgumentException("The buffer cannot be direct or read-only!");
         }
-        var buf = src.array();
-        var offset = src.position();
-        var len = src.remaining();
+        final var buf = src.array();
+        final var offset = src.position();
+        final var len = src.remaining();
         outputStream.write(buf, offset, len);
         src.position(offset + len);
         return len;

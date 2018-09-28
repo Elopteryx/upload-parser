@@ -32,7 +32,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
     @Test
     void valid_content_type() throws Exception {
-        var request = newRequest();
+        final var request = newRequest();
 
         when(request.getContentType()).thenReturn("multipart/");
         assertTrue(UploadParser.isMultipart(request));
@@ -50,7 +50,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
     @Test
     void invalid_content_type_async() throws Exception {
-        var request = newRequest();
+        final var request = newRequest();
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
         assertFalse(UploadParser.isMultipart(request));
@@ -61,7 +61,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
     @Test
     void invalid_content_type_blocking() throws Exception {
-        var request = newRequest();
+        final var request = newRequest();
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
         assertFalse(UploadParser.isMultipart(request));
@@ -72,8 +72,8 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
     @Test
     void use_the_full_api() throws Exception {
-        var request = newRequest();
-        var response = newResponse();
+        final var request = newRequest();
+        final var response = newResponse();
 
         when(request.startAsync()).thenReturn(mock(AsyncContext.class));
         when(request.getInputStream()).thenReturn(mock(ServletInputStream.class));
@@ -95,7 +95,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     void output_channel() {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    var test = fileSystem.getPath("test1");
+                    final var test = fileSystem.getPath("test1");
                     Files.createFile(test);
                     return PartOutput.from(Files.newByteChannel(test));
                 });
@@ -105,7 +105,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     void output_stream() {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    var test = fileSystem.getPath("test2");
+                    final var test = fileSystem.getPath("test2");
                     Files.createFile(test);
                     return PartOutput.from(Files.newOutputStream(test));
                 });
@@ -115,7 +115,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     void output_path() {
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
-                    var test = fileSystem.getPath("test2");
+                    final var test = fileSystem.getPath("test2");
                     Files.createFile(test);
                     return PartOutput.from(test);
                 });
@@ -134,16 +134,16 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Override
-    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) {
+    public PartOutput onPartBegin(final UploadContext context, final ByteBuffer buffer) {
         return PartOutput.from(new NullChannel());
     }
 
     @Override
-    public void onPartEnd(UploadContext context) {}
+    public void onPartEnd(final UploadContext context) {}
 
     @Override
-    public void onRequestComplete(UploadContext context) {}
+    public void onRequestComplete(final UploadContext context) {}
 
     @Override
-    public void onError(UploadContext context, Throwable throwable) {}
+    public void onError(final UploadContext context, final Throwable throwable) {}
 }

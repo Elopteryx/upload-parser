@@ -61,7 +61,7 @@ public class UploadContextImpl implements UploadContext {
      */
     private int partBytesRead;
 
-    public UploadContextImpl(HttpServletRequest request, Object userObject) {
+    public UploadContextImpl(final HttpServletRequest request, final Object userObject) {
         this.request = request;
         this.userObject = userObject;
     }
@@ -72,7 +72,7 @@ public class UploadContextImpl implements UploadContext {
     }
 
     @Override
-    public <T> T getUserObject(Class<T> clazz) {
+    public <T> T getUserObject(final Class<T> clazz) {
         return userObject != null ? clazz.cast(userObject) : null;
     }
 
@@ -91,7 +91,7 @@ public class UploadContextImpl implements UploadContext {
         return Collections.unmodifiableList(partStreams);
     }
 
-    void reset(PartStreamImpl newPart) {
+    void reset(final PartStreamImpl newPart) {
         buffering = true;
         partBytesRead = 0;
         currentPart = newPart;
@@ -99,7 +99,7 @@ public class UploadContextImpl implements UploadContext {
         output = null;
     }
 
-    void setOutput(PartOutput output) {
+    void setOutput(final PartOutput output) {
         this.output = output;
         this.currentPart.setOutput(output);
     }
@@ -120,7 +120,7 @@ public class UploadContextImpl implements UploadContext {
         return partBytesRead;
     }
 
-    int incrementAndGetPartBytesRead(int additional) {
+    int incrementAndGetPartBytesRead(final int additional) {
         partBytesRead += additional;
         return partBytesRead;
     }

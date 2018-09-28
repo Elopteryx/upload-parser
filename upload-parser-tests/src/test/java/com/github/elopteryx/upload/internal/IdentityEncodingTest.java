@@ -19,15 +19,15 @@ class IdentityEncodingTest {
 
     private static void checkEncoding(final String original) throws IOException {
 
-        var encoding = new MultipartParser.IdentityEncoding();
+        final var encoding = new MultipartParser.IdentityEncoding();
         encoding.handle(new MultipartParser.PartHandler() {
 
             @Override
-            public void beginPart(Headers headers) {}
+            public void beginPart(final Headers headers) {}
 
             @Override
-            public void data(ByteBuffer buffer) {
-                var parserResult = new String(buffer.array(), UTF_8);
+            public void data(final ByteBuffer buffer) {
+                final var parserResult = new String(buffer.array(), UTF_8);
                 assertEquals(parserResult, original);
             }
 

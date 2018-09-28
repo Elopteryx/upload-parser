@@ -58,7 +58,7 @@ public class RestUploadParser extends BlockingUploadParser {
      * @return The multipart object, representing the request
      * @throws IOException If an error occurred with the I/O
      */
-    public MultiPartImpl doBlockingParse(long contentLength, String mimeType, String encoding, InputStream stream) throws IOException {
+    public MultiPartImpl doBlockingParse(final long contentLength, final String mimeType, final String encoding, final InputStream stream) throws IOException {
         if (maxRequestSize > -1 && contentLength > maxRequestSize) {
             throw new RequestSizeException("The size of the request ("
                     + contentLength
@@ -70,7 +70,7 @@ public class RestUploadParser extends BlockingUploadParser {
         context = new UploadContextImpl(null, null);
         dataBuffer = ByteBuffer.allocate(maxBytesUsed / 2);
 
-        String boundary;
+        final String boundary;
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
             boundary = Headers.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
@@ -78,13 +78,13 @@ public class RestUploadParser extends BlockingUploadParser {
                         + mimeType
                         + ", multipart data will not be available");
             }
-            var charset = encoding != null ? Charset.forName(encoding) : ISO_8859_1;
+            final var charset = encoding != null ? Charset.forName(encoding) : ISO_8859_1;
             parseState = MultipartParser.beginParse(this, boundary.getBytes(), maxBytesUsed, charset);
 
             inputStream = stream;
         }
         blockingRead();
-        List<Part> parts = context.getPartStreams()
+        final List<Part> parts = context.getPartStreams()
                 .stream()
                 .map(PartStreamImpl.class::cast)
                 .map(PartImpl::new)

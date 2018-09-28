@@ -28,7 +28,7 @@ public class RequestSizeException extends UploadSizeException {
      * @param actual The known size at the time of the exception in bytes
      * @param permitted The maximum permitted size in bytes
      */
-    public RequestSizeException(String message, long actual, long permitted) {
+    public RequestSizeException(final String message, final long actual, final long permitted) {
         super(message, actual, permitted);
     }
 }

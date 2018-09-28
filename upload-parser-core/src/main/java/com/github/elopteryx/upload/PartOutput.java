@@ -38,7 +38,7 @@ public class PartOutput {
      * object will terminate the upload process.
      * @param value The value object.
      */
-    protected PartOutput(Object value) {
+    protected PartOutput(final Object value) {
         this.value = value;
     }
 
@@ -49,7 +49,7 @@ public class PartOutput {
      * @param <T> Type parameter
      * @return Whether it is safe to cast or not
      */
-    public <T> boolean safeToCast(Class<T> clazz) {
+    public <T> boolean safeToCast(final Class<T> clazz) {
         return value != null && clazz.isAssignableFrom(value.getClass());
     }
 
@@ -60,7 +60,7 @@ public class PartOutput {
      * @param <T> Type parameter
      * @return The stored value object
      */
-    public <T> T unwrap(Class<T> clazz) {
+    public <T> T unwrap(final Class<T> clazz) {
         return clazz.cast(value);
     }
 
@@ -70,7 +70,7 @@ public class PartOutput {
      * @param byteChannel A channel which can be used for writing
      * @return A new PartOutput instance
      */
-    public static PartOutput from(WritableByteChannel byteChannel) {
+    public static PartOutput from(final WritableByteChannel byteChannel) {
         return new PartOutput(byteChannel);
     }
 
@@ -81,7 +81,7 @@ public class PartOutput {
      * @param outputStream A stream which can be used for writing
      * @return A new PartOutput instance
      */
-    public static PartOutput from(OutputStream outputStream) {
+    public static PartOutput from(final OutputStream outputStream) {
         return new PartOutput(outputStream);
     }
 
@@ -94,7 +94,7 @@ public class PartOutput {
      * @param path A file path which can be used for writing
      * @return A new PartOutput instance
      */
-    public static PartOutput from(Path path) {
+    public static PartOutput from(final Path path) {
         return new PartOutput(path);
     }
 }

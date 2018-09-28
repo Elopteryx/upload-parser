@@ -12,16 +12,16 @@ class RequestBuilder {
 
     private final String boundary;
 
-    static RequestBuilder newBuilder(String boundary) {
+    static RequestBuilder newBuilder(final String boundary) {
         return new RequestBuilder(boundary);
     }
 
-    private RequestBuilder(String boundary) {
+    private RequestBuilder(final String boundary) {
         this.buffer = ByteBuffer.allocate(300_000);
         this.boundary = boundary;
     }
 
-    RequestBuilder addFormField(String name, String value) {
+    RequestBuilder addFormField(final String name, final String value) {
         buffer.put(LINE_FEED);
         buffer.put(("--" + boundary).getBytes(ISO_8859_1));
         buffer.put(LINE_FEED);
@@ -35,7 +35,7 @@ class RequestBuilder {
         return this;
     }
 
-    RequestBuilder addFilePart(String fieldName, byte[] content, String contentType, String fileName) {
+    RequestBuilder addFilePart(final String fieldName, final byte[] content, final String contentType, final String fileName) {
         buffer.put(LINE_FEED);
         buffer.put(("--" + boundary).getBytes(ISO_8859_1));
         buffer.put(LINE_FEED);

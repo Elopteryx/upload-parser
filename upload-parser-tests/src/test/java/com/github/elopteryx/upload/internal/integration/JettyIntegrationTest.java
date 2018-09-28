@@ -27,7 +27,7 @@ class JettyIntegrationTest {
     static void setUpClass() throws Exception {
         server = new Server(8090);
 
-        var handler = new ServletHandler();
+        final var handler = new ServletHandler();
         server.setHandler(handler);
 
         handler.addServletWithMapping(AsyncUploadServlet.class, "/async");
@@ -91,10 +91,10 @@ class JettyIntegrationTest {
         performRequest("http://localhost:8090/async?" + ClientRequest.COMPLEX, HttpServletResponse.SC_OK);
     }
 
-    private void performRequest(String url, Integer expectedStatus) {
+    private void performRequest(final String url, final Integer expectedStatus) {
         try {
             ClientRequest.performRequest(url, expectedStatus);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             if (expectedStatus != null) {
                 fail("Status returned: " + expectedStatus);
@@ -102,10 +102,10 @@ class JettyIntegrationTest {
         }
     }
 
-    private void performRequest(String url, Integer expectedStatus, ByteBuffer requestData) {
+    private void performRequest(final String url, final Integer expectedStatus, final ByteBuffer requestData) {
         try {
             ClientRequest.performRequest(url, expectedStatus, requestData);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             if (expectedStatus != null) {
                 fail("Status returned: " + expectedStatus);

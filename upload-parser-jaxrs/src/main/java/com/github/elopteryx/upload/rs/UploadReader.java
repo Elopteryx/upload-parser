@@ -85,13 +85,13 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
     }
 
     @Override
-    public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+    public boolean isReadable(final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
         return mediaType.getType().equals("multipart");
     }
 
     @Override
-    public Object readFrom(Class<Object> type, Type genericType, Annotation[] annotations, MediaType mediaType,
-                      MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
+    public Object readFrom(final Class<Object> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType,
+                           final MultivaluedMap<String, String> httpHeaders, final InputStream entityStream)
             throws IOException, WebApplicationException {
 
         if (multiPart == null) {
@@ -100,9 +100,9 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
         if (MultiPart.class.equals(type)) {
             return multiPart;
         } else if (Part.class.equals(type)) {
-            for (var annotation : annotations) {
+            for (final var annotation : annotations) {
                 if (annotation instanceof UploadParam) {
-                    var formParam = (UploadParam)annotation;
+                    final var formParam = (UploadParam)annotation;
                     return providePart(formParam.value());
                 }
             }
@@ -117,11 +117,11 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
         return null;
     }
 
-    private void parse(Annotation[] annotations, MultivaluedMap<String, String> httpHeaders,
-                       InputStream entityStream) throws IOException {
-        for (var annotation : annotations) {
+    private void parse(final Annotation[] annotations, final MultivaluedMap<String, String> httpHeaders,
+                       final InputStream entityStream) throws IOException {
+        for (final var annotation : annotations) {
             if (annotation instanceof UploadConfig) {
-                var config = (UploadConfig)annotation;
+                final var config = (UploadConfig)annotation;
                 parser.setSizeThreshold(config.sizeThreshold());
                 parser.setMaxPartSize(config.maxPartSize());
                 parser.setMaxRequestSize(config.maxRequestSize());
@@ -129,10 +129,10 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
             }
         }
 
-        long requestSize = Long.valueOf(httpHeaders.getFirst(Headers.CONTENT_LENGTH));
-        var mimeType = httpHeaders.getFirst(Headers.CONTENT_TYPE);
-        var encodingHeader = httpHeaders.getFirst(Headers.CONTENT_ENCODING);
-        var multiPart = parser.doBlockingParse(requestSize, mimeType, encodingHeader, entityStream);
+        final long requestSize = Long.valueOf(httpHeaders.getFirst(Headers.CONTENT_LENGTH));
+        final var mimeType = httpHeaders.getFirst(Headers.CONTENT_TYPE);
+        final var encodingHeader = httpHeaders.getFirst(Headers.CONTENT_ENCODING);
+        final var multiPart = parser.doBlockingParse(requestSize, mimeType, encodingHeader, entityStream);
         multiPart.setHeaders(httpHeaders);
         this.multiPart = multiPart;
     }
@@ -142,7 +142,7 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
      * @param name The form name.
      * @return The matched part or null if no part exists with that name
      */
-    private Part providePart(String name) {
+    private Part providePart(final String name) {
         return multiPart
                 .getParts()
                 .stream()
@@ -152,8 +152,8 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
     }
 
     @Override
-    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-        PartOutput output;
+    public PartOutput onPartBegin(final UploadContext context, final ByteBuffer buffer) throws IOException {
+        final PartOutput output;
         if (context.getCurrentPart().isFile()) {
             output = PartOutput.from(Files.createTempFile(null, ".tmp"));
         } else {
@@ -163,7 +163,7 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
     }
 
     @Override
-    public void onPartEnd(UploadContext context) throws IOException {
+    public void onPartEnd(final UploadContext context) throws IOException {
         // No need to do anything.
     }
 }

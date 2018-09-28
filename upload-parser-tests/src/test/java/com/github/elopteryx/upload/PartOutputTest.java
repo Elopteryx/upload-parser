@@ -18,9 +18,9 @@ class PartOutputTest {
 
     @Test
     void create_channel_output() {
-        var byteArrayOutputStream = new ByteArrayOutputStream();
-        var channel = Channels.newChannel(byteArrayOutputStream);
-        var output = PartOutput.from(channel);
+        final var byteArrayOutputStream = new ByteArrayOutputStream();
+        final var channel = Channels.newChannel(byteArrayOutputStream);
+        final var output = PartOutput.from(channel);
 
         assertTrue(output.safeToCast(Channel.class));
         assertTrue(output.safeToCast(WritableByteChannel.class));
@@ -32,8 +32,8 @@ class PartOutputTest {
 
     @Test
     void create_stream_output() {
-        var byteArrayOutputStream = new ByteArrayOutputStream();
-        var output = PartOutput.from(byteArrayOutputStream);
+        final var byteArrayOutputStream = new ByteArrayOutputStream();
+        final var output = PartOutput.from(byteArrayOutputStream);
 
         assertTrue(output.safeToCast(OutputStream.class));
         assertTrue(output.safeToCast(ByteArrayOutputStream.class));
@@ -45,8 +45,8 @@ class PartOutputTest {
 
     @Test
     void create_path_output() {
-        var path = Paths.get("");
-        var output = PartOutput.from(path);
+        final var path = Paths.get("");
+        final var output = PartOutput.from(path);
 
         assertTrue(output.safeToCast(Path.class));
 

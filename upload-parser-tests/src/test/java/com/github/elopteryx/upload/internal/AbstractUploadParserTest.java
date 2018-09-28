@@ -15,12 +15,12 @@ class AbstractUploadParserTest {
     private static final long size = 1024 * 1024 * 100L;
     private static final long smallSize = 1024;
 
-    private AbstractUploadParser runSetupForSize(long requestSize, long allowedRequestSize, long allowedPartSize) throws Exception {
-        var request = Servlets.newRequest();
+    private AbstractUploadParser runSetupForSize(final long requestSize, final long allowedRequestSize, final long allowedPartSize) throws Exception {
+        final var request = Servlets.newRequest();
 
         when(request.getContentLengthLong()).thenReturn(requestSize);
 
-        var parser = new AsyncUploadParser(request);
+        final var parser = new AsyncUploadParser(request);
         parser.setMaxPartSize(allowedPartSize);
         parser.setMaxRequestSize(allowedRequestSize);
         parser.setupAsyncParse();
@@ -45,7 +45,7 @@ class AbstractUploadParserTest {
     @Test
     void parser_should_throw_exception_for_request_size() {
         final var exception = assertThrows(RequestSizeException.class, () -> {
-            var parser = runSetupForSize(0, smallSize, -1);
+            final var parser = runSetupForSize(0, smallSize, -1);
             for (var i = 0; i < 11; i++) {
                 parser.checkRequestSize(100);
             }
@@ -57,7 +57,7 @@ class AbstractUploadParserTest {
     @Test
     void parser_should_throw_exception_for_part_size() {
         final var exception = assertThrows(PartSizeException.class, () -> {
-            var parser = runSetupForSize(0, -1, smallSize);
+            final var parser = runSetupForSize(0, -1, smallSize);
             for (var i = 0; i < 11; i++) {
                 parser.checkPartSize(100);
             }

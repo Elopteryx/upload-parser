@@ -14,8 +14,6 @@ task testReport(type: TestReport, group: "Build") {
 subprojects {
 
     apply plugin: "java"
-    apply plugin: "idea"
-    apply plugin: "eclipse"
     apply plugin: "maven-publish"
     apply plugin: "maven"
     apply plugin: "signing"
@@ -23,6 +21,7 @@ subprojects {
     apply plugin: "com.github.kt3k.coveralls"
     apply plugin: "jacoco"
     apply plugin: "checkstyle"
+    apply plugin: 'pmd'
 
     group = "com.github.elopteryx"
     version = "3.0.0-SNAPSHOT"
@@ -68,7 +67,7 @@ subprojects {
                 docEncoding "UTF-8"
                 failOnError true
                 links = [
-                        "https://docs.oracle.com/javase/10/docs/api/",
+                        "https://docs.oracle.com/en/java/javase/11/docs/api/",
                         "https://docs.oracle.com/javaee/7/api/",
                 ]
             }
@@ -89,6 +88,12 @@ subprojects {
     checkstyle {
         toolVersion "8.11"
         configFile = new File("${projectDir}/../config/checkstyle/checkstyle.xml")
+    }
+
+    pmd {
+        ruleSets = []
+        toolVersion = '6.7.0'
+        ruleSetConfig = resources.text.fromFile(file("${rootDir}/config/pmd/rulesSets.xml"))
     }
 
     jacoco {

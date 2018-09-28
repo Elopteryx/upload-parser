@@ -25,7 +25,7 @@ class UndertowIntegrationTest {
      */
     @BeforeAll
     static void setUpClass() throws Exception {
-        var servletBuilder = Servlets.deployment()
+        final var servletBuilder = Servlets.deployment()
                 .setClassLoader(UndertowIntegrationTest.class.getClassLoader())
                 .setContextPath("/")
                 .setDeploymentName("ROOT.war")
@@ -38,9 +38,9 @@ class UndertowIntegrationTest {
                                 .setAsyncSupported(false)
                 );
 
-        var manager = Servlets.defaultContainer().addDeployment(servletBuilder);
+        final var manager = Servlets.defaultContainer().addDeployment(servletBuilder);
         manager.deploy();
-        var path = Handlers.path(Handlers.redirect("/")).addPrefixPath("/", manager.start());
+        final var path = Handlers.path(Handlers.redirect("/")).addPrefixPath("/", manager.start());
 
         server = Undertow.builder()
                 .addHttpListener(8080, "localhost")
@@ -104,11 +104,11 @@ class UndertowIntegrationTest {
         performRequest("http://localhost:8080/async?" + ClientRequest.COMPLEX, HttpServletResponse.SC_OK);
     }
 
-    private void performRequest(String url, int expectedStatus) throws IOException {
+    private void performRequest(final String url, final int expectedStatus) throws IOException {
         ClientRequest.performRequest(url, expectedStatus);
     }
 
-    private void performRequest(String url, int expectedStatus, ByteBuffer requestData) throws IOException {
+    private void performRequest(final String url, final int expectedStatus, final ByteBuffer requestData) throws IOException {
         ClientRequest.performRequest(url, expectedStatus, requestData);
     }
 

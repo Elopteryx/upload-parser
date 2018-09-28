@@ -25,8 +25,8 @@ final class RequestSupplier {
     static {
         emptyFile = new byte[0];
         smallFile = "0123456789".getBytes(UTF_8);
-        var random = new Random();
-        var builder = new StringBuilder();
+        final var random = new Random();
+        final var builder = new StringBuilder();
         for (var i = 0; i < 100000; i++) {
             builder.append(random.nextInt(100));
         }
@@ -58,7 +58,7 @@ final class RequestSupplier {
                 .finish();
     }
 
-    private static byte[] getContents(String resource) {
+    private static byte[] getContents(final String resource) {
         try {
             final var path = Paths.get(ClientRequest.class.getResource(resource).toURI());
             return Files.readAllBytes(path);

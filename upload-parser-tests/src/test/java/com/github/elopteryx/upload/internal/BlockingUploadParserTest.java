@@ -26,8 +26,8 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
 
     @Test
     void this_should_end_with_multipart_exception() throws Exception {
-        var request = Servlets.newRequest();
-        var response = Servlets.newResponse();
+        final var request = Servlets.newRequest();
+        final var response = Servlets.newResponse();
 
         when(request.isAsyncSupported()).thenReturn(false);
         when(request.getHeader(Headers.CONTENT_TYPE)).thenReturn("multipart/form-data; boundary=----1234");
@@ -42,7 +42,7 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
 
     @Test
     void this_should_end_with_illegal_argument_exception() throws Exception {
-        var request = Servlets.newRequest();
+        final var request = Servlets.newRequest();
 
         when(request.isAsyncSupported()).thenReturn(false);
         when(request.getHeader(Headers.CONTENT_TYPE)).thenReturn("multipart/form-data;");
@@ -51,19 +51,19 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
     }
 
     @Override
-    public PartOutput onPartBegin(UploadContext context, ByteBuffer buffer) throws IOException {
-        var baos = new ByteArrayOutputStream();
+    public PartOutput onPartBegin(final UploadContext context, final ByteBuffer buffer) throws IOException {
+        final var baos = new ByteArrayOutputStream();
         strings.add(baos);
         return PartOutput.from(baos);
     }
 
     @Override
-    public void onPartEnd(UploadContext context) {
+    public void onPartEnd(final UploadContext context) {
         System.out.println(strings.get(strings.size() - 1).toString());
     }
 
     @Override
-    public void onError(UploadContext context, Throwable throwable) {
+    public void onError(final UploadContext context, final Throwable throwable) {
         assertTrue(throwable instanceof MultipartException);
     }
 }

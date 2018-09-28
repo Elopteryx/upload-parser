@@ -40,7 +40,7 @@ public class BlockingUploadParser extends AbstractUploadParser {
      */
     protected InputStream inputStream;
 
-    public BlockingUploadParser(HttpServletRequest request) {
+    public BlockingUploadParser(final HttpServletRequest request) {
         this.request = request;
     }
 
@@ -67,7 +67,7 @@ public class BlockingUploadParser extends AbstractUploadParser {
             if (requestCallback != null) {
                 requestCallback.onRequestComplete(context);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (errorCallback != null) {
                 errorCallback.onError(context, e);
             }
@@ -83,7 +83,7 @@ public class BlockingUploadParser extends AbstractUploadParser {
      */
     protected void blockingRead() throws IOException {
         while (true) {
-            var count = inputStream.read(dataBuffer.array());
+            final var count = inputStream.read(dataBuffer.array());
             if (count == -1) {
                 if (!parseState.isComplete()) {
                     throw new MultipartException("Stream ended unexpectedly!");

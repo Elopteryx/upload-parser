@@ -30,25 +30,25 @@ class UploadReaderTest {
     @BeforeEach
     void setUp() throws ServletException {
 
-        var deployment = new ResteasyDeployment();
+        final var deployment = new ResteasyDeployment();
         deployment.getActualResourceClasses().addAll(Arrays.asList(AsyncUploadController.class, ReaderUploadController.class));
         deployment.getActualProviderClasses().addAll(Arrays.asList(UploadReader.class, PartSizeMapper.class, RequestSizeMapper.class));
 
-        var restEasyServlet = Servlets.servlet("RestEasyServlet", HttpServlet30Dispatcher.class)
+        final var restEasyServlet = Servlets.servlet("RestEasyServlet", HttpServlet30Dispatcher.class)
                 .setAsyncSupported(true)
                 .setLoadOnStartup(1)
                 .addMapping("/*");
 
-        var deploymentInfo = new DeploymentInfo()
+        final var deploymentInfo = new DeploymentInfo()
                 .setContextPath("ROOT")
                 .addServletContextAttribute(ResteasyDeployment.class.getName(), deployment)
                 .addServlet(restEasyServlet).setDeploymentName("RestEasyUndertow")
                 .setClassLoader(ClassLoader.getSystemClassLoader());
 
-        var deploymentManager = Servlets.defaultContainer().addDeployment(deploymentInfo);
+        final var deploymentManager = Servlets.defaultContainer().addDeployment(deploymentInfo);
         deploymentManager.deploy();
 
-        var path = Handlers.path(Handlers.redirect("/")).addPrefixPath("/", deploymentManager.start());
+        final var path = Handlers.path(Handlers.redirect("/")).addPrefixPath("/", deploymentManager.start());
 
         server = Undertow.builder()
                 .addHttpListener(8110, "localhost")
@@ -82,7 +82,7 @@ class UploadReaderTest {
         performRequest("http://localhost:8110" + "/upload" + "/uploadWithReaderAndRequestLimit", HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
     }
 
-    private void performRequest(String url, int expectedStatus) throws IOException {
+    private void performRequest(final String url, final int expectedStatus) throws IOException {
         ClientRequest.performRequest(url, expectedStatus);
     }
 

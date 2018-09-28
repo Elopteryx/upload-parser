@@ -22,9 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 public class BlockingUploadServlet extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-        var query = request.getQueryString();
+        final var query = request.getQueryString();
         switch (query) {
             case ClientRequest.SIMPLE:
                 simple(request, response);
@@ -44,8 +44,8 @@ public class BlockingUploadServlet extends HttpServlet {
 
     }
 
-    private void simple(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        var context = UploadParser.newParser()
+    private void simple(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        final var context = UploadParser.newParser()
                 .onPartEnd(context1 -> {
                     if (context1.getCurrentOutput() != null && context1.getCurrentOutput().safeToCast(Channel.class)) {
                         var channel = context1.getCurrentOutput().unwrap(Channel.class);
@@ -59,7 +59,7 @@ public class BlockingUploadServlet extends HttpServlet {
         assertEquals(8, context.getPartStreams().size());
     }
 
-    private void thresholdLesser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void thresholdLesser(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
@@ -72,7 +72,7 @@ public class BlockingUploadServlet extends HttpServlet {
                 .doBlockingParse(request);
     }
 
-    private void thresholdGreater(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void thresholdGreater(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
         UploadParser.newParser()
                 .onPartBegin((context, buffer) -> {
@@ -85,7 +85,7 @@ public class BlockingUploadServlet extends HttpServlet {
                 .doBlockingParse(request);
     }
 
-    private void error(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void error(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
         UploadParser.newParser()
                 .onError((context, throwable) -> response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR))
@@ -93,7 +93,7 @@ public class BlockingUploadServlet extends HttpServlet {
                 .doBlockingParse(request);
     }
 
-    private static OnRequestComplete onSuccessfulFinish(HttpServletRequest request, HttpServletResponse response, int size) {
+    private static OnRequestComplete onSuccessfulFinish(final HttpServletRequest request, final HttpServletResponse response, final int size) {
         return context -> {
             final var currentPart = context.getCurrentPart();
             assertTrue(currentPart.isFinished());
