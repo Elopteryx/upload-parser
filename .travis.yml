@@ -18,5 +18,5 @@ script:
   - java -version
   - ./gradlew build
 
-#after_success:
-#  - ./gradlew coveralls
+after_success:
+  - ./gradlew coveralls
