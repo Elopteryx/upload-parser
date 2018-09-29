@@ -78,7 +78,7 @@ public class RestUploadParser extends BlockingUploadParser {
                         + ", multipart data will not be available");
             }
             final var charset = encoding == null ? ISO_8859_1 : Charset.forName(encoding);
-            parseState = MultipartParser.beginParse(this, boundary.getBytes(), maxBytesUsed, charset);
+            parseState = MultipartParser.beginParse(this, boundary.getBytes(charset), maxBytesUsed, charset);
 
             inputStream = stream;
         }

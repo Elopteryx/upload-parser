@@ -148,7 +148,7 @@ public abstract class AbstractUploadParser implements MultipartParser.PartHandle
             }
             final var encodingHeader = request.getCharacterEncoding();
             final var charset = encodingHeader == null ? ISO_8859_1 : Charset.forName(encodingHeader);
-            parseState = MultipartParser.beginParse(this, boundary.getBytes(), maxBytesUsed, charset);
+            parseState = MultipartParser.beginParse(this, boundary.getBytes(charset), maxBytesUsed, charset);
         }
     }
 

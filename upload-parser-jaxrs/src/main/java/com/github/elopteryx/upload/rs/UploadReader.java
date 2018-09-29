@@ -129,7 +129,7 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
             }
         }
 
-        final long requestSize = Long.valueOf(httpHeaders.getFirst(Headers.CONTENT_LENGTH));
+        final long requestSize = Long.parseLong(httpHeaders.getFirst(Headers.CONTENT_LENGTH));
         final var mimeType = httpHeaders.getFirst(Headers.CONTENT_TYPE);
         final var encodingHeader = httpHeaders.getFirst(Headers.CONTENT_ENCODING);
         final var multiPart = parser.doBlockingParse(requestSize, mimeType, encodingHeader, entityStream);

@@ -98,12 +98,12 @@ public final class MultipartParser {
         private final byte[] boundary;
 
         // 0=preamble
-        private volatile int state;
-        private volatile int subState = Integer.MAX_VALUE; // used for preamble parsing
-        private volatile ByteArrayOutputStream currentString;
-        private volatile String currentHeaderName;
-        private volatile Headers headers;
-        private volatile Encoding encodingHandler;
+        private int state;
+        private int subState = Integer.MAX_VALUE; // used for preamble parsing
+        private ByteArrayOutputStream currentString;
+        private String currentHeaderName;
+        private Headers headers;
+        private Encoding encodingHandler;
 
         /**
          * Public constructor.
