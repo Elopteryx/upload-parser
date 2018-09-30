@@ -1,5 +1,5 @@
 /**
- * Async file upload extension for Jax-RS.
+ * File upload extension module for Jax-RS.
  */
 module com.github.elopteryx.upload.rs {
     requires javax.ws.rs.api;

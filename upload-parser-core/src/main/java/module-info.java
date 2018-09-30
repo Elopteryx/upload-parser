@@ -1,5 +1,5 @@
 /**
- * Async file upload library for servlets.
+ * Async file upload module for servlets.
  */
 module com.github.elopteryx.upload {
     requires javax.servlet.api;
