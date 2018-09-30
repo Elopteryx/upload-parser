@@ -113,6 +113,24 @@ subprojects {
         toolVersion = jacocoVersion
     }
 
+    jacocoTestReport {
+        group = 'Coverage reports'
+        description = 'Generates a test coverage report for a project'
+
+        reports {
+            xml.enabled = true
+            html.enabled = true
+        }
+    }
+
+    task jacocoMerge(type: JacocoMerge) {
+        executionData tasks.withType(Test)
+
+        doFirst {
+            executionData = files(executionData.findAll { it.exists() })
+        }
+    }
+
     signing {
         required { !version.endsWith('SNAPSHOT') && gradle.taskGraph.hasTask('uploadArchives') }
         sign configurations.archives
@@ -125,11 +143,12 @@ subprojects {
 
     tasks.withType(Test) {
         rootProject.testReport.reportOn it
-        jacoco {
-            append true
-            destinationFile file("${rootDir}/build/jacoco/jacocoTest.exec")
-            setClassDumpDir file("${rootDir}/build/jacoco/classpathdumps")
-        }
+        it.dependsOn('jar')
+
+        // ensure tasks don't overwrite the default report directories used by the 'test' task
+        reports.html.destination = file("${buildDir}/reports/${name}")
+        reports.junitXml.destination = file("${buildDir}/reports/${name}/results")
+        binResultsDir = file("${buildDir}/reports/${name}/results/binary/${name}")
     }
 }
 
@@ -153,15 +172,11 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
     additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
     sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
     classDirectories = files(subprojects.sourceSets.main.output)
-    executionData = files(subprojects.jacocoTestReport.executionData)
+    executionData jacocoMerge.destinationFile
 
     reports {
         html.enabled = true
         xml.enabled = true
-    }
-
-    doFirst {
-        executionData = files(executionData.findAll { it.exists() })
     }
 }
 
