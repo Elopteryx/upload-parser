@@ -1,7 +1,7 @@
 plugins {
     id 'com.github.ben-manes.versions' version '0.20.0'
     id 'com.github.kt3k.coveralls' version '2.8.2'
-    id 'com.github.spotbugs' version '1.6.4'
+    id 'com.github.spotbugs' version '1.6.6'
 }
 
 apply plugin: 'com.github.kt3k.coveralls'
@@ -41,14 +41,14 @@ subprojects {
     ext {
         servletApiVersion = '3.1.0'
         jaxrsApiVersion = '2.0.1'
-        junitVersion = '5.3.1'
-        undertowVersion = '2.0.13.Final'
-        jettyVersion = '9.4.11.v20180605'
-        tomcatVersion = '9.0.12'
-        resteasyVersion = '3.6.1.Final'
-        tikaVersion = '1.19'
+        junitVersion = '5.3.2'
+        undertowVersion = '2.0.16.Final'
+        jettyVersion = '9.4.14.v20181114'
+        tomcatVersion = '9.0.14'
+        resteasyVersion = '3.6.2.Final'
+        tikaVersion = '1.19.1'
         jimfsVersion = '1.1'
-        mockitoVersion = '2.22.0'
+        mockitoVersion = '2.23.4'
 
         checkStyleVersion = '8.11'
         pmdVersion = '6.7.0'
@@ -170,9 +170,9 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
     description 'Generates an aggregate report from all subprojects'
     dependsOn subprojects.test, jacocoMerge
 
-    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(subprojects.sourceSets.main.output)
+    getAdditionalSourceDirs().from(files(subprojects.sourceSets.main.allSource.srcDirs))
+    getSourceDirectories().from(files(subprojects.sourceSets.main.allSource.srcDirs))
+    getClassDirectories().from(files(subprojects.sourceSets.main.output))
     executionData jacocoMerge.destinationFile
 
     reports {
