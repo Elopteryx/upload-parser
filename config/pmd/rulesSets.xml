@@ -33,6 +33,7 @@
         <exclude name="AvoidThrowingRawExceptionTypes"/>
         <exclude name="DataClass"/>
         <exclude name="LawOfDemeter"/>
+        <exclude name="LoosePackageCoupling"/>
         <exclude name="SignatureDeclareThrowsException"/>
         <exclude name="TooManyMethods"/>
     </rule>
