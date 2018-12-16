@@ -27,7 +27,7 @@ final class RequestSupplier {
         SMALL_FILE = "0123456789".getBytes(UTF_8);
         final var random = new Random();
         final var builder = new StringBuilder();
-        for (var i = 0; i < 100000; i++) {
+        for (var i = 0; i < 100_000; i++) {
             builder.append(random.nextInt(100));
         }
         LARGE_FILE = builder.toString().getBytes(UTF_8);

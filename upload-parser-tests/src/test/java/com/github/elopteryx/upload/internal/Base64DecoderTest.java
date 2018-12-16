@@ -122,11 +122,11 @@ class Base64DecoderTest {
 
     @Test
     void decode_buffer() throws IOException {
-        final var numbers = new byte[32768];
-        for (var i = 0; i < 32768; i++) {
+        final var numbers = new byte[32_768];
+        for (var i = 0; i < 32_768; i++) {
             numbers[i] = (byte)(i % 255);
         }
-        final var target = ByteBuffer.allocate(65535);
+        final var target = ByteBuffer.allocate(65_535);
 
         final var decoded = ByteBuffer.allocate(numbers.length);
         final var decoder = new Base64Decoder();
@@ -332,13 +332,13 @@ class Base64DecoderTest {
 
     @Test
     void testEncoderDecoderBuffer() throws IOException {
-        final var nums = new byte[32768];
-        for (var i = 0; i < 32768; i++) {
+        final var nums = new byte[32_768];
+        for (var i = 0; i < 32_768; i++) {
             nums[i] = (byte)(i % 255);
         }
 
         final var source = ByteBuffer.wrap(nums);
-        final var target = ByteBuffer.allocate(65535);
+        final var target = ByteBuffer.allocate(65_535);
 
         final var encoder = FlexBase64.createEncoder(true);
         encoder.encode(source, target);
@@ -360,12 +360,12 @@ class Base64DecoderTest {
 
     @Test
     void testEncoderDecoderBufferLoops() throws IOException {
-        final var nums = new byte[32768];
-        for (var i = 0; i < 32768; i++) {
+        final var nums = new byte[32_768];
+        for (var i = 0; i < 32_768; i++) {
             nums[i] = (byte)(i % 255);
         }
         final var source = ByteBuffer.wrap(nums);
-        final var target = ByteBuffer.allocate(65535);
+        final var target = ByteBuffer.allocate(65_535);
 
         final var encoder = FlexBase64.createEncoder(true);
         var limit = target.limit();
