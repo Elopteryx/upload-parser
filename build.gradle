@@ -1,7 +1,7 @@
 plugins {
-    id 'com.github.ben-manes.versions' version '0.20.0'
+    id 'com.github.ben-manes.versions' version '0.21.0'
     id 'com.github.kt3k.coveralls' version '2.8.2'
-    id 'com.github.spotbugs' version '1.6.6'
+    id 'com.github.spotbugs' version '1.7.1'
 }
 
 apply plugin: 'com.github.kt3k.coveralls'
@@ -14,7 +14,7 @@ task testReport(type: TestReport, group: 'Build') {
 allprojects {
     apply plugin: 'jacoco'
     jacoco {
-        toolVersion = '0.8.2'
+        toolVersion = '0.8.3'
     }
 }
 
@@ -41,19 +41,19 @@ subprojects {
     ext {
         servletApiVersion = '3.1.0'
         jaxrsApiVersion = '2.0.1'
-        junitVersion = '5.3.2'
-        undertowVersion = '2.0.16.Final'
-        jettyVersion = '9.4.14.v20181114'
-        tomcatVersion = '9.0.14'
+        junitVersion = '5.4.0'
+        undertowVersion = '2.0.19.Final'
+        jettyVersion = '9.4.15.v20190215'
+        tomcatVersion = '9.0.17'
         resteasyVersion = '3.6.2.Final'
-        tikaVersion = '1.19.1'
+        tikaVersion = '1.20'
         jimfsVersion = '1.1'
-        mockitoVersion = '2.23.4'
+        mockitoVersion = '2.25.1'
 
-        checkStyleVersion = '8.15'
+        checkStyleVersion = '8.18'
         pmdVersion = '6.10.0'
         spotbugsVersion = '3.1.9'
-        jacocoVersion = '0.8.2'
+        jacocoVersion = '0.8.3'
     }
 
     tasks.withType(JavaCompile) {
