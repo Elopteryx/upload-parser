@@ -41,18 +41,18 @@ subprojects {
     ext {
         servletApiVersion = '3.1.0'
         jaxrsApiVersion = '2.0.1'
-        junitVersion = '5.4.0'
-        undertowVersion = '2.0.19.Final'
-        jettyVersion = '9.4.15.v20190215'
-        tomcatVersion = '9.0.17'
-        resteasyVersion = '3.6.2.Final'
+        junitVersion = '5.4.2'
+        undertowVersion = '2.0.20.Final'
+        jettyVersion = '9.4.18.v20190429'
+        tomcatVersion = '9.0.19'
+        resteasyVersion = '3.6.3.Final'
         tikaVersion = '1.20'
         jimfsVersion = '1.1'
-        mockitoVersion = '2.25.1'
+        mockitoVersion = '2.27.0'
 
-        checkStyleVersion = '8.18'
-        pmdVersion = '6.10.0'
-        spotbugsVersion = '3.1.9'
+        checkStyleVersion = '8.20'
+        pmdVersion = '6.14.0'
+        spotbugsVersion = '3.1.12'
         jacocoVersion = '0.8.2'
     }
 
