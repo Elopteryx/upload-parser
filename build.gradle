@@ -14,7 +14,7 @@ task testReport(type: TestReport, group: 'Build') {
 allprojects {
     apply plugin: 'jacoco'
     jacoco {
-        toolVersion = '0.8.2'
+        toolVersion = '0.8.3'
     }
 }
 
@@ -41,19 +41,19 @@ subprojects {
     ext {
         servletApiVersion = '3.1.0'
         jaxrsApiVersion = '2.0.1'
-        junitVersion = '5.4.2'
-        undertowVersion = '2.0.20.Final'
-        jettyVersion = '9.4.18.v20190429'
-        tomcatVersion = '9.0.19'
-        resteasyVersion = '3.6.3.Final'
-        tikaVersion = '1.20'
+        junitVersion = '5.5.0'
+        undertowVersion = '2.0.22.Final'
+        jettyVersion = '9.4.19.v20190610'
+        tomcatVersion = '9.0.22'
+        resteasyVersion = '4.1.1.Final'
+        tikaVersion = '1.21'
         jimfsVersion = '1.1'
-        mockitoVersion = '2.27.0'
+        mockitoVersion = '3.0.0'
 
-        checkStyleVersion = '8.20'
-        pmdVersion = '6.14.0'
+        checkStyleVersion = '8.22'
+        pmdVersion = '6.16.0'
         spotbugsVersion = '3.1.12'
-        jacocoVersion = '0.8.2'
+        jacocoVersion = '0.8.3'
     }
 
     tasks.withType(JavaCompile) {
