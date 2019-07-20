@@ -47,7 +47,6 @@ public class UploadServlet extends HttpServlet {
                 })
                 .onRequestComplete(context -> context.getUserObject(HttpServletResponse.class).setStatus(200))
                 .onError((context, throwable) -> {
-                    throwable.printStackTrace();
                     response.sendError(500);
                 })
                 .sizeThreshold(4096)

@@ -66,11 +66,6 @@
 
     <!-- Rules that need custom configuration -->
 
-    <rule ref="category/java/bestpractices.xml/AvoidPrintStackTrace">
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.*Test']"/>
-        </properties>
-    </rule>
     <rule ref="category/java/bestpractices.xml/AvoidReassigningParameters">
         <properties>
             <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration['.Base64Decoder']"/>

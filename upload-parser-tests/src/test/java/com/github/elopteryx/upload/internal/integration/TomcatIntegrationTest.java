@@ -113,7 +113,6 @@ class TomcatIntegrationTest {
         try {
             ClientRequest.performRequest(url, expectedStatus);
         } catch (final IOException e) {
-            e.printStackTrace();
             if (expectedStatus != null) {
                 fail("Status returned: " + expectedStatus);
             }
@@ -124,7 +123,6 @@ class TomcatIntegrationTest {
         try {
             ClientRequest.performRequest(url, expectedStatus, requestData);
         } catch (final IOException e) {
-            e.printStackTrace();
             if (expectedStatus != null) {
                 fail("Status returned: " + expectedStatus);
             }

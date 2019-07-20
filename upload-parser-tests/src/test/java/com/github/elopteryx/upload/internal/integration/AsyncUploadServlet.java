@@ -100,7 +100,7 @@ public class AsyncUploadServlet extends HttpServlet {
                 .setupAsyncParse(request);
     }
 
-    private class EvilOutput extends PartOutput {
+    private static class EvilOutput extends PartOutput {
         EvilOutput(final Object value) {
             super(value);
         }
@@ -237,7 +237,6 @@ public class AsyncUploadServlet extends HttpServlet {
                 })
                 .onError((context, throwable) -> {
                     System.out.println("Error!");
-                    throwable.printStackTrace();
                     response.sendError(500);
                 })
                 .userObject(response)

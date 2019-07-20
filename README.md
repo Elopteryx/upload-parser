@@ -100,7 +100,6 @@ still be called just like in async mode.
                     })
                     .onRequestComplete(context -> response.setStatus(200))
                     .onError((context, throwable) -> {
-                        throwable.printStackTrace();
                         response.sendError(500);
                     })
                     .sizeThreshold(4096)

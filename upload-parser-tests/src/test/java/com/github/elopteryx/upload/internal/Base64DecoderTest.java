@@ -213,11 +213,10 @@ class Base64DecoderTest {
          * <p>The Encoder instance is not thread-safe, and must not be shared between threads without establishing a
          * happens-before relationship.</p>
          *
-         * @param wrap whether or not to wrap at 76 characters with CRLF
          * @return an createEncoder instance
          */
-        static Encoder createEncoder(final boolean wrap) {
-            return new Encoder(wrap);
+        static Encoder createEncoder() {
+            return new Encoder(true);
         }
 
         /**
@@ -228,7 +227,6 @@ class Base64DecoderTest {
             private int last;
             private int count;
             private final boolean wrap;
-            private int lastPos;
 
             private Encoder(final boolean wrap) {
                 this.wrap = wrap;
@@ -301,7 +299,6 @@ class Base64DecoderTest {
                 this.count = count;
                 this.last = last;
                 this.state = state;
-                this.lastPos = source.position();
             }
 
             /**
@@ -340,7 +337,7 @@ class Base64DecoderTest {
         final var source = ByteBuffer.wrap(nums);
         final var target = ByteBuffer.allocate(65_535);
 
-        final var encoder = FlexBase64.createEncoder(true);
+        final var encoder = FlexBase64.createEncoder();
         encoder.encode(source, target);
         encoder.complete(target);
 
@@ -367,7 +364,7 @@ class Base64DecoderTest {
         final var source = ByteBuffer.wrap(nums);
         final var target = ByteBuffer.allocate(65_535);
 
-        final var encoder = FlexBase64.createEncoder(true);
+        final var encoder = FlexBase64.createEncoder();
         var limit = target.limit();
         target.limit(100);
         while (source.remaining() > 0) {
