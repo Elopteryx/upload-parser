@@ -69,7 +69,7 @@ public final class ClientRequest {
                 System.out.println("----------------------------------------");
                 System.out.println(statusCode);
                 if (expectedStatus != null) {
-                    assertEquals(statusCode, (int) expectedStatus);
+                    assertEquals((int) expectedStatus, statusCode);
                 }
                 return HttpResponse.BodySubscribers.ofString(StandardCharsets.UTF_8);
             });

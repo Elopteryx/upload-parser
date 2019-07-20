@@ -23,7 +23,9 @@ class IdentityEncodingTest {
         encoding.handle(new MultipartParser.PartHandler() {
 
             @Override
-            public void beginPart(final Headers headers) {}
+            public void beginPart(final Headers headers) {
+                // No-op
+            }
 
             @Override
             public void data(final ByteBuffer buffer) {
@@ -32,7 +34,9 @@ class IdentityEncodingTest {
             }
 
             @Override
-            public void endPart() {}
+            public void endPart() {
+                // No-op
+            }
 
         }, ByteBuffer.wrap(original.getBytes(UTF_8)));
     }

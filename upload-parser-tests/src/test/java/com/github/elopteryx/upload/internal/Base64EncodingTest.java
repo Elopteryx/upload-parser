@@ -33,7 +33,9 @@ class Base64EncodingTest {
         encoding.handle(new MultipartParser.PartHandler() {
 
             @Override
-            public void beginPart(final Headers headers) {}
+            public void beginPart(final Headers headers) {
+                // No-op
+            }
 
             @Override
             public void data(final ByteBuffer buffer) {
@@ -42,7 +44,9 @@ class Base64EncodingTest {
             }
 
             @Override
-            public void endPart() {}
+            public void endPart() {
+                // No-op
+            }
 
         }, ByteBuffer.wrap(encoded.getBytes(US_ASCII)));
     }

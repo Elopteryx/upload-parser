@@ -139,11 +139,17 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
     }
 
     @Override
-    public void onPartEnd(final UploadContext context) {}
+    public void onPartEnd(final UploadContext context) {
+        // No-op
+    }
 
     @Override
-    public void onRequestComplete(final UploadContext context) {}
+    public void onRequestComplete(final UploadContext context) {
+        // No-op
+    }
 
     @Override
-    public void onError(final UploadContext context, final Throwable throwable) {}
+    public void onError(final UploadContext context, final Throwable throwable) {
+        // No-op
+    }
 }

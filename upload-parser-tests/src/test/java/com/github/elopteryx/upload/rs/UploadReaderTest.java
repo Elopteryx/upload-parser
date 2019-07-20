@@ -7,6 +7,7 @@ import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
+import org.jboss.resteasy.core.ResteasyDeploymentImpl;
 import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.junit.jupiter.api.AfterEach;
@@ -30,7 +31,7 @@ class UploadReaderTest {
     @BeforeEach
     void setUp() throws ServletException {
 
-        final var deployment = new ResteasyDeployment();
+        final var deployment = new ResteasyDeploymentImpl();
         deployment.getActualResourceClasses().addAll(Arrays.asList(AsyncUploadController.class, ReaderUploadController.class));
         deployment.getActualProviderClasses().addAll(Arrays.asList(UploadReader.class, PartSizeMapper.class, RequestSizeMapper.class));
 
