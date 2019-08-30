@@ -1,7 +1,7 @@
 plugins {
-    id 'com.github.ben-manes.versions' version '0.21.0'
-    id 'com.github.kt3k.coveralls' version '2.8.2'
-    id 'com.github.spotbugs' version '1.7.1'
+    id 'com.github.ben-manes.versions' version '0.23.0'
+    id 'com.github.kt3k.coveralls' version '2.8.4'
+    id 'com.github.spotbugs' version '2.0.0'
 }
 
 apply plugin: 'com.github.kt3k.coveralls'
@@ -41,17 +41,17 @@ subprojects {
     ext {
         servletApiVersion = '3.1.0'
         jaxrsApiVersion = '2.0.1'
-        junitVersion = '5.5.0'
-        undertowVersion = '2.0.22.Final'
+        junitVersion = '5.5.1'
+        undertowVersion = '2.0.25.Final'
         jettyVersion = '9.4.19.v20190610'
-        tomcatVersion = '9.0.22'
-        resteasyVersion = '4.1.1.Final'
-        tikaVersion = '1.21'
+        tomcatVersion = '9.0.24'
+        resteasyVersion = '4.2.0.Final'
+        tikaVersion = '1.22'
         jimfsVersion = '1.1'
         mockitoVersion = '3.0.0'
 
-        checkStyleVersion = '8.22'
-        pmdVersion = '6.16.0'
+        checkStyleVersion = '8.23'
+        pmdVersion = '6.17.0'
         spotbugsVersion = '3.1.12'
     }
 
@@ -101,6 +101,7 @@ subprojects {
 
     pmd {
         toolVersion = pmdVersion
+        incrementalAnalysis = true
         ruleSets = []
         ruleSetConfig = resources.text.fromFile(file("${rootDir}/config/pmd/rulesSets.xml"))
     }
