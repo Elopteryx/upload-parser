@@ -18,3 +18,5 @@ jobs:
         run: ./gradlew build
       - name: Upload coverage data
         run: ./gradlew -Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2" coveralls
+        env:
+          CI: true
