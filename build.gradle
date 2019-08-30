@@ -43,7 +43,7 @@ subprojects {
         jaxrsApiVersion = '2.0.1'
         junitVersion = '5.5.1'
         undertowVersion = '2.0.25.Final'
-        jettyVersion = '9.4.20.v20190813'
+        jettyVersion = '9.4.19.v20190610'
         tomcatVersion = '9.0.24'
         resteasyVersion = '4.2.0.Final'
         tikaVersion = '1.22'
