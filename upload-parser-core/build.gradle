@@ -3,7 +3,7 @@ ext.moduleName = 'com.github.elopteryx.upload'
 dependencies {
 
     /* Servlet API. */
-    compileOnly "javax.servlet:javax.servlet-api:$servletApiVersion"
+    compileOnly("javax.servlet:javax.servlet-api:$servletApiVersion")
 
 }
 
@@ -25,73 +25,66 @@ jar {
     manifest {
         attributes(
                 'Created-By': 'Creative Elopteryx',
-                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '),
                 'Automatic-Module-Name': 'com.github.elopteryx.upload',
-                'Implementation-Version': version
+                'Implementation-Version': archiveVersion
         )
     }
 }
 
 publishing {
     publications {
-        maven(MavenPublication) {
+        mavenJava(MavenPublication) {
+            artifactId = 'upload-parser'
             from components.java
-            afterEvaluate {
-                groupId 'com.github.elopteryx'
-                artifactId 'upload-parser'
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
             }
-        }
-    }
-}
+            pom {
+                name = 'Upload Parser'
+                groupId = 'com.github.elopteryx'
+                artifactId = 'upload-parser'
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment {
-                MavenDeployment deployment -> signing.signPom(deployment)
-            }
-
-            repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            pom.scopeMappings.with {
-                addMapping(1, configurations.compileOnly, 'provided')
-            }
-
-            pom.project {
-                name 'Upload Parser'
-                groupId 'com.github.elopteryx'
-                artifactId 'upload-parser'
-
-                description 'Upload Parser is an asynchronous file upload library for servlets.'
-                url 'https://github.com/Elopteryx/upload-parser'
+                description = 'Upload Parser is an asynchronous file upload library for servlets.'
+                url = 'https://github.com/Elopteryx/upload-parser'
 
                 scm {
-                    connection 'scm:git:git@github.com/Elopteryx/upload-parser.git'
-                    developerConnection 'scm:git:git@github.com/Elopteryx/upload-parser.git'
-                    url 'scm:git:git@github.com/Elopteryx/upload-parser.git'
+                    connection = 'scm:git:git@github.com/Elopteryx/upload-parser.git'
+                    developerConnection = 'scm:git:git@github.com/Elopteryx/upload-parser.git'
+                    url = 'scm:git:git@github.com/Elopteryx/upload-parser.git'
                 }
 
                 licenses {
                     license {
-                        name 'The Apache License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
                 }
 
                 developers {
                     developer {
-                        id 'elopteryx'
-                        name 'Adam Forgacs'
-                        email 'creative.elopteryx@gmail.com'
+                        id = 'elopteryx'
+                        name = 'Adam Forgacs'
+                        email = 'creative.elopteryx@gmail.com'
                     }
                 }
             }
         }
     }
+    repositories {
+        maven {
+            def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }
