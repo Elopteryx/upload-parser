@@ -166,9 +166,7 @@ class Base64DecoderTest {
 
     @Test
     void decode_string_null_target() {
-        assertThrows(IllegalStateException.class, () -> {
-            new Base64Decoder().decode(ByteBuffer.wrap(KNOWLEDGE_ENCODED.getBytes(US_ASCII)), null);
-        });
+        assertThrows(IllegalStateException.class, () -> new Base64Decoder().decode(ByteBuffer.wrap(KNOWLEDGE_ENCODED.getBytes(US_ASCII)), null));
     }
 
     @Test
@@ -189,18 +187,14 @@ class Base64DecoderTest {
     void decode_string_several_illegal_padding() {
         final var buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
-        assertThrows(IOException.class, () -> {
-            new Base64Decoder().decode(ByteBuffer.wrap(SEVERAL_ILLEGAL_PADDINGS.getBytes(US_ASCII)), buffer);
-        });
+        assertThrows(IOException.class, () -> new Base64Decoder().decode(ByteBuffer.wrap(SEVERAL_ILLEGAL_PADDINGS.getBytes(US_ASCII)), buffer));
     }
 
     @Test
     void decode_string_invalid_character() {
         final var buffer = ByteBuffer.wrap(KNOWLEDGE.getBytes(US_ASCII));
         buffer.clear();
-        assertThrows(IOException.class, () -> {
-            new Base64Decoder().decode(ByteBuffer.wrap(INVALID_CHARACTER.getBytes(US_ASCII)), buffer);
-        });
+        assertThrows(IOException.class, () -> new Base64Decoder().decode(ByteBuffer.wrap(INVALID_CHARACTER.getBytes(US_ASCII)), buffer));
     }
 
     private static final class FlexBase64 {
@@ -370,7 +364,7 @@ class Base64DecoderTest {
         while (source.remaining() > 0) {
             encoder.encode(source, target);
             var add = limit - target.position();
-            add = add < 100 ? add : 100;
+            add = Math.min(add, 100);
             target.limit(target.limit() + add);
         }
         encoder.complete(target);
@@ -384,7 +378,7 @@ class Base64DecoderTest {
         while (target.remaining() > 0) {
             decoder.decode(target, decoded);
             var add = limit - decoded.position();
-            add = add < 100 ? add : 100;
+            add = Math.min(add, 100);
             decoded.limit(decoded.position() + add);
         }
 

@@ -54,9 +54,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
         assertFalse(UploadParser.isMultipart(request));
-        assertThrows(IllegalArgumentException.class, () -> {
-            UploadParser.newParser().userObject(newResponse()).setupAsyncParse(request);
-        });
+        assertThrows(IllegalArgumentException.class, () -> UploadParser.newParser().userObject(newResponse()).setupAsyncParse(request));
     }
 
     @Test
@@ -65,9 +63,7 @@ public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComple
 
         when(request.getContentType()).thenReturn("text/plain;charset=UTF-8");
         assertFalse(UploadParser.isMultipart(request));
-        assertThrows(IllegalArgumentException.class, () -> {
-            UploadParser.newParser().userObject(newResponse()).doBlockingParse(request);
-        });
+        assertThrows(IllegalArgumentException.class, () -> UploadParser.newParser().userObject(newResponse()).doBlockingParse(request));
     }
 
     @Test

@@ -148,7 +148,6 @@ public class Headers {
                     break;
                 }
             }
-            return header.substring(start, end);
 
         } else {
             //no quotes
@@ -158,8 +157,8 @@ public class Headers {
                     break;
                 }
             }
-            return header.substring(start, end);
         }
+        return header.substring(start, end);
     }
 
 }

@@ -14,16 +14,12 @@ class ByteBufferBackedInputStreamTest {
 
     @Test
     void create_with_direct() throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new ByteBufferBackedInputStream(ByteBuffer.allocate(0).asReadOnlyBuffer());
-        });
+        assertThrows(IllegalArgumentException.class, () -> new ByteBufferBackedInputStream(ByteBuffer.allocate(0).asReadOnlyBuffer()));
     }
 
     @Test
     void create_with_read_only() throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new ByteBufferBackedInputStream(ByteBuffer.allocateDirect(0));
-        });
+        assertThrows(IllegalArgumentException.class, () -> new ByteBufferBackedInputStream(ByteBuffer.allocateDirect(0)));
     }
 
     @Test

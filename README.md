@@ -99,9 +99,7 @@ still be called just like in async mode.
                         return PartOutput.from(path);
                     })
                     .onRequestComplete(context -> response.setStatus(200))
-                    .onError((context, throwable) -> {
-                        response.sendError(500);
-                    })
+                    .onError((context, throwable) -> response.sendError(500))
                     .sizeThreshold(4096)
                     .maxPartSize(1024 * 1024 * 25)
                     .maxRequestSize(1024 * 1024 * 500)

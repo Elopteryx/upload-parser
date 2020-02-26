@@ -46,9 +46,7 @@ public class UploadServlet extends HttpServlet {
                     return PartOutput.from(path);
                 })
                 .onRequestComplete(context -> context.getUserObject(HttpServletResponse.class).setStatus(200))
-                .onError((context, throwable) -> {
-                    response.sendError(500);
-                })
+                .onError((context, throwable) -> response.sendError(500))
                 .sizeThreshold(4096)
                 .maxBytesUsed(8092)
                 .maxPartSize(1024 * 1024 * 25)

@@ -22,9 +22,7 @@ class RestUploadParserTest {
         final long requestSize = 1024;
         final var mimeType = "multipart/form-data; boundary=----1234";
         final var encodingHeader = "UTF-8";
-        assertThrows(MultipartException.class, () -> {
-            parser.doBlockingParse(requestSize, mimeType, encodingHeader, request.getInputStream());
-        });
+        assertThrows(MultipartException.class, () -> parser.doBlockingParse(requestSize, mimeType, encodingHeader, request.getInputStream()));
 
     }
 
@@ -36,8 +34,6 @@ class RestUploadParserTest {
         final long requestSize = 1024;
         final var mimeType = "multipart/form-data; boundary;";
         final var encodingHeader = "UTF-8";
-        assertThrows(IllegalArgumentException.class, () -> {
-            parser.doBlockingParse(requestSize, mimeType, encodingHeader, request.getInputStream());
-        });
+        assertThrows(IllegalArgumentException.class, () -> parser.doBlockingParse(requestSize, mimeType, encodingHeader, request.getInputStream()));
     }
 }
