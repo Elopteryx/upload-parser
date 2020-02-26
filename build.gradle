@@ -1,6 +1,6 @@
 plugins {
-    id 'com.github.ben-manes.versions' version '0.27.0'
-    id 'com.github.kt3k.coveralls' version '2.8.4'
+    id 'com.github.ben-manes.versions' version '0.28.0'
+    id 'com.github.kt3k.coveralls' version '2.10.0'
     id 'com.github.spotbugs' version '3.0.0'
 }
 
@@ -40,18 +40,18 @@ subprojects {
     ext {
         servletApiVersion = '3.1.0'
         jaxrsApiVersion = '2.0.1'
-        junitVersion = '5.5.2'
-        undertowVersion = '2.0.28.Final'
-        jettyVersion = '9.4.22.v20191022'
-        tomcatVersion = '9.0.29'
-        resteasyVersion = '4.4.1.Final'
-        tikaVersion = '1.22'
+        junitVersion = '5.6.0'
+        undertowVersion = '2.0.29.Final'
+        jettyVersion = '9.4.26.v20200117'
+        tomcatVersion = '9.0.31'
+        resteasyVersion = '4.5.1.Final'
+        tikaVersion = '1.23'
         jimfsVersion = '1.1'
-        mockitoVersion = '3.1.0'
+        mockitoVersion = '3.3.0'
 
-        checkStyleVersion = '8.26'
-        pmdVersion = '6.20.0'
-        spotbugsVersion = '4.0.0-beta4'
+        checkStyleVersion = '8.29'
+        pmdVersion = '6.21.0'
+        spotbugsVersion = '4.0.0'
     }
 
     tasks.withType(JavaCompile) {
@@ -69,7 +69,7 @@ subprojects {
             configure(options) {
                 windowTitle = 'Upload Parser API Documentation'
                 docTitle = 'Upload Parser API Documentation'
-                bottom = "Copyright &#169; 2019 <a href='https://github.com/Elopteryx'>Creative Elopteryx</a>"
+                bottom = "Copyright &#169; 2020 <a href='https://github.com/Elopteryx'>Creative Elopteryx</a>"
                 breakIterator = true
                 author = false
                 source = '11'
