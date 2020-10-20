@@ -1,7 +1,7 @@
 plugins {
-    id 'com.github.ben-manes.versions' version '0.28.0'
-    id 'com.github.kt3k.coveralls' version '2.10.1'
-    id 'com.github.spotbugs' version '3.0.0'
+    id 'com.github.ben-manes.versions' version '0.33.0'
+    id 'com.github.kt3k.coveralls' version '2.10.2'
+    id 'com.github.spotbugs' version '4.5.1'
 }
 
 apply plugin: 'com.github.kt3k.coveralls'
@@ -14,12 +14,13 @@ task testReport(type: TestReport, group: 'Build') {
 allprojects {
     apply plugin: 'jacoco'
     jacoco {
-        toolVersion = '0.8.5'
+        toolVersion = '0.8.6'
     }
 }
 
 subprojects {
 
+    apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
@@ -40,18 +41,18 @@ subprojects {
     ext {
         servletApiVersion = '3.1.0'
         jaxrsApiVersion = '2.0.1'
-        undertowVersion = '2.0.30.Final'
-        jettyVersion = '9.4.26.v20200117'
-        tomcatVersion = '9.0.31'
-        resteasyVersion = '4.5.3.Final'
-        junitVersion = '5.6.1'
-        tikaVersion = '1.24'
+        undertowVersion = '2.2.2.Final'
+        jettyVersion = '9.4.32.v20200930'
+        tomcatVersion = '9.0.39'
+        resteasyVersion = '4.5.8.Final'
+        junitVersion = '5.7.0'
+        tikaVersion = '1.24.1'
         jimfsVersion = '1.1'
-        mockitoVersion = '3.3.3'
+        mockitoVersion = '3.5.15'
 
-        checkStyleVersion = '8.29'
-        pmdVersion = '6.21.0'
-        spotbugsVersion = '4.0.0'
+        checkStyleVersion = '8.36.2'
+        pmdVersion = '6.28.0'
+        spotbugsVersion = '4.1.4'
     }
 
     tasks.withType(JavaCompile) {
@@ -60,7 +61,7 @@ subprojects {
     }
 
     java {
-        withJavadocJar()
+        // withJavadocJar()
         withSourcesJar()
     }
 
@@ -98,7 +99,10 @@ subprojects {
     spotbugs {
         toolVersion = spotbugsVersion
         effort = 'max'
-        sourceSets = [sourceSets.main]
+    }
+
+    spotbugsTest {
+        enabled = false
     }
 
     jacocoTestReport {

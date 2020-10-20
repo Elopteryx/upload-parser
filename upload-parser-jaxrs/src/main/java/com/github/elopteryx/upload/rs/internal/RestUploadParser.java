@@ -24,13 +24,11 @@ import com.github.elopteryx.upload.internal.Headers;
 import com.github.elopteryx.upload.internal.MultipartParser;
 import com.github.elopteryx.upload.internal.PartStreamImpl;
 import com.github.elopteryx.upload.internal.UploadContextImpl;
-import com.github.elopteryx.upload.rs.Part;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +69,7 @@ public class RestUploadParser extends BlockingUploadParser {
         dataBuffer = ByteBuffer.allocate(maxBytesUsed / 2);
 
         if (mimeType != null && mimeType.startsWith(MULTIPART_FORM_DATA)) {
-            final String boundary = Headers.extractBoundaryFromHeader(mimeType);
+            final var boundary = Headers.extractBoundaryFromHeader(mimeType);
             if (boundary == null) {
                 throw new IllegalArgumentException("Could not find boundary in multipart request with ContentType: "
                         + mimeType
@@ -83,7 +81,7 @@ public class RestUploadParser extends BlockingUploadParser {
             inputStream = stream;
         }
         blockingRead();
-        final List<Part> parts = context.getPartStreams()
+        final var parts = context.getPartStreams()
                 .stream()
                 .map(PartStreamImpl.class::cast)
                 .map(PartImpl::new)

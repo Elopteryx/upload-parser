@@ -85,7 +85,7 @@ public class UploadReader implements MessageBodyReader<Object>, OnPartBegin, OnP
 
     @Override
     public boolean isReadable(final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
-        return mediaType.getType().equals("multipart");
+        return "multipart".equals(mediaType.getType());
     }
 
     @Override
