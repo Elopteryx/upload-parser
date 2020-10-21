@@ -1,10 +1,7 @@
 plugins {
     id 'com.github.ben-manes.versions' version '0.33.0'
-    id 'com.github.kt3k.coveralls' version '2.10.2'
     id 'com.github.spotbugs' version '4.5.1'
 }
-
-apply plugin: 'com.github.kt3k.coveralls'
 
 task testReport(type: TestReport, group: 'Build') {
     description 'Generates an aggregate test report.'
@@ -20,12 +17,10 @@ allprojects {
 
 subprojects {
 
-    apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
     apply plugin: 'com.github.ben-manes.versions'
-    apply plugin: 'com.github.kt3k.coveralls'
     apply plugin: 'checkstyle'
     apply plugin: 'pmd'
     apply plugin: 'com.github.spotbugs'
@@ -170,17 +165,4 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
         html.enabled = true
         xml.enabled = true
     }
-}
-
-coveralls {
-    sourceDirs += subprojects.sourceSets.main.allSource.srcDirs.flatten()
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
-}
-
-tasks.coveralls {
-    group 'Coverage reports'
-    description 'Uploads the aggregated coverage report to Coveralls.'
-
-    dependsOn jacocoRootReport
-    onlyIf { System.env.'CI' }
 }
