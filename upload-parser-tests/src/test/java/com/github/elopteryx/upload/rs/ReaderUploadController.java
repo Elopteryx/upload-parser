@@ -30,11 +30,13 @@ public class ReaderUploadController {
         assertFalse(multiPart.getHeaders().isEmpty());
         for (final var part : parts) {
             assertTrue(part.getSize() >= 0);
+            assertFalse(part.getHeaderNames().isEmpty());
             if (part.isFile()) {
                 if ("".equals(part.getSubmittedFileName())) {
                     throw new IOException("No file was chosen for the form field!");
                 }
-                part.getHeaders("content-type");
+                assertFalse(part.getHeaders("content-type").isEmpty());
+                assertEquals(part.getContentType(), part.getHeader("content-type"));
             }
         }
         return Response.status(200).build();

@@ -196,7 +196,8 @@ public class AsyncUploadServlet extends HttpServlet {
                         if ("".equals(part.getSubmittedFileName())) {
                             throw new IOException("No file was chosen for the form field!");
                         }
-                        part.getHeaders("content-type");
+                        assertFalse(part.getHeaders("content-type").isEmpty());
+                        assertEquals(part.getContentType(), part.getHeader("content-type"));
                         final var baos = new ByteArrayOutputStream();
                         formFields.add(baos);
                         return PartOutput.from(baos);
