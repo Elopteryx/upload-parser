@@ -3,7 +3,7 @@ Upload Parser
 
 [![Apache 2 License](https://img.shields.io/badge/license-Apache%202-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Actions Status](https://github.com/Elopteryx/upload-parser/workflows/Upload%20Parser%20CI/badge.svg)](https://github.com/Elopteryx/upload-parser/actions)
-[![codecov](https://codecov.io/gh/Elopteryx/upload-parser/branch/master/graph/badge.svg?token=WdHn9v5XBq)](undefined)
+[![codecov](https://codecov.io/gh/Elopteryx/upload-parser/branch/master/graph/badge.svg?token=WdHn9v5XBq)](https://codecov.io/gh/Elopteryx/upload-parser)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.elopteryx/upload-parser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.elopteryx/upload-parser)
 [![JavaDoc](https://img.shields.io/badge/javadoc-3.0.0-brightgreen.svg)](http://www.javadoc.io/doc/com.github.elopteryx/upload-parser)
 
