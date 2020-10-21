@@ -16,7 +16,10 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Build with Gradle
         run: ./gradlew build
-      - name: Upload coverage data
-        run: ./gradlew -Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2" coveralls
-        env:
-          CI: true
+      - name: Create root report
+        run: ./gradlew jacocoRootReport
+      - uses: codecov/codecov-action@v1
+        with:
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true
