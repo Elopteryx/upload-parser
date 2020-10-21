@@ -212,9 +212,9 @@ public final class MultipartParser {
                     final var encoding = headers.getHeader(CONTENT_TRANSFER_ENCODING);
                     if (encoding == null) {
                         encodingHandler = new IdentityEncoding();
-                    } else if (encoding.equalsIgnoreCase("base64")) {
+                    } else if ("base64".equalsIgnoreCase(encoding)) {
                         encodingHandler = new Base64Encoding(bufferSize);
-                    } else if (encoding.equalsIgnoreCase("quoted-printable")) {
+                    } else if ("quoted-printable".equalsIgnoreCase(encoding)) {
                         encodingHandler = new QuotedPrintableEncoding(bufferSize);
                     } else {
                         encodingHandler = new IdentityEncoding();

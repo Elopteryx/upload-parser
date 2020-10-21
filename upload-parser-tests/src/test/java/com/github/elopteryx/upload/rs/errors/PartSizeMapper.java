@@ -16,8 +16,6 @@ public class PartSizeMapper implements ExceptionMapper<PartSizeException> {
 
     @Override
     public Response toResponse(final PartSizeException exception) {
-        System.out.println(exception.getActualSize());
-        System.out.println(exception.getPermittedSize());
         return Response.serverError().status(HttpServletResponse.SC_NOT_ACCEPTABLE).build();
     }
 }

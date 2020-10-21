@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -35,29 +34,7 @@ public class ReaderUploadController {
                 if ("".equals(part.getSubmittedFileName())) {
                     throw new IOException("No file was chosen for the form field!");
                 }
-                final var name = part.getName();
-                System.out.println("File field " + name + " with file name "
-                        + part.getSubmittedFileName() + " detected!");
-                for (final var header : part.getHeaderNames()) {
-                    System.out.println(header + " " + part.getHeader(header));
-                }
                 part.getHeaders("content-type");
-                System.out.println(part.getContentType());
-                final var output = part.getOutPut();
-                if (output.safeToCast(ByteArrayOutputStream.class)) {
-                    final var bos = output.unwrap(ByteArrayOutputStream.class);
-                    System.out.println(bos.toString());
-                }
-            } else {
-                for (final var header : part.getHeaderNames()) {
-                    System.out.println(header + " " + part.getHeader(header));
-                }
-                System.out.println(part.getContentType());
-                final var output = part.getOutPut();
-                if (output.safeToCast(ByteArrayOutputStream.class)) {
-                    final var bos = output.unwrap(ByteArrayOutputStream.class);
-                    System.out.println(bos.toString());
-                }
             }
         }
         return Response.status(200).build();
