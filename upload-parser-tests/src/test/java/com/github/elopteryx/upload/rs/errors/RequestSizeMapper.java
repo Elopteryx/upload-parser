@@ -16,8 +16,6 @@ public class RequestSizeMapper implements ExceptionMapper<RequestSizeException> 
 
     @Override
     public Response toResponse(final RequestSizeException exception) {
-        System.out.println(exception.getActualSize());
-        System.out.println(exception.getPermittedSize());
         return Response.serverError().status(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE).build();
     }
 }

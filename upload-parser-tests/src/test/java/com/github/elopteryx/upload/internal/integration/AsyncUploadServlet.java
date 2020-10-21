@@ -192,40 +192,22 @@ public class AsyncUploadServlet extends HttpServlet {
                     } else {
                         assertEquals(detectedType, expectedType);
                     }
-
-                    final var name = part.getName();
                     if (part.isFile()) {
                         if ("".equals(part.getSubmittedFileName())) {
                             throw new IOException("No file was chosen for the form field!");
                         }
-                        System.out.println("File field " + name + " with file name "
-                                + part.getSubmittedFileName() + " detected!");
-                        for (final var header : part.getHeaderNames()) {
-                            System.out.println(header + " " + part.getHeader(header));
-                        }
                         part.getHeaders("content-type");
-                        System.out.println(part.getContentType());
                         final var baos = new ByteArrayOutputStream();
                         formFields.add(baos);
                         return PartOutput.from(baos);
                     } else {
-                        for (final var header : part.getHeaderNames()) {
-                            System.out.println(header + " " + part.getHeader(header));
-                        }
-                        System.out.println(part.getContentType());
                         final var baos = new ByteArrayOutputStream();
                         formFields.add(baos);
                         return PartOutput.from(baos);
                     }
                 })
-                .onPartEnd(context -> {
-                    System.out.println(context.getCurrentPart().getKnownSize());
-                    System.out.println("Part success!");
-                })
+                .onPartEnd(context -> {})
                 .onRequestComplete(context -> {
-                    System.out.println("Request complete!");
-                    System.out.println("Total parts: " + context.getPartStreams().size());
-
                     assertArrayEquals(formFields.get(0).toByteArray(), RequestSupplier.LARGE_FILE);
                     assertArrayEquals(formFields.get(1).toByteArray(), RequestSupplier.EMPTY_FILE);
                     assertArrayEquals(formFields.get(2).toByteArray(), RequestSupplier.SMALL_FILE);
@@ -235,10 +217,7 @@ public class AsyncUploadServlet extends HttpServlet {
                     context.getUserObject(HttpServletResponse.class).setStatus(HttpServletResponse.SC_OK);
                     context.getRequest().getAsyncContext().complete();
                 })
-                .onError((context, throwable) -> {
-                    System.out.println("Error!");
-                    response.sendError(500);
-                })
+                .onError((context, throwable) -> response.sendError(500))
                 .userObject(response)
                 .sizeThreshold(4096)
                 .maxPartSize(Long.MAX_VALUE)

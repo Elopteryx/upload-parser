@@ -66,8 +66,6 @@ public final class ClientRequest {
         try {
             client.send(request, responseInfo -> {
                 final var statusCode = responseInfo.statusCode();
-                System.out.println("----------------------------------------");
-                System.out.println(statusCode);
                 if (expectedStatus != null) {
                     assertEquals((int) expectedStatus, statusCode);
                 }

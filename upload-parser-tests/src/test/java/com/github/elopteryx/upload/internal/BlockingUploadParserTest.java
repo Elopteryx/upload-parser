@@ -1,7 +1,6 @@
 package com.github.elopteryx.upload.internal;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.github.elopteryx.upload.OnError;
@@ -15,7 +14,6 @@ import com.github.elopteryx.upload.util.Servlets;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +49,7 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
     }
 
     @Override
-    public PartOutput onPartBegin(final UploadContext context, final ByteBuffer buffer) throws IOException {
+    public PartOutput onPartBegin(final UploadContext context, final ByteBuffer buffer) {
         final var baos = new ByteArrayOutputStream();
         strings.add(baos);
         return PartOutput.from(baos);
@@ -59,7 +57,7 @@ public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError
 
     @Override
     public void onPartEnd(final UploadContext context) {
-        System.out.println(strings.get(strings.size() - 1).toString());
+        assertFalse(strings.isEmpty());
     }
 
     @Override
