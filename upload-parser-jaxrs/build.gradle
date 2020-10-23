@@ -23,10 +23,6 @@ compileJava {
     }
 }
 
-javadoc {
-    options.addStringOption('-module-path', classpath.asPath)
-}
-
 jar {
     manifest {
         attributes(

@@ -56,8 +56,9 @@ subprojects {
     }
 
     java {
-        // withJavadocJar()
+        withJavadocJar()
         withSourcesJar()
+        modularity.inferModulePath = true
     }
 
     javadoc {
@@ -65,7 +66,7 @@ subprojects {
             configure(options) {
                 windowTitle = 'Upload Parser API Documentation'
                 docTitle = 'Upload Parser API Documentation'
-                bottom = "Copyright &#169; 2020 <a href='https://github.com/Elopteryx'>Creative Elopteryx</a>"
+                bottom = 'Copyright &#169; 2020 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
                 breakIterator = true
                 author = false
                 source = '11'
@@ -73,8 +74,9 @@ subprojects {
                 docEncoding = 'UTF-8'
                 failOnError = true
                 links = [
-                        'https://docs.oracle.com/en/java/javase/11/docs/api/',
+                        'https://docs.oracle.com/en/java/javase/11/docs/api/'
                 ]
+                modulePath = configurations.compileClasspath.asList()
             }
         }
     }
