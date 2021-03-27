@@ -141,6 +141,10 @@ subprojects {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 task jacocoMerge(type: JacocoMerge) {
     subprojects.each { subproject ->
         executionData subproject.tasks.withType(Test)
