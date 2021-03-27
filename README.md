@@ -36,8 +36,10 @@ Features
 
 Requirements
 --------
-* Java 11 for version 3.0.0, Java 8 for version 2.2.1
-* Servlet 3.1 environment
+| Versions    | Min JVM     | Min Servlet |
+| ----------- | ----------- | ----------- |
+| 3.0.0       | 11          | 3.1         |
+| 2.2.1       | 8           | 3.1         |
 
 Motivation
 --------
@@ -49,7 +51,7 @@ code, you can't rely on the servlet container to do the job for you in the async
 
 Also, the classic blocking method parses the whole request
 and only lets you run your code after it is finished. Why no support to check for the correct file extension, or request size right when they become available?
-And so I decided to write this small library which handles those situation. If you don't have these requirements then the Servlet API will do the job
+And so I decided to write this small library which handles those situations. If you don't have these requirements then the Servlet API will do the job
 just fine. Otherwise, I think you will find my library useful.
 
 Issues
@@ -60,7 +62,7 @@ Does the library have bugs? Needs extra functionality? Do you like the API? Feel
 Examples
 --------
 
-Very simple to setup, have a servlet which has no MultiPartConfig annotation or the identical section in the web.xml,
+Very simple to set up, have a servlet which has no MultiPartConfig annotation or the identical section in the web.xml,
 import the UploadParser class and pass your logic. The parser class will take care of starting async mode and
 registering the necessary classes to start the parsing. Note that if you can't enable async support
 for your servlet then you can also use blocking mode, by calling the doBlockingParse method instead. Your functions will

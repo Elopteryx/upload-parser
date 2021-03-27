@@ -1,6 +1,6 @@
 plugins {
-    id 'com.github.ben-manes.versions' version '0.33.0'
-    id 'com.github.spotbugs' version '4.5.1'
+    id 'com.github.ben-manes.versions' version '0.38.0'
+    id 'com.github.spotbugs' version '4.7.0'
 }
 
 task testReport(type: TestReport, group: 'Build') {
@@ -36,18 +36,18 @@ subprojects {
     ext {
         servletApiVersion = '3.1.0'
         jaxrsApiVersion = '2.0.1'
-        undertowVersion = '2.2.2.Final'
-        jettyVersion = '9.4.32.v20200930'
-        tomcatVersion = '9.0.39'
-        resteasyVersion = '4.5.8.Final'
+        undertowVersion = '2.2.5.Final'
+        jettyVersion = '10.0.1'
+        tomcatVersion = '9.0.44'
+        resteasyVersion = '4.6.0.Final'
         junitVersion = '5.7.0'
-        tikaVersion = '1.24.1'
-        jimfsVersion = '1.1'
-        mockitoVersion = '3.5.15'
+        tikaVersion = '1.25'
+        jimfsVersion = '1.2'
+        mockitoVersion = '3.8.0'
 
-        checkStyleVersion = '8.36.2'
-        pmdVersion = '6.28.0'
-        spotbugsVersion = '4.1.4'
+        checkStyleVersion = '8.41'
+        pmdVersion = '6.32.0'
+        spotbugsVersion = '4.2.2'
     }
 
     tasks.withType(JavaCompile) {
@@ -66,7 +66,7 @@ subprojects {
             configure(options) {
                 windowTitle = 'Upload Parser API Documentation'
                 docTitle = 'Upload Parser API Documentation'
-                bottom = 'Copyright &#169; 2020 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
+                bottom = 'Copyright &#169; 2021 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
                 breakIterator = true
                 author = false
                 source = '11'
@@ -139,10 +139,6 @@ subprojects {
         reports.junitXml.destination = file("${buildDir}/reports/${name}/results")
         binResultsDir = file("${buildDir}/reports/${name}/results/binary/${name}")
     }
-}
-
-repositories {
-    jcenter()
 }
 
 task jacocoMerge(type: JacocoMerge) {

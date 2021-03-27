@@ -189,7 +189,7 @@ public final class MultipartParser {
                     if (currentString == null || subState != 0) {
                         throw new MultipartException(ERROR_MESSAGE);
                     } else {
-                        currentHeaderName = new String(currentString.toByteArray(), requestCharset);
+                        currentHeaderName = currentString.toString(requestCharset);
                         currentString.reset();
                         subState = 0;
                         state = 2;
@@ -242,7 +242,7 @@ public final class MultipartParser {
                     if (subState != 1) {
                         throw new MultipartException(ERROR_MESSAGE);
                     }
-                    headers.addHeader(currentHeaderName.trim(), new String(currentString.toByteArray(), requestCharset).trim());
+                    headers.addHeader(currentHeaderName.trim(), currentString.toString(requestCharset).trim());
                     state = 1;
                     subState = 0;
                     currentString = null;
