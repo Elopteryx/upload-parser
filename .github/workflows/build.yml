@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ 11.0.8, 15 ]
+        java: [ 11.0.10, 16 ]
     steps:
       - uses: actions/checkout@master
       - name: Setup java

@@ -36,14 +36,14 @@ subprojects {
     ext {
         servletApiVersion = '3.1.0'
         jaxrsApiVersion = '2.0.1'
-        undertowVersion = '2.2.5.Final'
+        undertowVersion = '2.2.7.Final'
         jettyVersion = '10.0.1'
         tomcatVersion = '9.0.44'
         resteasyVersion = '4.6.0.Final'
         junitVersion = '5.7.0'
         tikaVersion = '1.25'
         jimfsVersion = '1.2'
-        mockitoVersion = '3.8.0'
+        mockitoVersion = '3.9.0'
 
         checkStyleVersion = '8.41'
         pmdVersion = '6.32.0'
