@@ -21,14 +21,14 @@ import com.github.elopteryx.upload.errors.MultipartException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * The blocking implementation of the parser. This parser can be used to perform a
  * blocking parse, whether the servlet supports async mode or not.
  */
-public class BlockingUploadParser extends AbstractUploadParser {
+public final class BlockingUploadParser extends AbstractUploadParser {
 
     /**
      * The request object.
@@ -38,7 +38,7 @@ public class BlockingUploadParser extends AbstractUploadParser {
     /**
      * The stream to read.
      */
-    protected InputStream inputStream;
+    private InputStream inputStream;
 
     public BlockingUploadParser(final HttpServletRequest request) {
         this.request = request;
@@ -81,7 +81,7 @@ public class BlockingUploadParser extends AbstractUploadParser {
      * it is not closed with the proper characters.
      * @throws IOException If an error occurred with the I/O
      */
-    protected void blockingRead() throws IOException {
+    private void blockingRead() throws IOException {
         while (true) {
             final var count = inputStream.read(dataBuffer.array());
             if (count == -1) {

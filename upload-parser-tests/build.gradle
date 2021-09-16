@@ -3,9 +3,6 @@ dependencies {
     /* Upload parser. */
     testImplementation(project(':upload-parser-core'))
 
-    /* Upload parser Jax-Rs integration. */
-    testImplementation(project(':upload-parser-jaxrs'))
-
     /* Test runner. */
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
@@ -13,7 +10,7 @@ dependencies {
 
     /* Undertow Http server. */
     testImplementation("io.undertow:undertow-core:$undertowVersion")
-    testImplementation("io.undertow:undertow-servlet:$undertowVersion")
+    testImplementation("io.undertow:undertow-servlet-jakartaee9:$undertowVersion")
 
     /* Jetty Http server. */
     testImplementation("org.eclipse.jetty:jetty-server:$jettyVersion")
@@ -21,11 +18,6 @@ dependencies {
 
     /* Tomcat Http server. */
     testImplementation("org.apache.tomcat.embed:tomcat-embed-core:$tomcatVersion")
-
-    /* Restful web services implementation. */
-    testImplementation("org.jboss.resteasy:resteasy-cdi:$resteasyVersion")
-    testImplementation("org.jboss.resteasy:resteasy-core:$resteasyVersion")
-    testImplementation("org.jboss.resteasy:resteasy-client:$resteasyVersion")
 
     /* Document and file parser. */
     testImplementation("org.apache.tika:tika-core:$tikaVersion")
@@ -38,9 +30,6 @@ dependencies {
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
 
     /* Servlet API. */
-    testImplementation("javax.servlet:javax.servlet-api:$servletApiVersion")
-
-    /* Restful web services API. */
-    testImplementation("javax.ws.rs:javax.ws.rs-api:$jaxrsApiVersion")
+    testImplementation("jakarta.servlet:jakarta.servlet-api:$servletApiVersion")
 
 }

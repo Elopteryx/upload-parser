@@ -5,7 +5,7 @@ Upload Parser
 [![Actions Status](https://github.com/Elopteryx/upload-parser/workflows/Upload%20Parser%20CI/badge.svg)](https://github.com/Elopteryx/upload-parser/actions)
 [![codecov](https://codecov.io/gh/Elopteryx/upload-parser/branch/master/graph/badge.svg?token=WdHn9v5XBq)](https://codecov.io/gh/Elopteryx/upload-parser)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.elopteryx/upload-parser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.elopteryx/upload-parser)
-[![JavaDoc](https://img.shields.io/badge/javadoc-3.0.0-brightgreen.svg)](http://www.javadoc.io/doc/com.github.elopteryx/upload-parser)
+[![JavaDoc](https://img.shields.io/badge/javadoc-4.0.0-brightgreen.svg)](http://www.javadoc.io/doc/com.github.elopteryx/upload-parser)
 
 Upload Parser is a file upload library for servlets and web applications. Although you can already use the standard
 servlet API to retrieve part items from a multipart request this library provides extra functionality not found
@@ -14,10 +14,6 @@ the user to upload everything, you can run your business logic, like file type v
 location as soon as the bytes arrive. Another great feature is that if you choose it and your servlet supports it the
 upload request can run in asynchronous mode, using the async IO API introduced in the 3.1 version of the servlet API.
 This will allow a much better use of system resources, no more waiting threads.
-
-The library has two components. The core module is written for plain servlets, although it can work with any web
-framework that allows access to the HttpServletRequest instance, for example Spring WebMVC. The JAX-RS module allows
-you to handle the uploaded parts as automatically injected method parameters when using the JAX-RS runtime.
 
 I consider the modules complete, when it comes to features. I don't think I can add more without bloating the
 library, but if you have suggestions for new stuff, or if you have found a bug I would be more than happy to fix that.
@@ -38,6 +34,7 @@ Requirements
 --------
 | Versions    | Min JVM     | Min Servlet |
 | ----------- | ----------- | ----------- |
+| 4.0.0       | 17          | 5.0         |
 | 3.0.0       | 11          | 3.1         |
 | 2.2.1       | 8           | 3.1         |
 
@@ -110,7 +107,7 @@ still be called just like in async mode.
 }
 ```
 
-You can also use the parser with web frameworks. The following example shows how to use it with a JAX-RS endpoint:
+You can also use the parser with web frameworks, like Spring WebMVC. The following example shows how to use it with a JAX-RS endpoint:
 
 ```java
 
@@ -156,117 +153,25 @@ You can also use the parser with web frameworks. The following example shows how
     }
 ```
 
-These two examples show how to use the core library. If you want to handle multipart requests in a more elegant way, you
-can use the JAX-RS module. It comes with a message body reader implementation (although it has to be extended and
-registered manually) and configuration annotations which allows you to receive the request parts as method parameters.
-The following code shows how they work:
-
-```java
-
-    @Path("upload")
-    public class ReaderUploadController {
-    
-        /**
-         * Example endpoint for the reader, the reader injects the object representing the whole
-         * multipart request.
-         * @param multiPart The multipart request
-         * @throws IOException If an error occurred with the I/O
-         * @throws ServletException If an error occurred with the servlet
-         */
-        @POST
-        @Path("upload1")
-        public void multiPart(@UploadConfig(sizeThreshold = 4096)MultiPart multiPart) throws IOException, ServletException {
-            multiPart.getParts();
-            multiPart.getHeaders();
-            multiPart.getSize();
-            // ...
-        }
-    
-        /**
-         * Example endpoint for the reader, the reader injects the part objects as method parameters.
-         * @param part1 The first part, with the given form name
-         * @param part2 The second part, with the given form name
-         * @param part3 The third part, with the given form name
-         * @throws IOException If an error occurred with the I/O
-         * @throws ServletException If an error occurred with the servlet
-         */
-        @POST
-        @Path("upload2")
-        public void separateParts(@UploadParam("text1")Part part1,
-                                  @UploadParam("text2")Part part2,
-                                  @UploadParam("file")Part part3
-        ) throws IOException, ServletException {
-            // ...
-        }
-    }
-
-```
-
-Note that the JAX-RS API does not support async IO for message body readers, therefore the parsing can only work in a
-blocking mode, if you use it like in the last example. If you are not planning to use parameter injection, then 
-importing the JAX-RS module is unnecessary, the core library will also work, as shown in the second example.
-
-For more information, please check the javadoc:
-
-Core ([javadoc][1])
-
-JAX-RS ([javadoc][2])
+For more information, please check the [Javadoc][1].
 
 Gradle
 -----
 
-**For use with Java 11+**
-
 ```xml
-compile 'com.github.elopteryx:upload-parser:3.0.0'
-
-compile 'com.github.elopteryx:upload-parser-jaxrs:3.0.0'
-```
-
-**For use with Java 8+**
-
-```xml
-compile 'com.github.elopteryx:upload-parser:2.2.1'
-
-compile 'com.github.elopteryx:upload-parser-jaxrs:2.2.1'
-
+compile 'com.github.elopteryx:upload-parser:4.0.0'
 ```
 Maven
 -----
 
-**For use with Java 11+**
-
 ```xml
 <dependency>
     <groupId>com.github.elopteryx</groupId>
     <artifactId>upload-parser</artifactId>
-    <version>3.0.0</version>
-</dependency>
-
-<dependency>
-    <groupId>com.github.elopteryx</groupId>
-    <artifactId>upload-parser-jaxrs</artifactId>
-    <version>3.0.0</version>
-</dependency>
-```
-
-**For use with Java 8+**
-
-```xml
-<dependency>
-    <groupId>com.github.elopteryx</groupId>
-    <artifactId>upload-parser</artifactId>
-    <version>2.2.1</version>
-</dependency>
-
-<dependency>
-    <groupId>com.github.elopteryx</groupId>
-    <artifactId>upload-parser-jaxrs</artifactId>
-    <version>2.2.1</version>
+    <version>4.0.0</version>
 </dependency>
 ```
 
 Find available versions on [Maven Central Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.elopteryx%22%20AND%20a%3A%22upload-parser%22).
 
-[1]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser/3.0.0
-[2]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser-jaxrs/3.0.0
+[1]: http://www.javadoc.io/doc/com.github.elopteryx/upload-parser/4.0.0

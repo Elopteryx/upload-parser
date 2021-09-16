@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError {
+class BlockingUploadParserTest implements OnPartBegin, OnPartEnd, OnError {
     
     private final List<ByteArrayOutputStream> strings = new ArrayList<>();
 

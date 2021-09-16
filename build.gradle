@@ -1,6 +1,6 @@
 plugins {
-    id 'com.github.ben-manes.versions' version '0.38.0'
-    id 'com.github.spotbugs' version '4.7.0'
+    id 'com.github.ben-manes.versions' version '0.39.0'
+    id 'com.github.spotbugs' version '4.7.5'
 }
 
 task testReport(type: TestReport, group: 'Build') {
@@ -11,7 +11,7 @@ task testReport(type: TestReport, group: 'Build') {
 allprojects {
     apply plugin: 'jacoco'
     jacoco {
-        toolVersion = '0.8.6'
+        toolVersion = '0.8.7'
     }
 }
 
@@ -26,7 +26,7 @@ subprojects {
     apply plugin: 'com.github.spotbugs'
 
     group = 'com.github.elopteryx'
-    version = '3.1.0-SNAPSHOT'
+    version = '4.0.0-SNAPSHOT'
 
     repositories {
         mavenCentral()
@@ -34,25 +34,23 @@ subprojects {
     }
 
     ext {
-        servletApiVersion = '3.1.0'
-        jaxrsApiVersion = '2.0.1'
-        undertowVersion = '2.2.7.Final'
-        jettyVersion = '10.0.1'
-        tomcatVersion = '9.0.44'
-        resteasyVersion = '4.6.0.Final'
-        junitVersion = '5.7.0'
-        tikaVersion = '1.25'
+        servletApiVersion = '5.0.0'
+        undertowVersion = '2.2.10.Final'
+        jettyVersion = '11.0.6'
+        tomcatVersion = '10.0.11'
+        junitVersion = '5.8.0'
+        tikaVersion = '2.1.0'
         jimfsVersion = '1.2'
-        mockitoVersion = '3.9.0'
+        mockitoVersion = '3.12.4'
 
-        checkStyleVersion = '8.41'
-        pmdVersion = '6.32.0'
+        checkStyleVersion = '9.0'
+        pmdVersion = '6.38.0'
         spotbugsVersion = '4.2.2'
     }
 
     tasks.withType(JavaCompile) {
-        sourceCompatibility = 11
-        targetCompatibility = 11
+        sourceCompatibility = 17
+        targetCompatibility = 17
     }
 
     java {
@@ -69,12 +67,13 @@ subprojects {
                 bottom = 'Copyright &#169; 2021 <a href="https://github.com/Elopteryx">Creative Elopteryx</a>'
                 breakIterator = true
                 author = false
-                source = '11'
+                source = '17'
                 encoding = 'UTF-8'
                 docEncoding = 'UTF-8'
                 failOnError = true
                 links = [
-                        'https://docs.oracle.com/en/java/javase/11/docs/api/'
+                        'https://docs.oracle.com/en/java/javase/17/docs/api/',
+                        'https://jakarta.ee/specifications/platform/9/apidocs/'
                 ]
                 modulePath = configurations.compileClasspath.asList()
             }
@@ -107,8 +106,8 @@ subprojects {
         description = 'Generates a test coverage report for a project'
 
         reports {
-            xml.enabled = true
-            html.enabled = true
+            xml.required = true
+            html.required = true
         }
     }
 
@@ -137,7 +136,7 @@ subprojects {
         // ensure tasks don't overwrite the default report directories used by the 'test' task
         reports.html.destination = file("${buildDir}/reports/${name}")
         reports.junitXml.destination = file("${buildDir}/reports/${name}/results")
-        binResultsDir = file("${buildDir}/reports/${name}/results/binary/${name}")
+        binaryResultsDirectory = file("${buildDir}/reports/${name}/results/binary/${name}")
     }
 }
 
@@ -164,7 +163,7 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
     executionData jacocoMerge.destinationFile
 
     reports {
-        html.enabled = true
-        xml.enabled = true
+        html.required = true
+        xml.required = true
     }
 }

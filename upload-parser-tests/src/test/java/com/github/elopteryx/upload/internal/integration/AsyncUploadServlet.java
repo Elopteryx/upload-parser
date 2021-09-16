@@ -25,45 +25,28 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(value = "/async", asyncSupported = true)
 public class AsyncUploadServlet extends HttpServlet {
 
     @Override
+    @SuppressWarnings("PMD.SwitchStmtsShouldHaveDefault")
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-
         final var query = request.getQueryString();
         switch (query) {
-            case ClientRequest.SIMPLE:
-                simple(request, response);
-                break;
-            case ClientRequest.THRESHOLD_LESSER:
-                thresholdLesser(request, response);
-                break;
-            case ClientRequest.THRESHOLD_GREATER:
-                thresholdGreater(request, response);
-                break;
-            case ClientRequest.ERROR:
-                error(request, response);
-                break;
-            case ClientRequest.IO_ERROR_UPON_ERROR:
-                ioErrorUponError(request);
-                break;
-            case ClientRequest.SERVLET_ERROR_UPON_ERROR:
-                servletErrorUponError(request);
-                break;
-            case ClientRequest.COMPLEX:
-                complex(request, response);
-                break;
-            default:
-                break;
+            case ClientRequest.SIMPLE -> simple(request, response);
+            case ClientRequest.THRESHOLD_LESSER -> thresholdLesser(request, response);
+            case ClientRequest.THRESHOLD_GREATER -> thresholdGreater(request, response);
+            case ClientRequest.ERROR -> error(request, response);
+            case ClientRequest.IO_ERROR_UPON_ERROR -> ioErrorUponError(request);
+            case ClientRequest.SERVLET_ERROR_UPON_ERROR -> servletErrorUponError(request);
+            case ClientRequest.COMPLEX -> complex(request, response);
         }
-
     }
 
     private void simple(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {

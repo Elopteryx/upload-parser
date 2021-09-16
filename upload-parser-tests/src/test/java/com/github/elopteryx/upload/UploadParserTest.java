@@ -17,11 +17,11 @@ import org.junit.jupiter.api.Test;
 import java.nio.ByteBuffer;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
-import javax.servlet.AsyncContext;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletResponse;
 
-public class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
+class UploadParserTest implements OnPartBegin, OnPartEnd, OnRequestComplete, OnError {
 
     private static FileSystem fileSystem;
 
