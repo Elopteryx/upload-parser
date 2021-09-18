@@ -20,10 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.channels.Channel;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -175,6 +172,7 @@ public class AsyncUploadServlet extends HttpServlet {
                     } else {
                         assertEquals(detectedType, expectedType);
                     }
+                    assertEquals(part.getHeaderNames(), Set.of("content-disposition", "content-type"));
                     if (part.isFile()) {
                         if ("".equals(part.getSubmittedFileName())) {
                             throw new IOException("No file was chosen for the form field!");
