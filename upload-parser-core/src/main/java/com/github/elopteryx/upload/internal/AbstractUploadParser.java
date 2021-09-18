@@ -40,13 +40,13 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.EnumSet;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Base class for the parser implementations. This holds the common methods, like the more specific
  * validation and the calling of the user-supplied functions.
  */
-public abstract class AbstractUploadParser implements MultipartParser.PartHandler {
+public abstract sealed class AbstractUploadParser implements MultipartParser.PartHandler permits AsyncUploadParser, BlockingUploadParser {
 
     /**
      * The default size allocated for the buffers.

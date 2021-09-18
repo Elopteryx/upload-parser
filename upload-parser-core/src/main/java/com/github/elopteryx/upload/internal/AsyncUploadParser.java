@@ -21,17 +21,17 @@ import static java.util.Objects.requireNonNull;
 import com.github.elopteryx.upload.errors.MultipartException;
 
 import java.io.IOException;
-import javax.servlet.ReadListener;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * The asynchronous implementation of the parser. This parser can be used to perform a parse
  * only if the calling servlet supports async mode.
  * Implements the listener interface. Called by the servlet container whenever data is available.
  */
-public class AsyncUploadParser extends AbstractUploadParser implements ReadListener {
+public final class AsyncUploadParser extends AbstractUploadParser implements ReadListener {
 
     /**
      * The request object.

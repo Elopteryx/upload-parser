@@ -12,36 +12,25 @@ import com.github.elopteryx.upload.util.NullChannel;
 
 import java.io.IOException;
 import java.nio.channels.Channel;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet("/blocking")
 public class BlockingUploadServlet extends HttpServlet {
 
     @Override
+    @SuppressWarnings("PMD.SwitchStmtsShouldHaveDefault")
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-
         final var query = request.getQueryString();
         switch (query) {
-            case ClientRequest.SIMPLE:
-                simple(request, response);
-                break;
-            case ClientRequest.THRESHOLD_LESSER:
-                thresholdLesser(request, response);
-                break;
-            case ClientRequest.THRESHOLD_GREATER:
-                thresholdGreater(request, response);
-                break;
-            case ClientRequest.ERROR:
-                error(request, response);
-                break;
-            default:
-                break;
+            case ClientRequest.SIMPLE -> simple(request, response);
+            case ClientRequest.THRESHOLD_LESSER -> thresholdLesser(request, response);
+            case ClientRequest.THRESHOLD_GREATER -> thresholdGreater(request, response);
+            case ClientRequest.ERROR -> error(request, response);
         }
-
     }
 
     private void simple(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {

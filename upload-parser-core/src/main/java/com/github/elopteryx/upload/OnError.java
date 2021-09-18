@@ -17,7 +17,7 @@
 package com.github.elopteryx.upload;
 
 import java.io.IOException;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 /**
  * A functional interface. An implementation of it must be passed in the

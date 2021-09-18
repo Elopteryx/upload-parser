@@ -1,5 +1,4 @@
 rootProject.name = 'upload-parser-parent'
 
 include 'upload-parser-core'
-include 'upload-parser-jaxrs'
 include 'upload-parser-tests'

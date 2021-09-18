@@ -17,7 +17,7 @@
 package com.github.elopteryx.upload;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * The context object which is passed to the user-supplied functions,

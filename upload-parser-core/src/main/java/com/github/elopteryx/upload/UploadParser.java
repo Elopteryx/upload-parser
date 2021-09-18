@@ -24,8 +24,8 @@ import com.github.elopteryx.upload.internal.BlockingUploadParser;
 
 import java.io.IOException;
 import java.util.Locale;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * The main class for the library. Provides a fluent API for the users to

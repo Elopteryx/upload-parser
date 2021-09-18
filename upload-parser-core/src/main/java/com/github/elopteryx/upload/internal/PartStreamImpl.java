@@ -56,10 +56,9 @@ public class PartStreamImpl implements PartStream {
      */
     private boolean finished;
     /**
-     * The output object supplied by the caller. Not used here, but for
-     * the Jax-Rs module it has to be made available.
+     * The output object supplied by the caller.
      */
-    protected PartOutput output;
+    private PartOutput output;
 
     /**
      * Creates a new instance.
@@ -118,10 +117,6 @@ public class PartStreamImpl implements PartStream {
     @Override
     public Collection<String> getHeaders(final String name) {
         return headers.getHeaders(name);
-    }
-
-    public Headers getHeadersObject() {
-        return headers;
     }
 
     void setSize(final long size) {

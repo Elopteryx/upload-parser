@@ -3,7 +3,7 @@ ext.moduleName = 'com.github.elopteryx.upload'
 dependencies {
 
     /* Servlet API. */
-    compileOnly("javax.servlet:javax.servlet-api:$servletApiVersion")
+    compileOnly("jakarta.servlet:jakarta.servlet-api:$servletApiVersion")
 
 }
 
@@ -74,6 +74,8 @@ publishing {
     }
     repositories {
         maven {
+            name = 'ossrh'
+            credentials(PasswordCredentials)
             def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
             def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
