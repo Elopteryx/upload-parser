@@ -1,11 +1,6 @@
 plugins {
-    id 'com.github.ben-manes.versions' version '0.39.0'
-    id 'com.github.spotbugs' version '4.7.5'
-}
-
-task testReport(type: TestReport, group: 'Build') {
-    description 'Generates an aggregate test report.'
-    destinationDir file("${buildDir}/reports/allTests")
+    id 'com.github.ben-manes.versions' version '0.42.0'
+    id 'com.github.spotbugs' version '5.0.6'
 }
 
 allprojects {
@@ -35,17 +30,17 @@ subprojects {
 
     ext {
         servletApiVersion = '5.0.0'
-        undertowVersion = '2.2.10.Final'
-        jettyVersion = '11.0.6'
+        undertowVersion = '2.2.16.Final'
+        jettyVersion = '11.0.8'
         tomcatVersion = '10.0.11'
-        junitVersion = '5.8.0'
-        tikaVersion = '2.1.0'
+        junitVersion = '5.8.2'
+        tikaVersion = '2.3.0'
         jimfsVersion = '1.2'
-        mockitoVersion = '3.12.4'
+        mockitoVersion = '4.3.1'
 
-        checkStyleVersion = '9.0'
-        pmdVersion = '6.38.0'
-        spotbugsVersion = '4.2.2'
+        checkStyleVersion = '10.0'
+        pmdVersion = '6.43.0'
+        spotbugsVersion = '4.2.3'
     }
 
     tasks.withType(JavaCompile) {
@@ -101,24 +96,6 @@ subprojects {
         enabled = false
     }
 
-    jacocoTestReport {
-        group = 'Coverage reports'
-        description = 'Generates a test coverage report for a project'
-
-        reports {
-            xml.required = true
-            html.required = true
-        }
-    }
-
-    task jacocoMerge(type: JacocoMerge) {
-        executionData tasks.withType(Test)
-
-        doFirst {
-            executionData = files(executionData.findAll { it.exists() })
-        }
-    }
-
     signing {
         required { !version.endsWith('SNAPSHOT') && gradle.taskGraph.hasTask('publish') }
         sign configurations.archives
@@ -129,41 +106,8 @@ subprojects {
         testLogging.showStandardStreams = true
     }
 
-    tasks.withType(Test) {
-        rootProject.testReport.reportOn it
-        it.dependsOn('jar')
-
-        // ensure tasks don't overwrite the default report directories used by the 'test' task
-        reports.html.destination = file("${buildDir}/reports/${name}")
-        reports.junitXml.destination = file("${buildDir}/reports/${name}/results")
-        binaryResultsDirectory = file("${buildDir}/reports/${name}/results/binary/${name}")
-    }
 }
 
 repositories {
     mavenCentral()
-}
-
-task jacocoMerge(type: JacocoMerge) {
-    subprojects.each { subproject ->
-        executionData subproject.tasks.withType(Test)
-    }
-    doFirst {
-        executionData = files(executionData.findAll { it.exists() })
-    }
-}
-
-task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
-    description 'Generates an aggregate report from all subprojects'
-    dependsOn subprojects.test, jacocoMerge
-
-    getAdditionalSourceDirs().from(files(subprojects.sourceSets.main.allSource.srcDirs))
-    getSourceDirectories().from(files(subprojects.sourceSets.main.allSource.srcDirs))
-    getClassDirectories().from(files(subprojects.sourceSets.main.output))
-    executionData jacocoMerge.destinationFile
-
-    reports {
-        html.required = true
-        xml.required = true
-    }
 }

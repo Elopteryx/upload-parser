@@ -1,7 +1,11 @@
+plugins {
+    id 'jacoco-report-aggregation'
+}
+
 dependencies {
 
     /* Upload parser. */
-    testImplementation(project(':upload-parser-core'))
+    implementation(project(':upload-parser-core'))
 
     /* Test runner. */
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
@@ -10,7 +14,7 @@ dependencies {
 
     /* Undertow Http server. */
     testImplementation("io.undertow:undertow-core:$undertowVersion")
-    testImplementation("io.undertow:undertow-servlet-jakartaee9:$undertowVersion")
+    testImplementation("io.undertow:undertow-servlet-jakarta:$undertowVersion")
 
     /* Jetty Http server. */
     testImplementation("org.eclipse.jetty:jetty-server:$jettyVersion")
@@ -32,4 +36,8 @@ dependencies {
     /* Servlet API. */
     testImplementation("jakarta.servlet:jakarta.servlet-api:$servletApiVersion")
 
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('testCodeCoverageReport', JacocoReport)
 }
