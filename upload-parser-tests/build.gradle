@@ -1,3 +1,8 @@
+plugins {
+    id 'test-report-aggregation'
+    id 'jacoco-report-aggregation'
+}
+
 dependencies {
 
     /* Upload parser. */
@@ -32,4 +37,9 @@ dependencies {
     /* Servlet API. */
     testImplementation("jakarta.servlet:jakarta.servlet-api:$servletApiVersion")
 
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('testAggregateTestReport', TestReport)
+    dependsOn tasks.named('testCodeCoverageReport', JacocoReport)
 }

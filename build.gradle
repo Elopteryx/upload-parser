@@ -3,11 +3,6 @@ plugins {
     id 'com.github.spotbugs' version '4.7.5'
 }
 
-task testReport(type: TestReport, group: 'Build') {
-    description 'Generates an aggregate test report.'
-    destinationDir file("${buildDir}/reports/allTests")
-}
-
 allprojects {
     apply plugin: 'jacoco'
     jacoco {
@@ -111,14 +106,6 @@ subprojects {
         }
     }
 
-    task jacocoMerge(type: JacocoMerge) {
-        executionData tasks.withType(Test)
-
-        doFirst {
-            executionData = files(executionData.findAll { it.exists() })
-        }
-    }
-
     signing {
         required { !version.endsWith('SNAPSHOT') && gradle.taskGraph.hasTask('publish') }
         sign configurations.archives
@@ -129,41 +116,8 @@ subprojects {
         testLogging.showStandardStreams = true
     }
 
-    tasks.withType(Test) {
-        rootProject.testReport.reportOn it
-        it.dependsOn('jar')
-
-        // ensure tasks don't overwrite the default report directories used by the 'test' task
-        reports.html.destination = file("${buildDir}/reports/${name}")
-        reports.junitXml.destination = file("${buildDir}/reports/${name}/results")
-        binaryResultsDirectory = file("${buildDir}/reports/${name}/results/binary/${name}")
-    }
 }
 
 repositories {
     mavenCentral()
-}
-
-task jacocoMerge(type: JacocoMerge) {
-    subprojects.each { subproject ->
-        executionData subproject.tasks.withType(Test)
-    }
-    doFirst {
-        executionData = files(executionData.findAll { it.exists() })
-    }
-}
-
-task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
-    description 'Generates an aggregate report from all subprojects'
-    dependsOn subprojects.test, jacocoMerge
-
-    getAdditionalSourceDirs().from(files(subprojects.sourceSets.main.allSource.srcDirs))
-    getSourceDirectories().from(files(subprojects.sourceSets.main.allSource.srcDirs))
-    getClassDirectories().from(files(subprojects.sourceSets.main.output))
-    executionData jacocoMerge.destinationFile
-
-    reports {
-        html.required = true
-        xml.required = true
-    }
 }
