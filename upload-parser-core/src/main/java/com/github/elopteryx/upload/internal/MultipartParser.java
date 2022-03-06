@@ -63,9 +63,9 @@ public final class MultipartParser {
     }
 
     interface PartHandler {
-        void beginPart(final Headers headers);
+        void beginPart(Headers headers);
 
-        void data(final ByteBuffer buffer) throws IOException;
+        void data(ByteBuffer buffer) throws IOException;
 
         void endPart() throws IOException;
     }
@@ -340,7 +340,7 @@ public final class MultipartParser {
 
 
     interface Encoding {
-        void handle(final PartHandler handler, final ByteBuffer rawData) throws IOException;
+        void handle(PartHandler handler, ByteBuffer rawData) throws IOException;
     }
 
     static class IdentityEncoding implements Encoding {
