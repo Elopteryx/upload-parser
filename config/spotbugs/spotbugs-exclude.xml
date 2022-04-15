@@ -1,0 +1,22 @@
+<FindBugsFilter>
+    <Match>
+        <Class name="com.github.elopteryx.upload.util.ByteBufferBackedInputStream" />
+        <Bug code="EI2" />
+    </Match>
+    <Match>
+        <Class name="com.github.elopteryx.upload.util.OutputStreamBackedChannel" />
+        <Bug code="EI2" />
+    </Match>
+    <Match>
+        <Class name="com.github.elopteryx.upload.internal.PartStreamImpl" />
+        <Bug code="EI2" />
+    </Match>
+    <Match>
+        <Class name="com.github.elopteryx.upload.internal.BlockingUploadParser" />
+        <Bug code="EI" />
+    </Match>
+    <Match>
+        <Class name="com.github.elopteryx.upload.internal.UploadContextImpl" />
+        <Bug code="EI" />
+    </Match>
+</FindBugsFilter>

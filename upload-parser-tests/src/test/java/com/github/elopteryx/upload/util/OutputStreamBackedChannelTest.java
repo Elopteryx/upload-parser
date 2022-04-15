@@ -33,7 +33,7 @@ class OutputStreamBackedChannelTest {
     }
 
     @Test
-    void try_to_write_from_read_only_buffer() throws Exception {
+    void try_to_write_from_read_only_buffer() {
         final var stream = new ByteArrayOutputStream(1024);
         final var channel = new OutputStreamBackedChannel(stream);
         final var buffer = ByteBuffer.allocate(0).asReadOnlyBuffer();

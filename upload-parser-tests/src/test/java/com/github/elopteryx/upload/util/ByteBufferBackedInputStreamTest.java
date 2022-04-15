@@ -13,12 +13,12 @@ class ByteBufferBackedInputStreamTest {
     private static final String TEST_TEXT = "Test text.";
 
     @Test
-    void create_with_direct() throws Exception {
+    void create_with_direct() {
         assertThrows(IllegalArgumentException.class, () -> new ByteBufferBackedInputStream(ByteBuffer.allocate(0).asReadOnlyBuffer()));
     }
 
     @Test
-    void create_with_read_only() throws Exception {
+    void create_with_read_only() {
         assertThrows(IllegalArgumentException.class, () -> new ByteBufferBackedInputStream(ByteBuffer.allocateDirect(0)));
     }
 

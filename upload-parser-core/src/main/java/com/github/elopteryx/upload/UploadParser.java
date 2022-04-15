@@ -196,7 +196,7 @@ public final class UploadParser {
         if (sizeThreshold < 0) {
             throw new IllegalArgumentException("Invalid parameter value: " + sizeThreshold);
         }
-        this.sizeThreshold = Math.max(sizeThreshold, 0);
+        this.sizeThreshold = sizeThreshold;
         return this;
     }
 

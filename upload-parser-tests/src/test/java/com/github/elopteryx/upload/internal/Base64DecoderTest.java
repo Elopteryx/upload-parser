@@ -119,18 +119,14 @@ class Base64DecoderTest {
 
     @Test
     void decode_buffer() throws IOException {
-        final var numbers = new byte[32_768];
-        for (var i = 0; i < 32_768; i++) {
-            numbers[i] = (byte)(i % 255);
-        }
         final var target = ByteBuffer.allocate(65_535);
 
-        final var decoded = ByteBuffer.allocate(numbers.length);
+        final var decoded = ByteBuffer.allocate(32_768);
         final var decoder = new Base64Decoder();
         target.flip();
         decoder.decode(target, decoded);
 
-        assertEquals(numbers.length, decoded.remaining());
+        assertEquals(32_768, decoded.remaining());
     }
 
     @Test
