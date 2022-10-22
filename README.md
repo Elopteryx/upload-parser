@@ -158,8 +158,8 @@ For more information, please check the [Javadoc][1].
 Gradle
 -----
 
-```xml
-compile 'com.github.elopteryx:upload-parser:4.0.0'
+```gradle
+implementation 'com.github.elopteryx:upload-parser:4.0.0'
 ```
 Maven
 -----
