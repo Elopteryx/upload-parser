@@ -14,7 +14,7 @@ dependencies {
 
     /* Undertow Http server. */
     testImplementation("io.undertow:undertow-core:$undertowVersion")
-    testImplementation("io.undertow:undertow-servlet-jakarta:$undertowVersion")
+    testImplementation("io.undertow:undertow-servlet:$undertowVersion")
 
     /* Jetty Http server. */
     testImplementation("org.eclipse.jetty:jetty-server:$jettyVersion")

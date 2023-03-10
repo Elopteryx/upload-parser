@@ -1,6 +1,6 @@
 plugins {
-    id 'com.github.ben-manes.versions' version '0.42.0'
-    id 'com.github.spotbugs' version '5.0.9'
+    id 'com.github.ben-manes.versions' version '0.46.0'
+    id 'com.github.spotbugs' version '5.0.13'
 }
 
 allprojects {
@@ -30,17 +30,17 @@ subprojects {
 
     ext {
         servletApiVersion = '6.0.0'
-        undertowVersion = '2.2.18.Final'
-        jettyVersion = '11.0.11'
-        tomcatVersion = '10.0.22'
-        junitVersion = '5.8.2'
-        tikaVersion = '2.4.1'
+        undertowVersion = '2.3.4.Final'
+        jettyVersion = '11.0.13'
+        tomcatVersion = '10.1.5'
+        junitVersion = '5.9.2'
+        tikaVersion = '2.7.0'
         jimfsVersion = '1.2'
-        mockitoVersion = '4.6.1'
+        mockitoVersion = '5.1.1'
 
-        checkStyleVersion = '10.3.1'
-        pmdVersion = '6.47.0'
-        spotbugsVersion = '4.7.1'
+        checkStyleVersion = '10.7.0'
+        pmdVersion = '6.50.0'
+        spotbugsVersion = '4.7.3'
     }
 
     tasks.withType(JavaCompile) {

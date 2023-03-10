@@ -127,22 +127,14 @@ public final class MultipartParser {
         void parse(final ByteBuffer buffer) throws IOException {
             while (buffer.hasRemaining()) {
                 switch (state) {
-                    case 0:
-                        preamble(buffer);
-                        break;
-                    case 1:
-                        headerName(buffer);
-                        break;
-                    case 2:
-                        headerValue(buffer);
-                        break;
-                    case 3:
-                        entity(buffer);
-                        break;
-                    case -1:
+                    case 0 -> preamble(buffer);
+                    case 1 -> headerName(buffer);
+                    case 2 -> headerValue(buffer);
+                    case 3 -> entity(buffer);
+                    case -1 -> {
                         return;
-                    default:
-                        throw new IllegalStateException(String.valueOf(state));
+                    }
+                    default -> throw new IllegalStateException(String.valueOf(state));
                 }
             }
         }
