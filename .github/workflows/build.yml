@@ -20,7 +20,7 @@ jobs:
         run: ./gradlew build
       - name: Create coverage report
         run: ./gradlew check
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
         with:
           files: upload-parser-tests/build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
           flags: unittests
