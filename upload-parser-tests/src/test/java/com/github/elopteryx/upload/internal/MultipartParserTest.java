@@ -26,7 +26,7 @@ class MultipartParserTest {
     @MethodSource("bufferSizeProvider")
     void mime_decoding_with_preamble(final int bufferSize) throws IOException {
         final var data = fixLineEndings(FileUtils.readFile(MultipartParserTest.class, "mime1.txt"));
-        final var handler = new TestPartHandler();
+        final var handler = new MockPartHandler();
         final var parser = MultipartParser.beginParse(handler, "unique-boundary-1".getBytes(), bufferSize, ISO_8859_1);
 
         final var buf = ByteBuffer.wrap(data.getBytes());
@@ -44,7 +44,7 @@ class MultipartParserTest {
     @MethodSource("bufferSizeProvider")
     void mime_decoding_with_utf8_headers(final int bufferSize) throws IOException {
         final var data = fixLineEndings(FileUtils.readFile(MultipartParserTest.class, "mime-utf8.txt"));
-        final var handler = new TestPartHandler();
+        final var handler = new MockPartHandler();
         final var parser = MultipartParser.beginParse(handler, "unique-boundary-1".getBytes(), bufferSize, UTF_8);
 
         final var buf = ByteBuffer.wrap(data.getBytes());
@@ -60,7 +60,7 @@ class MultipartParserTest {
     @MethodSource("bufferSizeProvider")
     void mime_decoding_without_preamble(final int bufferSize) throws IOException {
         final var data = fixLineEndings(FileUtils.readFile(MultipartParserTest.class, "mime2.txt"));
-        final var handler = new TestPartHandler();
+        final var handler = new MockPartHandler();
         final var parser = MultipartParser.beginParse(handler, "unique-boundary-1".getBytes(), bufferSize, ISO_8859_1);
 
         final var buf = ByteBuffer.wrap(data.getBytes());
@@ -77,7 +77,7 @@ class MultipartParserTest {
     @MethodSource("bufferSizeProvider")
     void base64_mime_decoding(final int bufferSize) throws IOException {
         final var data = fixLineEndings(FileUtils.readFile(MultipartParserTest.class, "mime3.txt"));
-        final var handler = new TestPartHandler();
+        final var handler = new MockPartHandler();
         final var parser = MultipartParser.beginParse(handler, "unique-boundary-1".getBytes(), bufferSize, ISO_8859_1);
 
         final var buf = ByteBuffer.wrap(data.getBytes());
@@ -94,7 +94,7 @@ class MultipartParserTest {
     @MethodSource("bufferSizeProvider")
     void quoted_printable(final int bufferSize) throws IOException {
         final var data = fixLineEndings(FileUtils.readFile(MultipartParserTest.class, "mime4.txt"));
-        final var handler = new TestPartHandler();
+        final var handler = new MockPartHandler();
         final var parser = MultipartParser.beginParse(handler, "someboundarytext".getBytes(), bufferSize, ISO_8859_1);
 
         final var buf = ByteBuffer.wrap(data.getBytes());
@@ -110,7 +110,7 @@ class MultipartParserTest {
     @MethodSource("bufferSizeProvider")
     void mime_decoding_malformed(final int bufferSize) throws IOException {
         final var data = fixLineEndings(FileUtils.readFile(MultipartParserTest.class, "mime5_malformed.txt"));
-        final var handler = new TestPartHandler();
+        final var handler = new MockPartHandler();
         final var parser = MultipartParser.beginParse(handler, "someboundarytext".getBytes(), bufferSize, ISO_8859_1);
 
         final var buf = ByteBuffer.wrap(data.getBytes());
@@ -122,7 +122,7 @@ class MultipartParserTest {
     @MethodSource("bufferSizeProvider")
     void base64_mime_decoding_malformed(final int bufferSize) {
         final var data = fixLineEndings(FileUtils.readFile(MultipartParserTest.class, "mime6_malformed.txt"));
-        final var handler = new TestPartHandler();
+        final var handler = new MockPartHandler();
         final var parser = MultipartParser.beginParse(handler, "unique-boundary-1".getBytes(), bufferSize, ISO_8859_1);
 
         final var buf = ByteBuffer.wrap(data.getBytes());
@@ -133,7 +133,7 @@ class MultipartParserTest {
     @MethodSource("bufferSizeProvider")
     void quoted_printable_malformed(final int bufferSize) throws IOException {
         final var data = fixLineEndings(FileUtils.readFile(MultipartParserTest.class, "mime7_malformed.txt"));
-        final var handler = new TestPartHandler();
+        final var handler = new MockPartHandler();
         final var parser = MultipartParser.beginParse(handler, "someboundarytext".getBytes(), bufferSize, ISO_8859_1);
 
         final var buf = ByteBuffer.wrap(data.getBytes());
@@ -145,7 +145,7 @@ class MultipartParserTest {
         assertEquals("text/plain", handler.parts.get(0).map.getHeader(Headers.CONTENT_TYPE));
     }
 
-    private static class TestPartHandler implements MultipartParser.PartHandler {
+    private static class MockPartHandler implements MultipartParser.PartHandler {
 
         private final List<Part> parts = new ArrayList<>();
         private Part current;

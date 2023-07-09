@@ -6,7 +6,7 @@ plugins {
 allprojects {
     apply plugin: 'jacoco'
     jacoco {
-        toolVersion = '0.8.8'
+        toolVersion = '0.8.10'
     }
 }
 
@@ -30,16 +30,16 @@ subprojects {
 
     ext {
         servletApiVersion = '6.0.0'
-        undertowVersion = '2.3.4.Final'
-        jettyVersion = '11.0.13'
-        tomcatVersion = '10.1.5'
+        undertowVersion = '2.3.7.Final'
+        jettyVersion = '11.0.15'
+        tomcatVersion = '10.1.10'
         junitVersion = '5.9.2'
-        tikaVersion = '2.7.0'
-        jimfsVersion = '1.2'
-        mockitoVersion = '5.1.1'
+        tikaVersion = '2.8.0'
+        jimfsVersion = '1.3.0'
+        mockitoVersion = '5.4.0'
 
-        checkStyleVersion = '10.7.0'
-        pmdVersion = '6.50.0'
+        checkStyleVersion = '10.12.1'
+        pmdVersion = '6.55.0'
         spotbugsVersion = '4.7.3'
     }
 
