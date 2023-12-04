@@ -1,6 +1,18 @@
 <FindBugsFilter>
     <Match>
         <Class name="com.github.elopteryx.upload.util.ByteBufferBackedInputStream" />
+        <Bug code="CT" />
+    </Match>
+    <Match>
+        <Class name="com.github.elopteryx.upload.util.ByteBufferBackedInputStream" />
+        <Bug code="EI2" />
+    </Match>
+    <Match>
+        <Class name="com.github.elopteryx.upload.util.ByteBufferBackedOutputStream" />
+        <Bug code="CT" />
+    </Match>
+    <Match>
+        <Class name="com.github.elopteryx.upload.util.ByteBufferBackedOutputStream" />
         <Bug code="EI2" />
     </Match>
     <Match>
