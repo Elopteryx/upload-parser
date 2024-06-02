@@ -49,7 +49,6 @@
         <exclude name="AvoidFieldNameMatchingMethodName"/>
         <exclude name="AvoidLiteralsInIfCondition"/>
         <exclude name="DataflowAnomalyAnalysis"/>
-        <exclude name="BeanMembersShouldSerialize"/>
         <exclude name="MissingSerialVersionUID"/>
         <exclude name="NullAssignment"/>
     </rule>

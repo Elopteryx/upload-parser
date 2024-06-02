@@ -1,12 +1,12 @@
 plugins {
-    id 'com.github.ben-manes.versions' version '0.50.0'
-    id 'com.github.spotbugs' version '6.0.1'
+    id 'com.github.ben-manes.versions' version '0.51.0'
+    id 'com.github.spotbugs' version '6.0.15'
 }
 
 allprojects {
     apply plugin: 'jacoco'
     jacoco {
-        toolVersion = '0.8.11'
+        toolVersion = '0.8.12'
     }
 }
 
@@ -30,17 +30,17 @@ subprojects {
 
     ext {
         servletApiVersion = '6.0.0'
-        undertowVersion = '2.3.10.Final'
-        jettyVersion = '11.0.18'
-        tomcatVersion = '10.1.16'
-        junitVersion = '5.10.1'
-        tikaVersion = '2.9.1'
+        undertowVersion = '2.3.13.Final'
+        jettyVersion = '11.0.21'
+        tomcatVersion = '10.1.24'
+        junitVersion = '5.10.2'
+        tikaVersion = '2.9.2'
         jimfsVersion = '1.3.0'
-        mockitoVersion = '5.8.0'
+        mockitoVersion = '5.12.0'
 
-        checkStyleVersion = '10.12.5'
+        checkStyleVersion = '10.17.0'
         pmdVersion = '6.55.0'
-        spotbugsVersion = '4.8.2'
+        spotbugsVersion = '4.8.5'
     }
 
     tasks.withType(JavaCompile) {
